@@ -1,0 +1,7 @@
+{
+    "jest.pathToJest": "node node_modules/jest/bin/jest.js",
+    "jest.showCoverageOnLoad": true,
+    "jest.pathToConfig": "jest.config.js",
+    "jest.debugMode": true,
+    "python.pythonPath": "/usr/bin/python"
+}

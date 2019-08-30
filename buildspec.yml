@@ -2,16 +2,26 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 10  
     commands:
+      - echo Installing Jest...
+      - npm install -g jest
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      
       # Install dependencies needed for running tests
       - npm install
 
       # Upgrade AWS CLI to the latest version
       - pip3 install --upgrade awscli
-  pre_build:
+  build:
     commands:
-      # Discover and run unit tests in the 'tests' directory
-      - npm test
+      - echo Build started on `date`
+      - npm run build
+      #- echo Testing with Jest
+      #- npm run test
   post_build:
     commands:
       # Remove existing node_modules to clear dev dependencies
@@ -28,6 +38,7 @@ phases:
 artifacts:
   type: zip
   files:
+    - dist/*
+    - docs/*
     - template-export.yml
     - template-configuration.json
-

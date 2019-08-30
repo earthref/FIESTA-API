@@ -1,96 +1,74 @@
-Welcome to the AWS CodeStar sample web service
-==============================================
+# EarthRef's FIESTA API
 
-This sample code helps get you started with a simple Express web service
-deployed by AWS Elastic Beanstalk and AWS CloudFormation.
+## Usage
 
-What's Here
------------
+The deployed API is currently available at http://api.earthref.org/v0 with documentation at http://api.docs.earthref.org0/v0. These GET requests can be made in the browser to test the API:
 
-This sample includes:
+#### Get the metadata for the latest 10 contributions as JSON rows:
+- http://api.earthref.org/MagIC/v0/search/contributions
 
-* README.md - this file
-* .ebextensions/ - this directory contains the configuration files that
-  AWS Elastic Beanstalk will deploy your Express service
-* package.json - this file contains various metadata relevant to your Node.js
-  application such as dependencies
-* server.js - this file contains the code for your service
-* tests/ - this directory contains unit tests for your application
-* template.yml - this file contains the description of AWS resources used by AWS
-  CloudFormation to deploy your infrastructure
-* template-configuration.json - this file contains the project ARN with placeholders used for tagging resources with the project ID
+#### Get the metadata for the latest 20 locations that mention "sedimentary" as JSON rows:
+- http://api.earthref.org/MagIC/v0/search/locations?size=20&query=sedimentary
 
-Getting Started
----------------
+#### Get contribution 16645 in MagIC Text File format:
+- http://api.earthref.org/MagIC/v0/contribution/16645
 
-These directions assume you want to develop on your local computer, and not
-from the Amazon EC2 instance itself. If you're on the Amazon EC2 instance, the
-virtual environment is already set up for you, and you can start working on the
-code.
+These requests can also be made with an HTTP request client, for example getting a contribution with Python:
+```python
+import requests
 
-To work on the sample code, you'll need to clone your project's repository to your
-local computer. If you haven't, do that first. You can find instructions in the
-AWS CodeStar user guide.
+# Get the 50 latest sites in MagIC
+response = requests.get(
+    'http://api.earthref.org/MagIC/v0/contribution/16663',
+    headers={'Accept': 'text/plain'}
+)
 
-1. Install Node.js on your computer.  For details on available installers visit
-   https://nodejs.org/en/download/.
+# Check the response status code
+if (response.status_code == 404):
+  print('Request URL is incorrect.')
+if (response.status_code == 204):
+  print('Contribution ID doesn''t exist.')
+  
+# Parse the first 100 characters of the contribution
+print(response.content[0:100])
+```
+Or searching with Python:
+```python
+import requests
+import pandas
 
-2. Install NPM dependencies:
+# Get the 50 latest sites in MagIC
+response = requests.get(
+    'http://api.earthref.org/MagIC/v0/search/sites',
+    params={'query': 'devonian', 'size': 50},
+    headers={'Accept': 'application/json'}
+)
 
-        $ npm install
+# Check the response status code
+if (response.status_code == 404):
+  print('Request URL is incorrect.')
 
-3. Start the development server:
+# Parse the JSON output into a dictionary
+json_response = response.json()
 
-        $ node server.js
+# Retrieve the list of sites, of which each site may have multiple data rows
+sites = json_response['results']
 
-4. Open http://127.0.0.1:3000/ in a web browser to view your service.
+# Flatten the sites rows
+def flatten(listOflists):
+    return [item for sublist in listOflists for item in sublist]
+sites_rows = flatten(sites)
 
-What Do I Do Next?
-------------------
+sites_df = pandas.DataFrame(sites_rows)
+sites_df.head()
+```
 
-Once you have a virtual environment running, you can start making changes to
-the sample Express web service. We suggest making a small change to
-server.js first, so you can see how changes pushed to your project's repository
-are automatically picked up and deployed to the Amazon EC2 instance by AWS Elastic
-Beanstalk. (You can watch the progress on your project dashboard.) Once you've seen
-how that works, start developing your own code, and have fun!
+## Development
 
-To run your tests locally, go to the root directory of the
-sample code and run the `npm test` command, which
-AWS CodeBuild also runs through your `buildspec.yml` file.
+```
+npm install
+npm start
+# API running at http://localhost:3100
+# Docs available at http://localhost:3101
+```
 
-To test your new code during the release process, modify the existing tests or
-add tests to the tests directory. AWS CodeBuild will run the tests during the
-build stage of your project pipeline. You can find the test results
-in the AWS CodeBuild console.
-
-Learn more about AWS CodeBuild and how it builds and tests your application here:
-https://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html
-
-Learn more about AWS CodeStar by reading the user guide.  Ask questions or make
-suggestions on our forum.
-
-User Guide: http://docs.aws.amazon.com/codestar/latest/userguide/welcome.html
-
-Forum: https://forums.aws.amazon.com/forum.jspa?forumID=248
-
-How Do I Add Template Resources to My Project?
-------------------
-
-To add AWS resources to your project, you'll need to edit the `template.yml`
-file in your project's repository. You may also need to modify permissions for
-your project's worker roles. After you push the template change, AWS CodeStar
-and AWS CloudFormation provision the resources for you.
-
-See the AWS CodeStar user guide for instructions to modify your template:
-https://docs.aws.amazon.com/codestar/latest/userguide/how-to-change-project#customize-project-template.html
-
-What Should I Do Before Running My Project in Production?
-------------------
-
-AWS recommends you review the security best practices recommended by the framework
-author of your selected sample application before running it in production. You
-should also regularly review and apply any available patches or associated security
-advisories for dependencies used within your application.
-
-Best Practices: https://docs.aws.amazon.com/codestar/latest/userguide/best-practices.html?icmpid=docs_acs_rm_sec

@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: FIESTA API
+  description: 
+    The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
+    Requests requiring authentication should include the ''api_key'' query parameter with a value of an active EarthRef.org API key.
+  contact:
+    email: admin@earthref.org
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  version: '0.1'
+externalDocs:
+  description: EarthRef.org
+  url: https://earthref.org/
+servers:
+- url: https://api.earthref.org/v0
+
+paths:
+  /v0/{repository}/contribution/{id}:
+    get:
+      tags:
+      - Public Contribution
+      summary: Retrieve a public contribution text file
+      operationId: getContributionByID
+      parameters:
+      - name: repository
+        in: path
+        description: Repository
+        required: true
+        schema:
+          type: string
+          minimum: 0
+          enum: [MagIC, ERDA]
+      - name: id
+        in: path
+        description: Contribution ID
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        200:
+          description: Contribution is returned in the format requested by the accept header
+          content:
+            text/plain:
+              schema:
+                type: string
+                example:
+                  tab delimited	contribution
+                  
+                  id	version	timestamp	contributor	data_model_version	reference
+                  
+                  10747	6	2015-07-09T02:20:01.000Z	@magic	3.0	10.1029/93JB00024
+                  
+                  >>>>>>>>>>
+                  
+                  tab delimited	locations
+                  
+                  location
+                  
+                  Hawaii
+        204:
+          description: Contribution ID not found
+          content: {}
+  /v0/{repository}/search/{table}:
+    get:
+      tags:
+      - Public Search
+      summary: Retrieve public records
+      operationId: getSearchByTable
+      parameters:
+      - name: repository
+        in: path
+        description: Repository
+        required: true
+        schema:
+          type: string
+          minimum: 0
+          enum: [MagIC, ERDA]
+      - name: table
+        in: path
+        description: Record type
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Max number of records to return
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+      - name: from
+        in: query
+        description: Starting record number for paging
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: query
+        in: query
+        description: Search query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header
+          content:
+            application/json:
+              schema:
+                required:
+                - contribution
+                type: object
+                properties:
+                  contribution:
+                    required:
+                    - id
+                    - version
+                    - timestamp
+                    - contributor
+                    - data_model_version
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 1
+                        example: 10747
+                      version:
+                        example: 6
+                      timestamp:
+                        example: '2015-07-09T02:20:01.000Z'
+                      contributor:
+                        example: '@magic'
+                      data_model_version:
+                        example: '3.0'
+                      reference:
+                        example: '10.1029/93JB00024'
+                example:
+                  contribution:
+                    id: 10747
+                    version: 6
+                    timestamp: '2015-07-09T02:20:01.000Z'
+                    contributor: '@magic'
+                    data_model_version: '3.0'
+                    reference: '10.1029/93JB00024'
+                  locations: [{
+                    location: Hawaii
+                  }]
