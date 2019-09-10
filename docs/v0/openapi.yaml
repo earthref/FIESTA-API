@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: FIESTA API
+  title: EarthRef.org FIESTA API
   description: 
     The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
     Requests requiring authentication should include the ''api_key'' query parameter with a value of an active EarthRef.org API key.
@@ -30,7 +30,6 @@ paths:
         required: true
         schema:
           type: string
-          minimum: 0
           enum: [MagIC, ERDA]
       - name: id
         in: path
@@ -76,7 +75,6 @@ paths:
         required: true
         schema:
           type: string
-          minimum: 0
           enum: [MagIC, ERDA]
       - name: table
         in: path

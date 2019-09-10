@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
 const index = 'magic_v4';
-const client = new Client({ node: process.env.ES_NODE || 'localhost:9200' });
+const client = new Client({ node: process.env.ES_NODE });
 
 // Complete definition of the Search response
 interface ShardsResponse {
