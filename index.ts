@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
 
 import fs from 'fs';
 import path from 'path';
