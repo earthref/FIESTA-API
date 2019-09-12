@@ -1,5 +1,11 @@
 import * as dotenv from 'dotenv';
-if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
+
+console.log('ENV', process.env);
+
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Running in production mode');
+  dotenv.config();
+}
 
 import fs from 'fs';
 import path from 'path';
