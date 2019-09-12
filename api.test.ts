@@ -13,9 +13,9 @@ describe('FIESTA API - Contributions', () => {
   let client: AxiosInstance;
 
   beforeAll(async () => {
-    client = axios.create({ baseURL: `http://localhost:${process.env.API_PORT}`, validateStatus: () => true });
-    api = API.listen(process.env.API_PORT);
-    await waitOn({ resources: [`tcp:localhost:${process.env.API_PORT}`] });
+    client = axios.create({ baseURL: `http://localhost:${process.env.PORT}`, validateStatus: () => true });
+    api = API.listen(process.env.PORT);
+    await waitOn({ resources: [`tcp:localhost:${process.env.PORT}`] });
   });
 
   afterAll(() => {
