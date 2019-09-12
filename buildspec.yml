@@ -30,4 +30,5 @@ artifacts:
   type: zip
   files:
     - dist/**/*
-    - docs/**/*
+    - node_modules/**/*
+    - package.json
