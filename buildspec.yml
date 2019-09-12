@@ -29,5 +29,5 @@ phases:
 artifacts:
   type: zip
   files:
-    - dist/*
-    - docs/*
+    - dist/**/*
+    - docs/**/*
