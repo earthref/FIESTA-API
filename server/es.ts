@@ -49,15 +49,16 @@ interface SearchResponse {
 async function esCheckConnection() {
   let isConnected = false;
   while (!isConnected) {
-    console.log('Connecting to ES');
+    // console.log('Connecting to ES');
     try {
       const health = await client.cluster.health({});
       console.log(health);
       isConnected = true;
     } catch (err) {
-      console.log('Connection Failed, Retrying...', err);
+      // console.log('Connection Failed, Retrying...', err);
     }
   }
+  return isConnected;
 }
 export { esCheckConnection };
 

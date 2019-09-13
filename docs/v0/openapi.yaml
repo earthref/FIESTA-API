@@ -17,6 +17,16 @@ servers:
 - url: https://api.earthref.org/v0
 
 paths:
+  /health-check:
+    get:
+      - Fiesta API
+      summary: Check the health of the API
+      operationId: getHealthCheck
+      responses:
+        200:
+          description: Health check passed
+        500:
+          description: Health check failed
   /v0/{repository}/contribution/{id}:
     get:
       tags:

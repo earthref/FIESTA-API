@@ -1,13 +1,7 @@
 import * as dotenv from 'dotenv';
 
-console.log('ENV', process.env);
+if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
 
-if (process.env.NODE_ENV !== 'production') {
-  console.log('Running in production mode');
-  dotenv.config();
-}
-
-import fs from 'fs';
 import path from 'path';
 import OpenAPIBackend from 'openapi-backend';
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
@@ -16,6 +10,7 @@ import KoaBodyparser from 'koa-bodyparser';
 import json from 'koa-json';
 import logger from 'koa-logger';
 
+import api from './paths/api';
 import contribution from './paths/contribution';
 import search from './paths/search';
 
@@ -28,6 +23,7 @@ API.use(KoaBodyparser());
 const server = new OpenAPIBackend({
   definition: path.join(__dirname, 'docs', 'v0', 'openapi.yaml'),
   handlers: {
+    ... api,
     ... contribution,
     ... search,
     validationFail: async (c: OpenAPIContext, ctx: Koa.Context) => {
@@ -40,7 +36,7 @@ const server = new OpenAPIBackend({
         ctx.request.path === `/${latest}` ||
         ctx.request.path === `/${latest}/`
       ) {
-        ctx.redirect('https://api.docs.earthref.org');
+        // ctx.redirect('https://api.docs.earthref.org');
       } else if (
         ctx.request.path === '/openapi.yaml' ||
         ctx.request.path === `/${latest}/openapi.yaml`
