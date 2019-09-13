@@ -35,18 +35,19 @@ const server = new OpenAPIBackend({
       ctx.status = 400;
     },
     notFound: async (c: OpenAPIContext, ctx: Koa.Context) => {
-      if (ctx.request.path === '/') {
-        ctx.redirect(latest);
-      } else if (ctx.request.path === '/openapi.yaml') {
-        ctx.redirect(`${latest}/openapi.yaml`);
-      } else if (ctx.request.path === '/v0') {
-          ctx.body = fs.readFileSync('docs/v0/index.html', {'encoding': 'utf8'});
-          ctx.state = 200;
-      } else if (ctx.request.path === '/v0/openapi.yaml') {
-          ctx.body = fs.readFileSync('docs/v0/openapi.yaml', {'encoding': 'utf8'});
-          ctx.state = 200;
+      if (
+        ctx.request.path === '/' ||
+        ctx.request.path === `/${latest}` ||
+        ctx.request.path === `/${latest}/`
+      ) {
+        ctx.redirect('https://api.docs.earthref.org');
+      } else if (
+        ctx.request.path === '/openapi.yaml' ||
+        ctx.request.path === `/${latest}/openapi.yaml`
+      ) {
+        ctx.redirect(`https://api.docs.earthref.org/${latest}/openapi.yaml`);
       } else {
-        ctx.body = { err: 'not found here' };
+        ctx.body = { err: `Path "${ctx.request.path}" is not defined for this API. See https://api.docs.earthref.org for more information.` };
         ctx.status = 404;
       }
     },
