@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-
 if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
 
 import path from 'path';
@@ -32,18 +31,22 @@ const server = new OpenAPIBackend({
     },
     notFound: async (c: OpenAPIContext, ctx: Koa.Context) => {
       if (
-        ctx.request.path === '/' ||
-        ctx.request.path === `/${latest}` ||
+        ctx.request.path === '/'
+      ) {
+        ctx.status = 200;
+      } else if (
+          ctx.request.path === '/' ||
+          ctx.request.path === `/${latest}` ||
         ctx.request.path === `/${latest}/`
       ) {
-        // ctx.redirect('https://api.docs.earthref.org');
+        ctx.redirect('https://api.docs.earthref.org');
       } else if (
         ctx.request.path === '/openapi.yaml' ||
         ctx.request.path === `/${latest}/openapi.yaml`
       ) {
         ctx.redirect(`https://api.docs.earthref.org/${latest}/openapi.yaml`);
       } else {
-        ctx.body = { err: `Path "${ctx.request.path}" is not defined for this API. See https://api.docs.earthref.org for more information.` };
+        ctx.body = { err: `Path '${ctx.request.path}' is not defined for this API. See https://api.docs.earthref.org for more information.` };
         ctx.status = 404;
       }
     },
@@ -60,7 +63,7 @@ const server = new OpenAPIBackend({
 server.init();
 
 // Log requests
-API.use(logger());
+if (process.env.NODE_ENV === 'development') { API.use(logger()); }
 
 // Pretty print JSON output
 API.use(json());

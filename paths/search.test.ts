@@ -1,14 +1,14 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
 
 import { Server } from 'http';
 import axios, { AxiosInstance } from 'axios';
 import waitOn from 'wait-on';
 import { API } from '../index';
 
-jest.setTimeout(15000);
+jest.setTimeout(60000);
 
-describe('MagIC API v0 - Search', () => {
+describe('FIESTA API v0 - Search', () => {
   let api: Server;
   let client: AxiosInstance;
 

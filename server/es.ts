@@ -46,19 +46,22 @@ interface SearchResponse {
 }
 
 // Check the ES connection status
-async function esCheckConnection() {
-  let isConnected = false;
-  while (!isConnected) {
-    // console.log('Connecting to ES');
-    try {
-      const health = await client.cluster.health({});
-      console.log(health);
-      isConnected = true;
-    } catch (err) {
-      // console.log('Connection Failed, Retrying...', err);
-    }
+function sleep(ms = 0) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+async function esCheckConnection(attempt = 0): Promise<boolean> {
+  try {
+    const health = await client.cluster.health({});
+    if (process.env.NODE_ENV === 'development') { console.log(health); }
+    return true;
+  } catch (err) {
+    if (process.env.NODE_ENV === 'development') { console.log('Connecting to ES Failed, Retrying...', err); }
   }
-  return isConnected;
+  if (attempt >= 5) { return false; }
+  await sleep(100);
+  return await esCheckConnection(attempt + 1);
 }
 export { esCheckConnection };
 

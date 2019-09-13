@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') { dotenv.config(); }
 
 import { Server } from 'http';
 import axios, { AxiosInstance } from 'axios';
@@ -8,7 +8,7 @@ import { API } from '../index';
 
 jest.setTimeout(60000);
 
-describe('MagIC API v0 - Contributions', () => {
+describe('FIESTA API v0 - Contributions', () => {
   let api: Server;
   let client: AxiosInstance;
 

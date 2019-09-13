@@ -13,7 +13,7 @@
     "watch-start": "NODE_ENV=development nodemon --delay 2 -L -w dist/ dist/index.js",
     "dev": "concurrently -k -p '[{name}]' -n 'typescript,api' -c 'yellow.bold,cyan.bold' npm:watch-build npm:watch-start",
     "lint": "tslint --format prose --project .",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.3.0",

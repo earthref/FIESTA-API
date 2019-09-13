@@ -14,19 +14,22 @@ externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
 servers:
-- url: https://api.earthref.org/v0
+- url: https://api.earthref.org
 
 paths:
   /health-check:
     get:
+      tags:
       - Fiesta API
       summary: Check the health of the API
       operationId: getHealthCheck
       responses:
         200:
           description: Health check passed
+          content: {}
         500:
           description: Health check failed
+          content: {}
   /v0/{repository}/contribution/{id}:
     get:
       tags:
