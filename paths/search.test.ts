@@ -4,7 +4,7 @@ dotenv.config();
 import { Server } from 'http';
 import axios, { AxiosInstance } from 'axios';
 import waitOn from 'wait-on';
-import { API } from '../api';
+import { API } from '../index';
 
 jest.setTimeout(15000);
 

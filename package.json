@@ -5,6 +5,7 @@
   "author": "Rupert Minnett <rminnett@earthref.org>",
   "license": "MIT",
   "keywords": [],
+  "private": true,
   "scripts": {
     "build": "mkdir -p dist/docs && cp -R docs/* dist/docs && tsc",
     "watch-build": "mkdir -p dist/docs && cp -R docs/* dist/docs && tsc -w",

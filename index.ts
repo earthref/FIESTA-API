@@ -80,3 +80,4 @@ API.use((ctx) =>
 );
 
 API.listen(process.env.PORT);
+export { API };
