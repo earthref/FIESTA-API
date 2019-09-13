@@ -31,12 +31,8 @@ const server = new OpenAPIBackend({
     },
     notFound: async (c: OpenAPIContext, ctx: Koa.Context) => {
       if (
-        ctx.request.path === '/'
-      ) {
-        ctx.status = 200;
-      } else if (
-          ctx.request.path === '/' ||
-          ctx.request.path === `/${latest}` ||
+        ctx.request.path === '/' ||
+        ctx.request.path === `/${latest}` ||
         ctx.request.path === `/${latest}/`
       ) {
         ctx.redirect('https://api.docs.earthref.org');
