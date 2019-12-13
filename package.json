@@ -29,7 +29,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.15",
-    "npm": "^6.11.2",
+    "npm": "^6.13.4",
     "openapi-backend": "^2.3.4"
   },
   "devDependencies": {
