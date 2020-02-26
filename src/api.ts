@@ -17,10 +17,11 @@ import download from './paths/download';
 import search from './paths/search';
 
 const v = 'v1';
+const src = `${isDev ? 'src' : 'dist'}/public`;
 
 // Define API
 const server = new OpenAPIBackend({
-  definition: 'src/public/v1/openapi.yaml',
+  definition: `${src}/${v}/openapi.yaml`,
   handlers: {
     ... root,
     ... contribution,
@@ -32,7 +33,6 @@ const server = new OpenAPIBackend({
     },
     notFound: async (c: OpenAPIContext, ctx: Koa.Context) => {
       const url = ctx.request.url;
-      const src = `${isDev ? 'src' : 'dist'}/public`;
       if (url === '/' || url === '/index.html') {
         ctx.redirect(`/${v}`);
       }
