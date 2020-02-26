@@ -57,20 +57,6 @@ paths:
             text/plain:
               schema:
                 type: string
-                example:
-                  tab delimited	contribution
-                  
-                  id	version	timestamp	contributor	data_model_version	reference
-                  
-                  10747	6	2015-07-09T02:20:01.000Z	@magic	3.0	10.1029/93JB00024
-                  
-                  >>>>>>>>>>
-                  
-                  tab delimited	locations
-                  
-                  location
-                  
-                  Hawaii
         204:
           description: Contribution ID not found
           content: {}
