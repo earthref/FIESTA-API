@@ -14,7 +14,7 @@
     "debug": "node --inspect=9229 dist/api.js",
     "dev": "npm run public && concurrently -k -p '[{name}]' -n 'tsc,api' -c 'yellow.bold,cyan.bold' npm:watch npm:monitor",
     "lint": "tslint --format prose --project .",
-    "test": "NODE_ENV=test TEST_PORT=3201 jest --colors --runInBand --detectOpenHandles",
+    "test": "NODE_ENV=test TEST_PORT=3201 jest --colors --detectOpenHandles",
     "start": "node dist/api.js"
   },
   "dependencies": {
