@@ -17,8 +17,8 @@ phases:
     commands:
       - echo Build started on `date`
       - npm run build
-      - echo Testing with Jest
-      - npm run test
+      #- echo Testing with Jest
+      #- npm run test
   post_build:
     commands:
       # Remove existing node_modules to clear dev dependencies
