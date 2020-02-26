@@ -16,40 +16,47 @@ import contribution from './paths/contribution';
 import download from './paths/download';
 import search from './paths/search';
 
+const v = 'v1';
+
 // Define API
 const server = new OpenAPIBackend({
-  definition: 'dist/public/v0/openapi.yaml',
+  definition: 'src/public/v1/openapi.yaml',
   handlers: {
     ... root,
     ... contribution,
     ... download,
     ... search,
     validationFail: async (c: OpenAPIContext, ctx: Koa.Context) => {
-      ctx.body = { err: c.validation.errors };
       ctx.status = 400;
+      ctx.body = { err: c.validation.errors };
     },
     notFound: async (c: OpenAPIContext, ctx: Koa.Context) => {
-      if (ctx.request.url === '/' ||
-          ctx.request.url === '/index.html') {
-        ctx.redirect('/v0')
-      } else if (ctx.request.url === '/v0' ||
-          ctx.request.url === '/v0/' ||
-          ctx.request.url === '/v0/index.html') {
-        ctx.type = 'html';
-        ctx.body = createReadStream('dist/public/v0/index.html');
-      } else if (ctx.request.url === '/openapi.yaml' ||
-          ctx.request.url === '/v0/openapi.yaml') {
-        ctx.type = 'text';
-        ctx.body = createReadStream('dist/public/v0/openapi.yaml');
-      } else {
-        ctx.body = { err: `Path '${ctx.request.path}' is not defined for this API. See https://api.docs.earthref.org for more information.` };
+      const url = ctx.request.url;
+      const src = `${isDev ? 'src' : 'dist'}/public`;
+      if (url === '/' || url === '/index.html') {
+        ctx.redirect(`/${v}`);
+      }
+      else if (url === `/${v}` || url === `/${v}/` || url === `/${v}/index.html`) {
+        ctx.type = 'html'; ctx.body = createReadStream(`${src}/${v}/index.html`);
+      }
+      else if (url === '/openapi.yaml' || url === `/${v}/openapi.yaml`) {
+        ctx.type = 'text'; ctx.body = createReadStream(`${src}/${v}/openapi.yaml`);
+      }
+      else if (url === '/favicon.ico') {
+        ctx.type = 'ico'; ctx.body = createReadStream(`${src}/favicon.ico`);
+      }
+      else {
         ctx.status = 404;
+        ctx.body = {
+          err: `Path '${ctx.request.path}' is not defined for this API. ` +
+            `See https://api.earthref.org for more information.`
+        };
       }
     },
     notImplemented: async (c: OpenAPIContext, ctx: Koa.Context) => {
       const { status, mock } = c.api.mockResponseForOperation(c.operation.operationId);
-      ctx.body = mock;
       ctx.status = status;
+      ctx.body = mock;
     },
   },
   ajvOpts: {

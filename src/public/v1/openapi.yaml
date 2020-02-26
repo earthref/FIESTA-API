@@ -3,13 +3,12 @@ info:
   title: EarthRef.org FIESTA API
   description: 
     The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
-    Requests requiring authentication should include the ''api_key'' query parameter with a value of an active EarthRef.org API key.
   contact:
     email: admin@earthref.org
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '0.3'
+  version: '1.0'
 externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
@@ -30,7 +29,7 @@ paths:
         500:
           description: Health check failed
           content: {}
-  /v0/{repository}/contribution/{id}:
+  /v1/{repository}/contribution/{id}:
     get:
       tags:
       - Public Contribution
@@ -75,10 +74,10 @@ paths:
         204:
           description: Contribution ID not found
           content: {}
-  /v0/{repository}/download:
+  /v1/{repository}/download:
     post:
       tags:
-      - Download
+      - Download Contribution Data
       summary: Retrieve the latest public contribution text file for a reference DOI
       operationId: downloadContribution
       parameters:
@@ -105,7 +104,7 @@ paths:
         204:
           description: Contribution with reference DOI not found
           content: {}
-  /v0/{repository}/search/{table}:
+  /v1/{repository}/search/{table}:
     get:
       tags:
       - Public Search

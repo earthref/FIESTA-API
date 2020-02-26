@@ -7,7 +7,7 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 
 jest.setTimeout(60000);
 
-describe('FIESTA API v0', () => {
+describe('FIESTA API v1', () => {
   let start: ChildProcessWithoutNullStreams;
   let client: AxiosInstance;
 
@@ -28,35 +28,35 @@ describe('FIESTA API v0', () => {
   });
 
   // Contribution
-  test('GET /v0/MagIC/contribution/0 returns 204', async () => {
-    const res = await client.get('/v0/MagIC/contribution/0', { headers: { 'Accept': 'text/plain' }});
+  test('GET /v1/MagIC/contribution/0 returns 204', async () => {
+    const res = await client.get('/v1/MagIC/contribution/0', { headers: { 'Accept': 'text/plain' }});
     expect(res.status).toBe(204);
   });
-  test('GET /v0/MagIC/contribution/[latest contribution ID] returns 200', async () => {
-    const latestRes = await client.get('/v0/MagIC/search/contributions?size=1');
+  test('GET /v1/MagIC/contribution/[latest contribution ID] returns 200', async () => {
+    const latestRes = await client.get('/v1/MagIC/search/contributions?size=1');
     const latestCID = latestRes.data.results[0].id;
-    const res = await client.get(`/v0/MagIC/contribution/${latestCID}`, { headers: { 'Accept': 'text/plain' }});
+    const res = await client.get(`/v1/MagIC/contribution/${latestCID}`, { headers: { 'Accept': 'text/plain' }});
     expect(res.status).toBe(200);
   });
-  test('POST /v0/MagIC/contribution returns 404', async () => {
-    const res = await client.post('/v0/MagIC/contribution', {});
+  test('POST /v1/MagIC/contribution returns 404', async () => {
+    const res = await client.post('/v1/MagIC/contribution', {});
     expect(res.status).toBe(404);
   });
-  test('GET /v0/MagIC/contribution/1a returns 400 with validation error', async () => {
-    const res = await client.get('/v0/MagIC/contribution/1a', { headers: { 'Accept': 'text/plain' }});
+  test('GET /v1/MagIC/contribution/1a returns 400 with validation error', async () => {
+    const res = await client.get('/v1/MagIC/contribution/1a', { headers: { 'Accept': 'text/plain' }});
     expect(res.status).toBe(400);
     expect(res.data).toHaveProperty('err');
   });
 
   // Download
-  test('POST /v0/MagIC/download doi=10.1029/JZ072I012P03247 returns 200', async () => {
-    const res = await client.post('/v0/MagIC/download', { doi: '10.1029/JZ072I012P03247' }, { headers: { 'Accept': 'text/plain' }});
+  test('POST /v1/MagIC/download doi=10.1029/JZ072I012P03247 returns 200', async () => {
+    const res = await client.post('/v1/MagIC/download', { doi: '10.1029/JZ072I012P03247' }, { headers: { 'Accept': 'text/plain' }});
     expect(res.status).toBe(200);
   });
 
   // Search
-  test('GET /v0/MagIC/search/contributions returns 10 or less results', async () => {
-    const res = await client.get('/v0/MagIC/search/contributions');
+  test('GET /v1/MagIC/search/contributions returns 10 or less results', async () => {
+    const res = await client.get('/v1/MagIC/search/contributions');
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('total');
     expect(res.data).toHaveProperty('size');
@@ -66,8 +66,8 @@ describe('FIESTA API v0', () => {
     expect(res.data).toHaveProperty('results');
     expect(res.data.results.length).toBeLessThanOrEqual(res.data.size);
   });
-  test('GET /v0/MagIC/search/contributions returns 5 or less results', async () => {
-    const res = await client.get('/v0/MagIC/search/contributions?size=5');
+  test('GET /v1/MagIC/search/contributions returns 5 or less results', async () => {
+    const res = await client.get('/v1/MagIC/search/contributions?size=5');
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('total');
     expect(res.data).toHaveProperty('size');
@@ -77,8 +77,8 @@ describe('FIESTA API v0', () => {
     expect(res.data).toHaveProperty('results');
     expect(res.data.results.length).toBeLessThanOrEqual(res.data.size);
   });
-  test('GET /v0/MagIC/search/contributions query for "basalt" returns 800 or more results', async () => {
-    const res = await client.get('/v0/MagIC/search/contributions?query=basalt&size=1');
+  test('GET /v1/MagIC/search/contributions query for "basalt" returns 800 or more results', async () => {
+    const res = await client.get('/v1/MagIC/search/contributions?query=basalt&size=1');
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('total');
     expect(res.data.total).toBeGreaterThanOrEqual(800);
