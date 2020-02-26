@@ -26,7 +26,7 @@ interface SearchResponse {
   hits: {
     total: number;
     max_score: number;
-    hits: Array<{
+    hits: {
       _index: string;
       _type: string;
       _id: string;
@@ -39,7 +39,7 @@ interface SearchResponse {
       inner_hits?: any;
       matched_queries?: string[];
       sort?: string[];
-    }>;
+    }[];
   };
   aggregations?: any;
   err?: Explanation;
@@ -67,9 +67,24 @@ export { esCheckConnection };
 
 // Search public contributions
 async function esGetSearchByTable(
-  { table = 'contribution', size = 10, from = 0, query = '' }:
-  { table?: string, size?: number, from?: number, query?: string } = {},
+  { table = 'contribution', size = 10, from = 0, query = '', doi = '' }:
+  { table?: string, size?: number, from?: number, query?: string, doi?: string } = {},
 ) {
+  const must:{}[] = [{
+    term: {
+      'summary.contribution._is_activated': true,
+    },
+  }];
+  if (query !== '') must.push({
+    simple_query_string: {
+      query,
+    },
+  });
+  if (doi !== '') must.push({
+    term: {
+      'summary.contribution.reference.raw': doi,
+    },
+  });
   const params: RequestParams.Search = {
     index,
     type: table,
@@ -80,17 +95,7 @@ async function esGetSearchByTable(
         'summary.contribution.timestamp': 'desc',
       },
       query: {
-        bool: {
-          must: [query && {
-            simple_query_string: {
-              query,
-            },
-          } || true, {
-            term: {
-              'summary.contribution._is_activated': true,
-            },
-          }],
-        },
+        bool: { must },
       },
     },
   };
@@ -100,7 +105,7 @@ async function esGetSearchByTable(
   const results = table !== 'contribution' ?
     resp.body.hits.hits.map((hit) => hit._source.rows) :
     resp.body.hits.hits.map((hit) =>
-      [_.omitBy(hit._source.summary.contribution, (_: any, k: string) => k[0] === '_')]);
+      _.omitBy(hit._source.summary.contribution, (_: any, k: string) => k[0] === '_'));
   return {
     total: resp.body.hits.total,
     size,

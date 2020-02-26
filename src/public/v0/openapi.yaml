@@ -9,7 +9,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '0.1'
+  version: '0.3'
 externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
@@ -74,6 +74,36 @@ paths:
                   Hawaii
         204:
           description: Contribution ID not found
+          content: {}
+  /v0/{repository}/download:
+    post:
+      tags:
+      - Download
+      summary: Retrieve the latest public contribution text file for a reference DOI
+      operationId: downloadContribution
+      parameters:
+      - name: repository
+        in: path
+        description: Repository
+        required: true
+        schema:
+          type: string
+          enum: [MagIC, ERDA]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                doi:
+                  type: string
+                  description: Contribution reference DOI
+      responses:
+        200:
+          description: Contribution is returned in the format requested by the accept header
+        204:
+          description: Contribution with reference DOI not found
           content: {}
   /v0/{repository}/search/{table}:
     get:

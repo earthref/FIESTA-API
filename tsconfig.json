@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["es7", "esnext.asynciterable"],
@@ -9,18 +9,9 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
-    "baseUrl": ".",
-    "rootDir": ".",
     "outDir": "dist",
     "sourceMap": true,
-    "paths": {
-      "*": [
-        "node_modules/*",
-        "types/*"
-      ]
-    }
   },
-  "include": [
-    "**/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.tests.ts"],
 }
