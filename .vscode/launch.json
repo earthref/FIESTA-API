@@ -7,10 +7,10 @@
     {
         "type": "node",
         "request": "launch",
-        "name": "npm-debug",
+        "name": "npm-debug-dev",
         "runtimeExecutable": "npm",
         "cwd": "${workspaceFolder}",
-        "runtimeArgs": ["run-script", "debug"],
+        "runtimeArgs": ["run-script", "dev"],
         "port": 9229,
         "timeout": 30000,
         "skipFiles": [

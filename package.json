@@ -8,13 +8,9 @@
   "private": true,
   "scripts": {
     "public": "rm -rf dist/public && mkdir -p dist/public && cp -R src/public/* dist/public",
+    "dev": "npm run public && NODE_ENV=development ts-node-dev --respawn --inspect -- src/api.ts",
+    "test": "NODE_ENV=testing jest --colors --runInBand --detectOpenHandles",
     "build": "npm run public && tsc --pretty",
-    "watch": "tsc -w --pretty",
-    "monitor": "nodemon -L src/api.ts",
-    "debug": "node --inspect=9229 dist/api.js",
-    "dev": "npm run public && concurrently -k -p '[{name}]' -n 'tsc,api' -c 'yellow.bold,cyan.bold' npm:watch npm:monitor",
-    "lint": "tslint --format prose --project .",
-    "test": "NODE_ENV=test TEST_PORT=3201 jest --colors --detectOpenHandles",
     "start": "node dist/api.js"
   },
   "dependencies": {
@@ -45,15 +41,22 @@
     "@types/koa-static": "^4.0.1",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.6",
-    "@types/wait-on": "^4.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.21.0",
+    "@typescript-eslint/parser": "^2.21.0",
     "axios": "^0.19.2",
-    "concurrently": "^5.1.0",
+    "canvas": "^2.6.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.1.0",
+    "jest-dev-server": "^4.4.0",
+    "prettier": "^1.19.1",
     "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
-    "tslint": "^6.0.0",
-    "tslint-microsoft-contrib": "^6.2.0",
-    "typescript": "^3.8.2",
-    "wait-on": "^4.0.0"
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.2"
   }
 }
