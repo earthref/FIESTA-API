@@ -15,6 +15,31 @@ externalDocs:
 servers:
 - url: https://api.earthref.org
 
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    repository:
+      name: repository
+      in: path
+      description: Repository
+      required: true
+      schema:
+        type: string
+        enum: [MagIC, ERDA]
+  responses:
+    unauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        Authenticate:
+          schema:
+            type: string
+
+security:
+  - basicAuth: []
+
 paths:
   /health-check:
     get:
@@ -29,20 +54,33 @@ paths:
         500:
           description: Health check failed
           content: {}
-  /v1/{repository}/contribution/{id}:
+  /authenticate:
     get:
       tags:
-      - Public Contribution
-      summary: Retrieve a public contribution text file
-      operationId: getContributionByID
+      - Fiesta API
+      summary: Authenticate a username and password
+      operationId: authenticate
+      responses:
+        200:
+          description: User Record
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                required:
+                - name
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+  /v1/{repository}/download/{id}:
+    get:
+      tags:
+      - Download
+      summary: Download files for a single contribution
+      operationId: downloadContributionFilesByID
       parameters:
-      - name: repository
-        in: path
-        description: Repository
-        required: true
-        schema:
-          type: string
-          enum: [MagIC, ERDA]
+      - $ref: '#/components/parameters/repository'
       - name: id
         in: path
         description: Contribution ID
@@ -61,29 +99,40 @@ paths:
           description: Contribution ID not found
           content: {}
   /v1/{repository}/download:
-    post:
+    get:
       tags:
-      - Download Contribution Data
-      summary: Retrieve the latest public contribution text file for a reference DOI
-      operationId: downloadContribution
+      - Download
+      summary: Download contribution files
+      operationId: downloadContributionFiles
       parameters:
-      - name: repository
-        in: path
-        description: Repository
-        required: true
+      - $ref: '#/components/parameters/repository'
+      - name: n_max_contributions
+        in: query
+        description: Maximum number of contributions to download in descending timestamp order
+        schema:
+          type: integer
+          minimum: 0
+      - name: query
+        in: query
+        description: An Elasticsearch simple query to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-query-notes)
         schema:
           type: string
-          enum: [MagIC, ERDA]
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                doi:
-                  type: string
-                  description: Contribution reference DOI
+      - name: id
+        in: query
+        description: One or more contribution IDs to match
+        schema:
+          type: string
+      - name: doi
+        in: query
+        description: One or more DOIs to match
+        schema:
+          type: string
+      - name: contributor_name
+        in: query
+        description: One or more contributor names to match
+        schema:
+          type: string
       responses:
         200:
           description: Contribution is returned in the format requested by the accept header
@@ -95,24 +144,18 @@ paths:
       tags:
       - Public Search
       summary: Retrieve public records
-      operationId: getSearchByTable
+      operationId: searchByTable
       parameters:
-      - name: repository
-        in: path
-        description: Repository
-        required: true
-        schema:
-          type: string
-          enum: [MagIC, ERDA]
+      - $ref: '#/components/parameters/repository'
       - name: table
         in: path
         description: Record type
         required: true
         schema:
           type: string
-      - name: size
+      - name: n_max_rows
         in: query
-        description: Max number of records to return
+        description: Max number of rows to return
         required: false
         schema:
           type: integer

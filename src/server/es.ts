@@ -1,3 +1,6 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-underscore-dangle */
+
 import _ from 'lodash';
 import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
@@ -61,7 +64,7 @@ async function esCheckConnection(attempt = 0): Promise<boolean> {
   }
   if (attempt >= 5) { return false; }
   await sleep(100);
-  return await esCheckConnection(attempt + 1);
+  return esCheckConnection(attempt + 1);
 }
 export { esCheckConnection };
 
@@ -82,7 +85,7 @@ async function esGetSearchByTable(
   });
   if (doi !== '') must.push({
     term: {
-      'summary.contribution.reference.raw': doi,
+      'summary.contribution._reference.doi.raw': doi,
     },
   });
   const params: RequestParams.Search = {
@@ -105,7 +108,7 @@ async function esGetSearchByTable(
   const results = table !== 'contribution' ?
     resp.body.hits.hits.map((hit) => hit._source.rows) :
     resp.body.hits.hits.map((hit) =>
-      _.omitBy(hit._source.summary.contribution, (_: any, k: string) => k[0] === '_'));
+      _.omitBy(hit._source.summary.contribution, (o: any, k: string) => k[0] === '_'));
   return {
     total: resp.body.hits.total,
     size,
