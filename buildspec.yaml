@@ -5,8 +5,8 @@ phases:
     runtime-versions:
       nodejs: 10
     commands:
-      - echo Installing Jest...
-      - npm install -g jest
+    #  - echo Installing Jest...
+    #  - npm install -g jest
   pre_build:
     commands:
       - echo Installing source NPM dependencies...
@@ -15,8 +15,8 @@ phases:
     commands:
       - echo Build started on `date`
       - npm run build
-      - echo Testing with Jest
-      - npm run test
+    #  - echo Testing with Jest
+    #  - npm run test
   post_build:
     commands:
       - rm -r node_modules
