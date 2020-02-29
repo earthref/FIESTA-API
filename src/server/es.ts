@@ -70,50 +70,35 @@ export { esCheckConnection };
 
 // Search public contributions
 async function esGetSearchByTable(
-  { table = 'contribution', size = 10, from = 0, query = '', doi = '' }:
-  { table?: string, size?: number, from?: number, query?: string, doi?: string } = {},
+  { table = 'contribution', size = 10, from = 0, queries = [], ids = [], dois = [] }:
+  { table?: string, size?: number, from?: number, queries?: string[], ids?: string[], dois?: string[] } = {},
 ) {
-  const must:{}[] = [{
-    term: {
-      'summary.contribution._is_activated': true,
-    },
-  }];
-  if (query !== '') must.push({
-    simple_query_string: {
-      query,
-    },
-  });
-  if (doi !== '') must.push({
-    term: {
-      'summary.contribution._reference.doi.raw': doi,
-    },
-  });
+  const must:{}[] = [{ term: { 'summary.contribution._is_activated': true }}];
+  if (queries.length) queries.forEach(query => must.push({ query_string: { query }}));
+  if (ids.length) must.push({ terms: { 'summary.contribution.id': ids }});
+  if (dois.length) must.push({ terms: { 'summary.contribution._reference.doi.raw': dois }});
   const params: RequestParams.Search = {
     index,
     type: table,
     size,
     from,
     body: {
-      sort: {
-        'summary.contribution.timestamp': 'desc',
-      },
-      query: {
-        bool: { must },
-      },
+      sort: { 'summary.contribution.timestamp': 'desc' },
+      query: { bool: { must } },
     },
   };
-
   const resp: ApiResponse<SearchResponse> = await client.search(params);
-  if (resp.body.hits.total <= 0) { return undefined; }
+  if (resp.body.hits.total <= 0) { return false; }
   const results = table !== 'contribution' ?
-    resp.body.hits.hits.map((hit) => hit._source.rows) :
+    _.flatMap(resp.body.hits.hits, (hit) => hit._source.rows) :
     resp.body.hits.hits.map((hit) =>
       _.omitBy(hit._source.summary.contribution, (o: any, k: string) => k[0] === '_'));
   return {
     total: resp.body.hits.total,
+    table,
     size,
     from,
-    query,
+    queries,
     results,
   };
 }

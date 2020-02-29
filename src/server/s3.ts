@@ -11,16 +11,21 @@ async function s3GetObjectUTF8({ Bucket, Key }: { Bucket: string, Key: string })
     const data = await s3.getObject({ Bucket, Key }).promise();
     return data.Body.toString('utf-8');
   } catch (e) {
-    if (e.name === 'NoSuchKey') { return undefined; }
+    if (e.name === 'NoSuchKey') { return false; }
     throw(e);
   }
 }
 export { s3GetObjectUTF8 };
 
 async function s3GetContributionByID({ id, format = 'txt' }: { id: string, format: 'json'|'txt' }) {
-  return s3GetObjectUTF8({
-    Bucket: `magic-activated-contributions/${id}`,
-    Key: `magic_contribution_${id}.${format}`,
-  });
+  try {
+    return s3GetObjectUTF8({
+      Bucket: `magic-activated-contributions/${id}`,
+      Key: `magic_contribution_${id}.${format}`,
+    });
+  } catch (e) {
+    if (e.name === 'NoSuchKey') { return false; }
+    throw(e);
+  }
 }
 export { s3GetContributionByID };

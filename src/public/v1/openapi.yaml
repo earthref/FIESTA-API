@@ -73,31 +73,6 @@ paths:
                 - name
         401:
           $ref: '#/components/responses/unauthorizedError'
-  /v1/{repository}/download/{id}:
-    get:
-      tags:
-      - Download
-      summary: Download files for a single contribution
-      operationId: downloadContributionFilesByID
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: id
-        in: path
-        description: Contribution ID
-        required: true
-        schema:
-          type: integer
-          minimum: 0
-      responses:
-        200:
-          description: Contribution is returned in the format requested by the accept header
-          content:
-            text/plain:
-              schema:
-                type: string
-        204:
-          description: Contribution ID not found
-          content: {}
   /v1/{repository}/download:
     get:
       tags:
@@ -111,28 +86,36 @@ paths:
         description: Maximum number of contributions to download in descending timestamp order
         schema:
           type: integer
-          minimum: 0
+          minimum: 1
+          maximum: 100
       - name: query
         in: query
-        description: An Elasticsearch simple query to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-query-notes)
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
         schema:
           type: string
       - name: id
         in: query
         description: One or more contribution IDs to match
         schema:
-          type: string
+          type: array
+          items:
+            type: integer
+            minimum: 1
       - name: doi
         in: query
         description: One or more DOIs to match
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       - name: contributor_name
         in: query
         description: One or more contributor names to match
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         200:
           description: Contribution is returned in the format requested by the accept header
@@ -156,7 +139,6 @@ paths:
       - name: n_max_rows
         in: query
         description: Max number of rows to return
-        required: false
         schema:
           type: integer
           minimum: 1
@@ -164,16 +146,17 @@ paths:
       - name: from
         in: query
         description: Starting record number for paging
-        required: false
         schema:
           type: integer
-          minimum: 0
+          minimum: 1
       - name: query
         in: query
-        description: Search query
-        required: false
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       responses:
         200:
           description: Rows are returned in the format requested by the accept header

@@ -11,6 +11,11 @@ describe('FIESTA API v1 Search Tests', () => {
     client = axios.create({ baseURL: `http://localhost:${process.env.TEST_PORT}`, validateStatus: () => true });
   });
 
+  test('GET /v1/MagIC/search', async () => {
+    const res = await client.get('/v1/MagIC/search');
+    expect(res.status).toBe(404);
+  });
+
   test('GET /v1/MagIC/search/contributions returns 10 or less results', async () => {
     const res = await client.get('/v1/MagIC/search/contributions');
     expect(res.status).toBe(200);

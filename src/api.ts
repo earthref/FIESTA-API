@@ -73,9 +73,14 @@ API.use(async (ctx, next) => {
   } catch (err) {
     ctx.status = err.statusCode || err.status || 500;
     ctx.body = {
-      message: err.message,
+      status: ctx.status,
+      err: err.message,
     };
+    ctx.app.emit('error', err, ctx);
   }
+});
+API.on('error', (err, ctx) => {
+  console.error(ctx.request, err);
 });
 
 // Serve API endpoints
