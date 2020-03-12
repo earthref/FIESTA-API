@@ -32,6 +32,21 @@ interface Explanation {
   details: Explanation[];
 }
 
+interface Hit {
+  _index: string;
+  _type: string;
+  _id: string;
+  _score: number;
+  _source: any;
+  _version?: number;
+  _explanation?: Explanation;
+  fields?: any;
+  highlight?: any;
+  inner_hits?: any;
+  matched_queries?: string[];
+  sort?: string[];
+}
+
 interface SearchResponse {
   took: number;
   timed_out: boolean;
@@ -40,20 +55,7 @@ interface SearchResponse {
   hits: {
     total: number;
     max_score: number;
-    hits: {
-      _index: string;
-      _type: string;
-      _id: string;
-      _score: number;
-      _source: any;
-      _version?: number;
-      _explanation?: Explanation;
-      fields?: any;
-      highlight?: any;
-      inner_hits?: any;
-      matched_queries?: string[];
-      sort?: string[];
-    }[];
+    hits: Hit[];
   };
   aggregations?: any;
   err?: Explanation;
@@ -115,7 +117,7 @@ async function esGetSearchByTable(
   const resp: ApiResponse<SearchResponse> = await client.search(params);
   if (resp.body.hits.total <= 0) { return false; }
   const results = table !== 'contribution' ?
-    _.flatMap(resp.body.hits.hits, (hit) => hit._source.rows) :
+    _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows) :
     resp.body.hits.hits.map((hit) =>
       _.omitBy(hit._source.summary.contribution, (o: any, k: string) => k[0] === '_'));
   return {
