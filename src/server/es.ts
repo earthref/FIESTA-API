@@ -1,11 +1,22 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 
-import _ from 'lodash';
+import lodash from 'lodash';
+import deepdash from 'deepdash';
+import bcrypt from 'bcrypt';
 import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
+const _ = deepdash(lodash);
+
 const index = 'magic_v4';
+const usersIndex = 'er_users_v1';
 const client = new Client({ node: process.env.ES_NODE });
+
+function sleep(ms = 0) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 // Complete definition of the Search response
 interface ShardsResponse {
@@ -49,11 +60,6 @@ interface SearchResponse {
 }
 
 // Check the ES connection status
-function sleep(ms = 0) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
 async function esCheckConnection(attempt = 0): Promise<boolean> {
   try {
     const health = await client.cluster.health({});
@@ -67,6 +73,25 @@ async function esCheckConnection(attempt = 0): Promise<boolean> {
   return esCheckConnection(attempt + 1);
 }
 export { esCheckConnection };
+
+// Authenticate a username and password
+async function esAuthenticate(username: string, password: string) {
+  const resp: ApiResponse<SearchResponse> = await client.search({
+    size: 1,
+    index: usersIndex,
+    body: {
+      query: { "term": { "handle.raw": username.toLowerCase() }},
+      sort: { "id": "desc" }
+    }
+  });
+  if (resp.body.hits.total <= 0) { await sleep(500); return false; }
+  let user = resp.body.hits.hits[0]._source;
+  if (!bcrypt.compareSync(password, user._password)) { await sleep(500); return false; }
+  user = _.omitDeep(user, /(^|\.)_/);
+  user.has_password = true;
+  return user;
+}
+export { esAuthenticate };
 
 // Search public contributions
 async function esGetSearchByTable(
