@@ -3,7 +3,7 @@
 
 import lodash from 'lodash';
 import deepdash from 'deepdash';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
 const _ = deepdash(lodash);
