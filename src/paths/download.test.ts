@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import axios, { AxiosInstance } from 'axios';
+import unzipper from 'unzipper';
 
 dotenv.config();
 jest.setTimeout(30000);
@@ -59,8 +60,17 @@ describe('FIESTA API v1 Download Tests', () => {
 
   test('GET /v1/MagIC/download?id=1&id=16595&id=16761 should return status 204 - ' +
       'there are public contributions for the second and third contribution IDs', async () => {
-    const res = await client.get('/v1/MagIC/download?id=1&id=16595&id=16761');
+    const res = await client.get('/v1/MagIC/download?id=1&id=16595&id=16761', { responseType: 'stream' });
     expect(res.status).toBe(200);
+    const paths: string[] = [];
+    await res.data.pipe(unzipper.Parse())
+    .on('entry', (entry: unzipper.Entry) => {
+      paths.push(entry.path);
+      entry.autodrain();
+    }).promise();
+    expect(paths.length).toBe(2);
+    expect(paths).toContain('16595/magic_contribution_16595.txt');
+    expect(paths).toContain('16761/magic_contribution_16761.txt');
   });
 
 });

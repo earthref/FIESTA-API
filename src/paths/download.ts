@@ -30,11 +30,13 @@ export default {
         ids: id !== undefined ? ids : undefined,
         dois: doi !== undefined ? dois : undefined,
       });
+      console.log('0: ', contributions);
       if (contributions && contributions.results.length >= 1) {
         const archive = archiver('zip');
         const fileName = `MagIC Download - Public - ${DateTime.utc().toISO().replace(/(-|:)/g,'')}.zip`;
         let emptyArchive = true;
         await Promise.all(contributions.results.map(async (contribution: { id: string; }) => {
+          console.log('1: ', contribution.id);
           const cid = contribution.id;
           const contributionFile = await s3GetContributionByID({ id: cid, format: ctx.accepts('text/plain') ? 'txt' : 'json' });
           if (contributionFile) {
