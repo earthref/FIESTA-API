@@ -120,12 +120,12 @@ paths:
         200:
           description: Contribution is returned in the format requested by the accept header
         204:
-          description: Contribution with reference DOI not found
+          description: Contribution with reference DOI or contribution ID not found
           content: {}
   /v1/{repository}/search/{table}:
     get:
       tags:
-      - Public Search
+      - Search
       summary: Retrieve public records
       operationId: searchByTable
       parameters:
@@ -201,3 +201,37 @@ paths:
                   locations: [{
                     location: Hawaii
                   }]
+  /v1/{repository}/upload:
+    post:
+      tags:
+      - Upload
+      summary: Upload contribution files
+      operationId: uploadFiles
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: id
+        in: query
+        description: The ID of the contribution to which the file should be uploaded
+        schema:
+          type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        200:
+          description: File is uploaded to the contribution
+        204:
+          description: Contribution with reference DOI not found
+          content: {}
+        401:
+          $ref: '#/components/responses/unauthorizedError'

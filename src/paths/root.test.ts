@@ -11,14 +11,14 @@ describe('FIESTA API v1 Root Tests', () => {
     client = axios.create({ baseURL: `http://localhost:${process.env.TEST_PORT}`, validateStatus: () => true });
   });
   
-  test('GET /health-check returns 200', async () => {
-    const res = await client.get('/health-check', { headers: { 'Accept': 'text/plain' }});
+  test('GET /health-check returns 200 OK', async () => {
+    const res = await client.get('/v1/health-check', { headers: { 'Accept': 'text/plain' }});
     expect(res.status).toBe(200);
   });
   
-  test('GET /authenticate returns 200', async () => {
-    const res = await client.get('/authenticate', { headers: { 'Accept': 'text/plain' }});
-    expect(res.status).toBe(200);
+  test('GET /authenticate returns 401 Unauthorized', async () => {
+    const res = await client.get('/v1/authenticate', { headers: { 'Accept': 'text/plain' }});
+    expect(res.status).toBe(401);
   });
 
 });

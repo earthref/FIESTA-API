@@ -16,6 +16,7 @@ import logger from 'koa-logger';
 import root from './paths/root';
 import download from './paths/download';
 import search from './paths/search';
+import upload from './paths/upload';
 
 const v = 'v1';
 const src = `${isDev ? 'src' : 'dist'}/public`;
@@ -27,6 +28,7 @@ const server = new OpenAPIBackend({
     ...root,
     ...download,
     ...search,
+    ...upload,
     validationFail: async (c: OpenAPIContext, ctx: Koa.Context) => {
       ctx.status = 400;
       ctx.body = { err: c.validation.errors };
