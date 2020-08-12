@@ -2,16 +2,16 @@
 
 ## Usage
 
-The deployed API is currently available at http://api.earthref.org/v0 with documentation at http://api.docs.earthref.org/v0. These GET requests can be made in the browser to test the API:
+The deployed API is currently available at https://api.earthref.org/v0 with documentation at https://api.earthref.org. These GET requests can be made in the browser to test the API:
 
 #### Get the metadata for the latest 10 MagIC contributions as JSON rows:
-- http://api.earthref.org/v0/MagIC/search/contributions
+- https://api.earthref.org/v0/MagIC/search/contributions
 
 #### Get the metadata for the latest 20 locations in MagIC that mention "sedimentary" as JSON rows:
-- http://api.earthref.org/v0/MagIC/search/locations?size=20&query=sedimentary
+- https://api.earthref.org/v0/MagIC/search/locations?size=20&query=sedimentary
 
 #### Get MagIC contribution 16645 in MagIC Text File format:
-- http://api.earthref.org/v0/MagIC/contribution/16645
+- https://api.earthref.org/v0/MagIC/contribution/16645
 
 These requests can also be made with an HTTP request client, for example getting a contribution with Python:
 ```python
@@ -19,7 +19,7 @@ import requests
 
 # Get the 50 latest sites in MagIC
 response = requests.get(
-    'http://api.earthref.org/v0/MagIC/contribution/16663',
+    'https://api.earthref.org/v0/MagIC/contribution/16663',
     headers={'Accept': 'text/plain'}
 )
 
@@ -39,7 +39,7 @@ import pandas
 
 # Get the 50 latest sites in MagIC
 response = requests.get(
-    'http://api.earthref.org/v0/MagIC/search/sites',
+    'https://api.earthref.org/v0/MagIC/search/sites',
     params={'query': 'devonian', 'size': 50},
     headers={'Accept': 'application/json'}
 )
@@ -67,8 +67,7 @@ sites_df.head()
 
 ```
 npm install
-npm start
-# API running at http://localhost:3100
-# Docs available at http://localhost:3101
+npm dev
+# API running at http://localhost:3200
 ```
 

@@ -1,0 +1,398 @@
+openapi: 3.0.1
+info:
+  title: EarthRef.org FIESTA API
+  description: 
+    The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
+  contact:
+    email: admin@earthref.org
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  version: '0.1.0 Beta'
+externalDocs:
+  description: EarthRef.org
+  url: https://earthref.org/
+servers:
+- url: https://api.earthref.org
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    repository:
+      name: repository
+      in: path
+      description: Repository
+      required: true
+      schema:
+        type: string
+        enum: [MagIC]
+    contributionID:
+      name: id
+      in: query
+      description: Contribution IDs
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    unauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorReponse'
+    serverError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorReponse'
+    noMatches:
+      description: No matches found
+      content:
+        {}
+  schemas:
+    messageResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+      example:
+        message: 'Here is a message.'
+    errorReponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/messageResponse'
+      example:
+        errors:
+        - message: 'There was an error.'
+
+security:
+  - basicAuth: []
+
+paths:
+  /v0/health-check:
+    get:
+      tags:
+      - FIESTA API
+      summary: Check the health of the API
+      operationId: healthCheck
+      responses:
+        200:
+          description: Health check passed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Health check failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorReponse'
+  /v0/authenticate:
+    get:
+      tags:
+      - FIESTA API
+      summary: Authenticate a username and password
+      operationId: authenticate
+      security: 
+      - basicAuth: []
+      responses:
+        200:
+          description: User Record
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                required:
+                - name
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v0/{repository}/download:
+    get:
+      tags:
+      - Download
+      summary: Download public contribution files
+      operationId: downloadContributionFiles
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: n_max_contributions
+        in: query
+        description: Maximum number of contributions to download in descending timestamp order
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: One or more contribution IDs to match
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+      - name: doi
+        in: query
+        description: One or more DOIs to match
+        schema:
+          type: array
+          items:
+            type: string
+      - name: contributor_name
+        in: query
+        description: One or more contributor names to match
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: The contributions are returned in the format requested by the accept header.
+        204:
+          $ref: '#/components/responses/noMatches'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v0/{repository}/search/{table}:
+    get:
+      tags:
+      - Search
+      summary: Retrieve public records
+      operationId: searchByTable
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: table
+        in: path
+        description: Record type
+        required: true
+        schema:
+          type: string
+      - name: n_max_rows
+        in: query
+        description: Max number of rows to return
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+      - name: from
+        in: query
+        description: Starting record number for paging
+        schema:
+          type: integer
+          minimum: 1
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header.
+        204:
+          $ref: '#/components/responses/noMatches'
+  /v0/{repository}/private/download:
+    get:
+      tags:
+      - Private
+      summary: Download private contribution files
+      operationId: privateDownloadContributionFiles
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: n_max_contributions
+        in: query
+        description: Maximum number of contributions to download in descending timestamp order
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: One or more contribution IDs to match
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+      - name: doi
+        in: query
+        description: One or more DOIs to match
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: The contributions are returned in the format requested by the accept header.
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v0/{repository}/private/search/{table}:
+    get:
+      tags:
+      - Private
+      summary: Retrieve private records
+      operationId: privateSearchByTable
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: table
+        in: path
+        description: Record type
+        required: true
+        schema:
+          type: string
+      - name: n_max_rows
+        in: query
+        description: Max number of rows to return
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+      - name: from
+        in: query
+        description: Starting record number for paging
+        schema:
+          type: integer
+          minimum: 1
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header.
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+  /v0/{repository}/private:
+    post:
+      tags:
+      - Private
+      summary: Create a private contribution
+      operationId: privateCreate
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      responses:
+        201:
+          description: The private contribution was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                properties:
+                  id:
+                    type: integer
+                    minimum: 1
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+    put:
+      tags:
+      - Private
+      summary: Update a private contribution
+      operationId: privateUpdate
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - $ref: '#/components/parameters/contributionID'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        202:
+          description: The file(s) were uploaded to the contribution and are being processed.
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+    delete:
+      tags:
+      - Private
+      summary: Delete a private contribution
+      operationId: privateDelete
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - $ref: '#/components/parameters/contributionID'
+      responses:
+        200:
+          description: The contribution was deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - records_deleted
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'

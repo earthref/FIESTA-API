@@ -3,32 +3,28 @@ import Koa from 'koa';
 import * as fs from 'fs';
 import { default as archiver } from 'archiver';
 import { DateTime } from 'luxon';
-import { s3GetContributionByID } from '../server/s3';
-import { esGetSearchByTable } from '../server/es';
+import { esAuthenticate, esGetPrivateSearchByTable, esGetPrivateTSV } from '../server/es';
 
 export default {
-	downloadContributionFiles: async (
+	privateDownloadContributionFiles: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {
 		try {
+			const user = await esAuthenticate(ctx.headers.authorization);
+			if (user === false) {
+				ctx.body = {
+					errors: [{ message: 'Username or password is not recognized' }],
+				};
+				ctx.status = 401;
+				return;
+			}
 			const { repository: repositories } = c.request.params;
-			const {
-				n_max_contributions,
-				query,
-				id,
-				doi,
-				contributor_name,
-			} = c.request.query;
-			if (
-				query === undefined &&
-				id === undefined &&
-				doi === undefined &&
-				contributor_name === undefined
-			) {
+			const { n_max_contributions, query, id, doi } = c.request.query;
+			if (query === undefined && id === undefined && doi === undefined) {
 				ctx.status = 400;
 				ctx.body = {
-					errors: [{ message: 'At least one query parameter is required.' }],
+					errors: [{ message: 'At least one query parameter is required' }],
 				};
 			} else {
 				// const fileTypes: string[] = c.request.query.file_type instanceof Array ? c.request.query.file_type : [c.request.query.file_type];
@@ -42,8 +38,9 @@ export default {
 					repositories instanceof Array ? repositories[0] : repositories;
 				const ids: string[] = id instanceof Array ? id : [id];
 				const dois: string[] = doi instanceof Array ? doi : [doi];
-				const contributions = await esGetSearchByTable({
+				const contributions = await esGetPrivateSearchByTable({
 					repository,
+					contributor: `@${user.handle}`,
 					table: 'contribution',
 					size: n_max_contributions !== undefined ? size : 10,
 					ids: id !== undefined ? ids : undefined,
@@ -60,9 +57,14 @@ export default {
 					let emptyArchive = true;
 					await Promise.all(
 						cids.map(async (cid) => {
-							const contributionFile = await s3GetContributionByID({
+							/* const contributionFile = await s3GetContributionByID({
 								id: cid,
 								format: ctx.accepts('text/plain') ? 'txt' : 'json',
+							}); */
+							const contributionFile = await esGetPrivateTSV({
+								repository,
+								contributor: `@${user.handle}`,
+								id: cid
 							});
 							if (contributionFile) {
 								archive.append(contributionFile, {
@@ -101,7 +103,7 @@ export default {
 								{
 									message: `Failed to retrieve contributions [${cids.join(
 										', '
-									)}] for download.`,
+									)}] for download`,
 								},
 							],
 						};

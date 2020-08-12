@@ -10,8 +10,8 @@
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "outDir": "dist",
-    "sourceMap": true,
+    "inlineSourceMap": true,
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.tests.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
 }

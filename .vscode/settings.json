@@ -3,5 +3,7 @@
     "jest.pathToConfig": "jest.config.js",
     "python.pythonPath": "/usr/bin/python",
     "jest.coverageFormatter": "GutterFormatter",
-    "jest.showCoverageOnLoad": true
+    "jest.showCoverageOnLoad": true,
+    "eslint.alwaysShowStatus": true,
+    "eslint.enable": true
 }

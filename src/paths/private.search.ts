@@ -1,11 +1,21 @@
-/* eslint-disable camelcase */
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
-import { esGetSearchByTable } from '../server/es';
+import { esAuthenticate, esGetPrivateSearchByTable } from '../server/es';
 
 export default {
-	searchByTable: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	privateSearchByTable: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
+			const user = await esAuthenticate(ctx.headers.authorization);
+			if (user === false) {
+				ctx.body = {
+					errors: [{ message: 'Username or password is not recognized.' }],
+				};
+				ctx.status = 401;
+				return;
+			}
 			const { repository: repositories, table: tables } = c.request.params;
 			const { n_max_rows, from, query } = c.request.query;
 			const repository: string =
@@ -20,8 +30,9 @@ export default {
 				10
 			);
 			const queries: string[] = query instanceof Array ? query : [query];
-			ctx.body = await esGetSearchByTable({
+			ctx.body = await esGetPrivateSearchByTable({
 				repository,
+				contributor: `@${user.handle}`,
 				table: table === 'contributions' ? 'contribution' : table,
 				size: n_max_rows !== undefined ? size : 10,
 				from: from !== undefined ? fromNumber : undefined,

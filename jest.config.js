@@ -1,7 +1,15 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testMatch: ['**/?(*.)+(test).ts?(x)'],
-  globalSetup: '<rootDir>/jest.setup.ts',
-  globalTeardown: '<rootDir>/jest.teardown.ts',
+	testEnvironment: 'node',
+	roots: ['<rootDir>/src'],
+	testMatch: ['**/?(*.)+(tests)\\.ts'],
+	moduleFileExtensions: ['js', 'ts', 'json'],
+	transform: {
+		'^.+\\.ts$': 'ts-jest',
+	},
+	watchPlugins: [
+		'jest-watch-typeahead/filename',
+		'jest-watch-typeahead/testname',
+	],
+	collectCoverage: false,
+	collectCoverageFrom: ['**/*.ts', '!**/*.tests.ts'],
 };
