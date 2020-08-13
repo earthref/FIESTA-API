@@ -21,7 +21,7 @@ import privateCreateUpdateDelete from './paths/private';
 import privateDownload from './paths/private.download';
 import privateSearch from './paths/private.search';
 
-const v = 'v0';
+const v = 'v1';
 const src = `${isDev ? 'src' : 'dist'}/public`;
 
 // Define API

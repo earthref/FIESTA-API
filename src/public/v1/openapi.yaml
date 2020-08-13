@@ -8,7 +8,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '0.1.0 Beta'
+  version: '1.0'
 externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
@@ -83,7 +83,7 @@ security:
   - basicAuth: []
 
 paths:
-  /v0/health-check:
+  /v1/health-check:
     get:
       tags:
       - FIESTA API
@@ -102,7 +102,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorReponse'
-  /v0/authenticate:
+  /v1/authenticate:
     get:
       tags:
       - FIESTA API
@@ -125,7 +125,7 @@ paths:
           $ref: '#/components/responses/unauthorizedError'
         500:
           $ref: '#/components/responses/serverError'
-  /v0/{repository}/download:
+  /v1/{repository}/download:
     get:
       tags:
       - Download
@@ -176,7 +176,7 @@ paths:
           $ref: '#/components/responses/noMatches'
         500:
           $ref: '#/components/responses/serverError'
-  /v0/{repository}/search/{table}:
+  /v1/{repository}/search/{table}:
     get:
       tags:
       - Search
@@ -216,7 +216,7 @@ paths:
           description: Rows are returned in the format requested by the accept header.
         204:
           $ref: '#/components/responses/noMatches'
-  /v0/{repository}/private/download:
+  /v1/{repository}/private/download:
     get:
       tags:
       - Private
@@ -264,7 +264,7 @@ paths:
           $ref: '#/components/responses/unauthorizedError'
         500:
           $ref: '#/components/responses/serverError'
-  /v0/{repository}/private/search/{table}:
+  /v1/{repository}/private/search/{table}:
     get:
       tags:
       - Private
@@ -308,7 +308,7 @@ paths:
           $ref: '#/components/responses/noMatches'
         401:
           $ref: '#/components/responses/unauthorizedError'
-  /v0/{repository}/private:
+  /v1/{repository}/private:
     post:
       tags:
       - Private

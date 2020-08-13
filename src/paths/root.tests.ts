@@ -5,7 +5,7 @@ import axios, { AxiosInstance } from 'axios';
 dotenv.config();
 jest.setTimeout(30000);
 
-describe('FIESTA API v0 Root Tests', () => {
+describe('FIESTA API v1 Root Tests', () => {
 	let client: AxiosInstance;
 
 	beforeAll(async () => {
@@ -15,22 +15,22 @@ describe('FIESTA API v0 Root Tests', () => {
 		});
 	});
 
-	test('GET /v0/health-check returns 200', async () => {
-		const res = await client.get('/v0/health-check', {
+	test('GET /v1/health-check returns 200', async () => {
+		const res = await client.get('/v1/health-check', {
 			headers: { Accept: 'text/plain' },
 		});
 		expect(res.status).toBe(200);
 	});
 
-	test('GET /v0/authenticate returns 401', async () => {
-		const res = await client.get('/v0/authenticate', {
+	test('GET /v1/authenticate returns 401', async () => {
+		const res = await client.get('/v1/authenticate', {
 			headers: { Accept: 'text/plain' },
 		});
 		expect(res.status).toBe(401);
 	});
 
-	test('GET /v0/authenticate with incorrect basic auth returns 200', async () => {
-		const res = await client.get('/v0/authenticate', {
+	test('GET /v1/authenticate with incorrect basic auth returns 200', async () => {
+		const res = await client.get('/v1/authenticate', {
 			headers: { Accept: 'text/plain' },
 			auth: {
 				username: process.env.TEST_USERNAME,
@@ -40,8 +40,8 @@ describe('FIESTA API v0 Root Tests', () => {
 		expect(res.status).toBe(401);
 	});
 
-	test('GET /v0/authenticate with correct basic auth returns 401', async () => {
-		const res = await client.get('/v0/authenticate', {
+	test('GET /v1/authenticate with correct basic auth returns 401', async () => {
+		const res = await client.get('/v1/authenticate', {
 			headers: { Accept: 'text/plain' },
 			auth: {
 				username: process.env.TEST_USERNAME,
