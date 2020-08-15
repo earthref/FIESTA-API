@@ -86,7 +86,7 @@ paths:
   /v1/health-check:
     get:
       tags:
-      - FIESTA API
+      - System
       summary: Check the health of the API
       operationId: healthCheck
       responses:
@@ -95,17 +95,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/messageResponse'
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: 'Healthy'
         500:
           description: Health check failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorReponse'
+                type: object
+                required:
+                - errors
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - message
+                      properties:
+                        message:
+                          type: string
+                      example:
+                        message: 'Health check failed'
   /v1/authenticate:
     get:
       tags:
-      - FIESTA API
+      - People
       summary: Authenticate a username and password
       operationId: authenticate
       security: 
@@ -121,277 +142,6 @@ paths:
               schema:
                 required:
                 - name
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-        500:
-          $ref: '#/components/responses/serverError'
-  /v1/{repository}/download:
-    get:
-      tags:
-      - Download
-      summary: Download public contribution files
-      operationId: downloadContributionFiles
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: n_max_contributions
-        in: query
-        description: Maximum number of contributions to download in descending timestamp order
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 10
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: string
-      - name: id
-        in: query
-        description: One or more contribution IDs to match
-        schema:
-          type: array
-          items:
-            type: integer
-            minimum: 1
-      - name: doi
-        in: query
-        description: One or more DOIs to match
-        schema:
-          type: array
-          items:
-            type: string
-      - name: contributor_name
-        in: query
-        description: One or more contributor names to match
-        schema:
-          type: array
-          items:
-            type: string
-      responses:
-        200:
-          description: The contributions are returned in the format requested by the accept header.
-        204:
-          $ref: '#/components/responses/noMatches'
-        500:
-          $ref: '#/components/responses/serverError'
-  /v1/{repository}/search/{table}:
-    get:
-      tags:
-      - Search
-      summary: Retrieve public records
-      operationId: searchByTable
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: table
-        in: path
-        description: Record type
-        required: true
-        schema:
-          type: string
-      - name: n_max_rows
-        in: query
-        description: Max number of rows to return
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 10000
-      - name: from
-        in: query
-        description: Starting record number for paging
-        schema:
-          type: integer
-          minimum: 1
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: array
-          items:
-            type: string
-      responses:
-        200:
-          description: Rows are returned in the format requested by the accept header.
-        204:
-          $ref: '#/components/responses/noMatches'
-  /v1/{repository}/private/download:
-    get:
-      tags:
-      - Private
-      summary: Download private contribution files
-      operationId: privateDownloadContributionFiles
-      security: 
-      - basicAuth: []
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: n_max_contributions
-        in: query
-        description: Maximum number of contributions to download in descending timestamp order
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 10
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: string
-      - name: id
-        in: query
-        description: One or more contribution IDs to match
-        schema:
-          type: array
-          items:
-            type: integer
-            minimum: 1
-      - name: doi
-        in: query
-        description: One or more DOIs to match
-        schema:
-          type: array
-          items:
-            type: string
-      responses:
-        200:
-          description: The contributions are returned in the format requested by the accept header.
-        204:
-          $ref: '#/components/responses/noMatches'
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-        500:
-          $ref: '#/components/responses/serverError'
-  /v1/{repository}/private/search/{table}:
-    get:
-      tags:
-      - Private
-      summary: Retrieve private records
-      operationId: privateSearchByTable
-      security: 
-      - basicAuth: []
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: table
-        in: path
-        description: Record type
-        required: true
-        schema:
-          type: string
-      - name: n_max_rows
-        in: query
-        description: Max number of rows to return
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 10000
-      - name: from
-        in: query
-        description: Starting record number for paging
-        schema:
-          type: integer
-          minimum: 1
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: array
-          items:
-            type: string
-      responses:
-        200:
-          description: Rows are returned in the format requested by the accept header.
-        204:
-          $ref: '#/components/responses/noMatches'
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-  /v1/{repository}/private:
-    post:
-      tags:
-      - Private
-      summary: Create a private contribution
-      operationId: privateCreate
-      security: 
-      - basicAuth: []
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      responses:
-        201:
-          description: The private contribution was created.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - id
-                properties:
-                  id:
-                    type: integer
-                    minimum: 1
-        204:
-          $ref: '#/components/responses/noMatches'
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-        500:
-          $ref: '#/components/responses/serverError'
-    put:
-      tags:
-      - Private
-      summary: Update a private contribution
-      operationId: privateUpdate
-      security: 
-      - basicAuth: []
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - $ref: '#/components/parameters/contributionID'
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                filename:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        202:
-          description: The file(s) were uploaded to the contribution and are being processed.
-        204:
-          $ref: '#/components/responses/noMatches'
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-        500:
-          $ref: '#/components/responses/serverError'
-    delete:
-      tags:
-      - Private
-      summary: Delete a private contribution
-      operationId: privateDelete
-      security: 
-      - basicAuth: []
-      parameters:
-      - $ref: '#/components/parameters/repository'
-      - $ref: '#/components/parameters/contributionID'
-      responses:
-        200:
-          description: The contribution was deleted.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - records_deleted
-                properties:
-                  id:
-                    type: integer
-                    minimum: 0
-        204:
-          $ref: '#/components/responses/noMatches'
         401:
           $ref: '#/components/responses/unauthorizedError'
         500:

@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  title: EarthRef.org FIESTA API
+  version: '*'
+paths:
+  /v0/health-check:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1health-check'
+  /v0/authenticate:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1authenticate'
+  /v0/{repository}/download:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1%7Brepository%7D~1download'
+  /v0/{repository}/search/{table}:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1%7Brepository%7D~1search~1%7Btable%7D'
+  /v0/{repository}/private/download:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1%7Brepository%7D~1private~1download'
+  /v0/{repository}/private/search/{table}:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1%7Brepository%7D~1private~1search~1%7Btable%7D'
+  /v0/{repository}/private:
+    $ref: 'public/v0/openapi.yaml#/paths/~1v0~1%7Brepository%7D~1private'
+  /v1/health-check:
+    $ref: 'public/v1/openapi.yaml#/paths/~1v1~1health-check'
+  /v1/authenticate:
+    $ref: 'public/v1/openapi.yaml#/paths/~1v1~1authenticate'
