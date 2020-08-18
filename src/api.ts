@@ -32,7 +32,7 @@ const src = `${isDev ? 'src' : 'dist'}/public`;
 // Define API
 
 const server = new OpenAPIBackend({
-	definition: `src/openapi.yaml`,
+	definition: `${isDev ? 'src' : 'dist'}/openapi.yaml`,
 	handlers: {
 		...v0root,
 		...v0download,

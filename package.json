@@ -7,9 +7,9 @@
   "keywords": [],
   "private": true,
   "scripts": {
-    "public": "rm -rf dist/public && mkdir -p dist/public && cp -R src/public/* dist/public",
+    "static": "rm -rf dist/public && mkdir -p dist/public && cp -R src/public/* dist/public && cp src/openapi.yaml dist",
     "dev": "ts-node-dev --respawn --inspect -- src/api.ts",
-    "build": "npm run public && tsc --pretty",
+    "build": "npm run static && tsc --pretty",
     "start": "node dist/api.js",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write **/*.{js,ts}",
