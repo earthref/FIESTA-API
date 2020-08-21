@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const XLSX = require('xlsx');
-const { Runner } = require('../server/runner.js');
+const { Runner } = require('../libs/runner.js');
 const {
 	Validator: ValidateContribution,
-} = require('../server/validate_contribution');
+} = require('../libs/validate_contribution');
 
 const { model } = require('../configs/magic/data_models/3.0.js');
 const versions = ['2.2', '2.3', '2.4', '2.5', '3.0'];

@@ -80,13 +80,14 @@ export default {
 				ctx.status = 500;
 				return;
 			}
-			const { repository: repositories, id: ids } = c.request.params;
+			const { repository: repositories } = c.request.params;
+			const { id: ids } = c.request.query;
 			const repository: string =
 				repositories instanceof Array ? repositories[0] : repositories;
 			const id: string = ids instanceof Array ? ids[0] : ids;
 			ctx.status = 200;
 			ctx.body = {
-				id: await esDeletePrivate({
+				rows_deleted: await esDeletePrivate({
 					repository,
 					contributor: user.handle ? `@${user.handle}` : `@user${user.id}`,
 					id,

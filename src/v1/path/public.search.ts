@@ -4,7 +4,10 @@ import Koa from 'koa';
 import { esGetSearchByTable } from '../libs/es';
 
 export default {
-	searchByTable: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	publicSearchByTable: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			const { repository: repositories, table: tables } = c.request.params;
 			const { n_max_rows, from, query } = c.request.query;

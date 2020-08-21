@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const luxon = require('luxon');
-const { Runner } = require('../server/runner.js');
+const { Runner } = require('../libs/runner.js');
 
 const { model } = require('../configs/magic/data_models/3.0.js');
 const versions = ['2.2', '2.3', '2.4', '2.5', '3.0'];

@@ -5,7 +5,7 @@ import unzipper from 'unzipper';
 
 dotenv.config();
 jest.setTimeout(30000);
-const v = 'v0';
+const v = 'v1';
 
 describe(`FIESTA API ${v} Download Tests`, () => {
 	let client: AxiosInstance;

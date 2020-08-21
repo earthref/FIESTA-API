@@ -1,6 +1,6 @@
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
-import { esCheckConnection, esAuthenticate } from '../lib/es';
+import { esCheckConnection, esAuthenticate } from '../libs/es';
 
 export default {
 	healthCheck: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
@@ -29,7 +29,7 @@ export default {
 			if (ctx.body === false) {
 				ctx.status = 401;
 				ctx.body = {
-					errors: [{ message: 'Username or password not recognized' }],
+					errors: [{ message: 'Username or password is not recognized.' }],
 				};
 			}
 		} catch (e) {

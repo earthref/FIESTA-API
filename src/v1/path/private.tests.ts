@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 
 dotenv.config();
 jest.setTimeout(30000);
-const v = 'v0';
+const v = 'v1';
 
 describe(`FIESTA API ${v} Private Create/Update/Delete Tests`, () => {
 	let client: AxiosInstance;
@@ -23,12 +23,16 @@ describe(`FIESTA API ${v} Private Create/Update/Delete Tests`, () => {
 	});
 
 	test(`POST /${v}/MagIC/private and DELETE /${v}/MagIC/private`, async () => {
-		const createRes = await client.post(`/${v}/MagIC/private`, {}, {
-			auth: {
-				username: process.env.TEST_USERNAME,
-				password: process.env.TEST_PASSWORD,
-			},
-		});
+		const createRes = await client.post(
+			`/${v}/MagIC/private`,
+			{},
+			{
+				auth: {
+					username: process.env.TEST_USERNAME,
+					password: process.env.TEST_PASSWORD,
+				},
+			}
+		);
 		expect(createRes.status).toBe(200);
 		expect(createRes.data).toHaveProperty('id');
 		expect(createRes.data.id).toBeGreaterThanOrEqual(1);
@@ -42,7 +46,7 @@ describe(`FIESTA API ${v} Private Create/Update/Delete Tests`, () => {
 			}
 		);
 		expect(deleteRes.status).toBe(200);
-		expect(deleteRes.data).toHaveProperty('records_deleted');
-		expect(deleteRes.data.records_deleted).toEqual(1);
+		expect(deleteRes.data).toHaveProperty('rows_deleted');
+		expect(deleteRes.data.rows_deleted).toEqual(1);
 	});
 });

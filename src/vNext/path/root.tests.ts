@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 
 dotenv.config();
 jest.setTimeout(30000);
-const v = 'v0';
+const v = 'vNext';
 
 describe(`FIESTA API ${v} Root Tests`, () => {
 	let client: AxiosInstance;
@@ -30,7 +30,7 @@ describe(`FIESTA API ${v} Root Tests`, () => {
 		expect(res.status).toBe(401);
 	});
 
-	test(`GET /${v}/authenticate with incorrect basic auth returns 200`, async () => {
+	test(`GET /${v}/authenticate with incorrect basic auth returns 401`, async () => {
 		const res = await client.get(`/${v}/authenticate`, {
 			headers: { Accept: 'text/plain' },
 			auth: {
@@ -41,7 +41,7 @@ describe(`FIESTA API ${v} Root Tests`, () => {
 		expect(res.status).toBe(401);
 	});
 
-	test(`GET /${v}/authenticate with correct basic auth returns 401`, async () => {
+	test(`GET /${v}/authenticate with correct basic auth returns 200`, async () => {
 		const res = await client.get(`/${v}/authenticate`, {
 			headers: { Accept: 'text/plain' },
 			auth: {

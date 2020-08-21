@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 
 dotenv.config();
 jest.setTimeout(30000);
-const v = 'v0';
+const v = 'v1';
 
 describe(`FIESTA API ${v} Private Download Tests`, () => {
 	let client: AxiosInstance;
@@ -16,9 +16,9 @@ describe(`FIESTA API ${v} Private Download Tests`, () => {
 		});
 	});
 
-	test(`GET /${v}/MagIC/private/download should return status 401`, async () => {
+	test(`GET /${v}/MagIC/private/download should return status 400`, async () => {
 		const res = await client.get(`/${v}/MagIC/private/download`);
-		expect(res.status).toBe(401);
+		expect(res.status).toBe(400);
 		expect(res.data).toHaveProperty('errors');
 	});
 

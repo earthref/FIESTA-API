@@ -8,7 +8,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '1.0'
+  version: '1.0.0'
 externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
@@ -142,6 +142,327 @@ paths:
               schema:
                 required:
                 - name
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/download:
+    get:
+      tags:
+      - Public Data
+      summary: Download the zip archive of files for one or more public contributions
+      operationId: publicDownloadFiles
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: n_max_contributions
+        in: query
+        description: Maximum number of contributions to download in descending timestamp order
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: One or more contribution IDs to match
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+      - name: doi
+        in: query
+        description: One or more reference DOIs to match
+        schema:
+          type: array
+          items:
+            type: string
+      - name: contributor_name
+        in: query
+        description: One or more contributor names to match
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: A zip archive of files for the public contributions
+          content:
+            application/zip: {}
+        204:
+          $ref: '#/components/responses/noMatches'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/data:
+    get:
+      tags:
+      - Public Data
+      summary: Retrieve the data for a public contribution
+      operationId: publicContributionData
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: id
+        in: query
+        description: The ID of the public contribution to retrieve
+        schema:
+          type: integer
+          minimum: 1
+      - name: key
+        in: query
+        description: The private key for retrieving a shared contribution
+        schema:
+          type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header
+          content:
+            text/plain: {}
+            application/json: {}
+            application/vnd.ms-excel: {}
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          description: Contribution ID and private key do not match
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorReponse'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/search/{table}:
+    get:
+      tags:
+      - Public Data
+      summary: Retrieve public data rows
+      operationId: publicSearchByTable
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: table
+        in: path
+        required: true
+        description: Table name
+        schema:
+          type: string
+      - name: n_max_rows
+        in: query
+        description: Max number of rows to return
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+      - name: from
+        in: query
+        description: Starting record number for paging
+        schema:
+          type: integer
+          minimum: 1
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header
+          content:
+            text/plain: {}
+            application/json: {}
+            application/vnd.ms-excel: {}
+        204:
+          $ref: '#/components/responses/noMatches'
+  /v1/{repository}/private/download:
+    get:
+      tags:
+      - Private Data
+      summary: Download the zip archive of the files for a private contribution
+      operationId: privateDownloadFiles
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: id
+        in: query
+        required: true
+        description: The ID of the contribution to download
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: A zip archive of files for the private contribution
+          content:
+            application/zip: {}
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/private/data:
+    get:
+      tags:
+      - Private Data
+      summary: Retrieve the data for a private contribution
+      operationId: privateContributionData
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: id
+        in: query
+        required: true
+        description: The ID of the contribution data to retrieve
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header
+          content:
+            text/plain: {}
+            application/json: {}
+            application/vnd.ms-excel: {}
+        204:
+          $ref: '#/components/responses/noMatches'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/private/search/{table}:
+    get:
+      tags:
+      - Private Data
+      summary: Retrieve private data rows
+      operationId: privateSearchByTable
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: table
+        in: path
+        description: Table name
+        required: true
+        schema:
+          type: string
+      - name: n_max_rows
+        in: query
+        description: Max number of rows to return
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+      - name: from
+        in: query
+        description: Starting record number for paging
+        schema:
+          type: integer
+          minimum: 1
+      - name: query
+        in: query
+        description: One or more Elasticsearch query strings to match any data model text field
+          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: Rows are returned in the format requested by the accept header.
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+  /v1/{repository}/private:
+    post:
+      tags:
+      - Private Data
+      summary: Create a private contribution
+      operationId: privateCreate
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      responses:
+        201:
+          description: The private contribution was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                properties:
+                  id:
+                    type: integer
+                    minimum: 1
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+    put:
+      tags:
+      - Private Data
+      summary: Update a private contribution
+      operationId: privateUpdate
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - $ref: '#/components/parameters/contributionID'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        202:
+          description: The file(s) were uploaded to the contribution and are being processed.
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+    delete:
+      tags:
+      - Private Data
+      summary: Delete a private contribution
+      operationId: privateDelete
+      security: 
+      - basicAuth: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - $ref: '#/components/parameters/contributionID'
+      responses:
+        200:
+          description: The contribution was deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - rows_deleted
+                properties:
+                  rows_deleted:
+                    type: integer
+                    minimum: 0
+        204:
+          $ref: '#/components/responses/noMatches'
         401:
           $ref: '#/components/responses/unauthorizedError'
         500:

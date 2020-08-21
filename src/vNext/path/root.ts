@@ -29,7 +29,7 @@ export default {
 			if (ctx.body === false) {
 				ctx.status = 401;
 				ctx.body = {
-					errors: [{ message: 'Username or password is not recognized.' }],
+					errors: [{ message: 'Username or password not recognized' }],
 				};
 			}
 		} catch (e) {

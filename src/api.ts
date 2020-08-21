@@ -16,17 +16,18 @@ import KoaBodyparser from 'koa-bodyparser';
 import json from 'koa-json';
 import logger from 'koa-logger';
 
-import v0root from './v0/path/root';
-import v0download from './v0/path/download';
-import v0search from './v0/path/search';
-import v0privateCreateUpdateDelete from './v0/path/private';
-import v0privateDownload from './v0/path/private.download';
-import v0privateSearch from './v0/path/private.search';
+import v1Root from './v1/path/root';
+import v1Download from './v1/path/public.download';
+import v1Data from './v1/path/public.data';
+import v1Search from './v1/path/public.search';
+import v1PrivateCreateUpdateDelete from './v1/path/private';
+import v1PrivateDownload from './v1/path/private.download';
+import v1PrivateSearch from './v1/path/private.search';
 
-import v1root from './v1/path/root';
+import vNextroot from './v1/path/root';
 
-const vs = ['v0', 'v1'];
-const vDefault = 'v0'; // default version
+const vs = ['next', 'v1'];
+const vDefault = 'v1'; // default version
 const src = `${isDev ? 'src' : 'dist'}/public`;
 
 // Define API
@@ -34,13 +35,14 @@ const src = `${isDev ? 'src' : 'dist'}/public`;
 const server = new OpenAPIBackend({
 	definition: `${isDev ? 'src' : 'dist'}/openapi.yaml`,
 	handlers: {
-		...v0root,
-		...v0download,
-		...v0search,
-		...v0privateCreateUpdateDelete,
-		...v0privateDownload,
-		...v0privateSearch,
-		...v1root,
+		...v1Root,
+		...v1Download,
+		...v1Data,
+		...v1Search,
+		...v1PrivateCreateUpdateDelete,
+		...v1PrivateDownload,
+		...v1PrivateSearch,
+		...vNextroot,
 		validationFail: async (c: OpenAPIContext, ctx: Koa.Context) => {
 			ctx.status = 400;
 			ctx.body = { errors: c.validation.errors };
@@ -89,7 +91,7 @@ const server = new OpenAPIBackend({
 				if (validation.errors) {
 					ctx.status = 502;
 					ctx.body = {
-						err: validation.errors,
+						errors: validation.errors,
 					};
 					return;
 				}
@@ -103,11 +105,19 @@ const server = new OpenAPIBackend({
 				if (headerValidation.errors) {
 					ctx.status = 502;
 					ctx.body = {
-						err: headerValidation.errors,
+						errors: headerValidation.errors,
 					};
 					return;
 				}
 			}
+		},
+		notImplemented: async (c: OpenAPIContext, ctx: Koa.Context) => {
+			ctx.status = 501;
+			ctx.body = {
+				errors: [
+					{ message: 'This endpoint is defined, but not yet implemented.' },
+				],
+			};
 		},
 	},
 	ajvOpts: {

@@ -113,6 +113,60 @@ async function esAuthenticate(authorization: string): Promise<boolean | any> {
 }
 export { esAuthenticate };
 
+// Contribution data
+async function esGetContributionData({
+	repository,
+	id = '',
+	doi = '',
+	key = '',
+	format = 'txt',
+}: {
+	repository?: string;
+	id?: string;
+	doi?: string;
+	key?: string;
+	format?: 'txt' | 'json' | 'xls';
+} = {}): Promise<Record<string, unknown>[]> {
+	const must: Record<string, unknown>[] = [];
+	if (id) must.push({ term: { 'summary.contribution.id': id } });
+	if (doi)
+		must.push({
+			term: { 'summary.contribution._reference.doi.raw': doi.toUpperCase() },
+		});
+	if (key) must.push({ term: { 'summary.contribution._private_key': key } });
+	const params: RequestParams.Search = {
+		index: indexes[repository],
+		type: 'contribution',
+		size: 1,
+		body: {
+			sort: { 'summary.contribution.timestamp': 'desc' },
+			query: { bool: { must } },
+		},
+	};
+	const resp: ApiResponse<SearchResponse> = await client.search(params);
+	if (resp.body.hits.total <= 0) {
+		return;
+	}
+	if (
+		key === '' &&
+		resp.body.hits.hits[0]._source.summary.contribution._is_activated ===
+			'false'
+	) {
+		return;
+	}
+	if (format === 'txt') {
+		const { Exporter: ExportContribution } = await import(
+			'./export_contribution.js'
+		);
+		const exporter = new ExportContribution({});
+		return exporter.toText(resp.body.hits.hits[0]._source.contribution);
+	}
+	if (format === 'json') {
+		return resp.body.hits.hits[0]._source.contribution;
+	}
+}
+export { esGetContributionData };
+
 // Search public contributions
 async function esGetSearchByTable({
 	repository,
@@ -340,29 +394,28 @@ async function esDeletePrivate({
 	contributor?: string;
 	id?: string;
 } = {}): Promise<number> {
-	console.log(
-		await client.deleteByQuery({
-			index: indexes[repository],
-			body: {
-				query: {
-					bool: {
-						must: [
-							{
-								term: {
-									'summary.contribution.contributor.raw': contributor,
-								},
+	const params = {
+		index: indexes[repository],
+		body: {
+			query: {
+				bool: {
+					must: [
+						{
+							term: {
+								'summary.contribution.contributor.raw': contributor,
 							},
-							{
-								term: {
-									'summary.contribution.id': id,
-								},
+						},
+						{
+							term: {
+								'summary.contribution.id': id,
 							},
-						],
-					},
+						},
+					],
 				},
 			},
-		})
-	);
+		},
+	};
+	await client.deleteByQuery(params);
 	return 1;
 }
 export { esDeletePrivate };
@@ -409,7 +462,7 @@ async function esGetPrivate({
 		return exporter.toText(resp.body.hits.hits[0]._source.contribution);
 	}
 	if (format === 'json') {
-		return JSON.stringify(resp.body.hits.hits[0]._source.contribution);
+		return resp.body.hits.hits[0]._source.contribution;
 	}
 	if (format === 'xls') {
 		const { Exporter: ExportContribution } = await import(
