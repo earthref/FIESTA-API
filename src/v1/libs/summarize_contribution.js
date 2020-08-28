@@ -1,26 +1,29 @@
-import _ from 'lodash';
-import $ from 'jquery';
-import moment from 'moment';
-import Promise from 'bluebird';
-import Runner from '/lib/modules/common/runner';
+const _ = require('lodash');
+const luxon = require('luxon');
+const Promise = require('bluebird');
+const { Runner } = require('../libs/runner.js');
 
-import { versions, models } from '/lib/configs/magic/data_models';
-import { cvs } from '/lib/modules/er/controlled_vocabularies';
+const { model } = require('../configs/magic/data_models/3.0.js');
+const versions = ['2.2', '2.3', '2.4', '2.5', '3.0'];
+const models = {
+	'3.0': model,
+};
+const { cvs } = require('../configs/controlled_vocabularies.js');
 
 let reTrailingS = new RegExp(/s$/);
 let reLeadingDoubleUnderscore = new RegExp(/(^__)/);
 let reGlobalPeriod = new RegExp(/\./, 'g');
 let reControlledVocabulary = new RegExp(/cv\("(.*)"\)/);
 let reDictionary = new RegExp(/\s*([^[].+)\[(.+)\]\s*/);
-let reNSummaryColumn = new RegExp(/^\_n_/);
-let reAgeSummaryColumn = new RegExp(/^_age.*\_y(bp)?$/);
-let reGeoSummaryColumn = new RegExp(/^\_geo_/);
+let reNSummaryColumn = new RegExp(/^_n_/);
+let reAgeSummaryColumn = new RegExp(/^_age.*_y(bp)?$/);
+let reGeoSummaryColumn = new RegExp(/^_geo_/);
 
 let maxValsArrayLength = 100;
 let maxExperimentMeasurementRows = 1000;
 let maxSummaryMeasurementRows = 1000;
 
-export default class extends Runner {
+class Summarizer extends Runner {
 	constructor({ runnerState }) {
 		super({ runnerState });
 	}
@@ -47,7 +50,7 @@ export default class extends Runner {
 		);
 
 		return this._summarizeTables(true)
-			.then(this._getCrossRefData.bind(this))
+			//.then(this._getCrossRefData.bind(this))
 			.then(this._adoptChildTableCounts.bind(this))
 			.then(this._aggregateTableCounts.bind(this))
 			.then(this._consolidate.bind(this));
@@ -74,15 +77,16 @@ export default class extends Runner {
 			)
 		);
 
-		return this._summarizeTables()
-			.then(this._getCrossRefData.bind(this))
-			.then(this._adoptChildTables.bind(this))
-			.then(this._inheritParentTables.bind(this))
-			.then(this._aggregateTables.bind(this))
-			.then(this._consolidate.bind(this));
+		return this._summarizeTables(true)
+			//.then(this._getCrossRefData.bind(this))
+			.then(this._adoptAllChildTables.bind(this))
+			//.then(this._inheritParentTables.bind(this))
+			//.then(this._aggregateAllTables.bind(this))
+			//.then(this._consolidate.bind(this));
 	}
 
-	_getCrossRefData() {
+	// TODO
+	/*_getCrossRefData() {
 		// console.log('_getCrossRefData');
 
 		return new Promise((resolve) => {
@@ -103,7 +107,7 @@ export default class extends Runner {
 				resolve();
 			}
 		});
-	}
+	}*/
 
 	_summarizeTables(onlyCounts) {
 		// console.log('_summarizeTables');
@@ -378,7 +382,7 @@ export default class extends Runner {
 
 		return Promise.each(_.keys(this.json), (table) => {
 			return new Promise((resolve) => {
-				// console.log('consolidating', table);
+				console.log('consolidating', table, _.keys(this.json));
 
 				if (table === 'contribution')
 					this._consolidateSummary(this.json[table].summary);
@@ -410,7 +414,7 @@ export default class extends Runner {
 			return new Promise((resolve) => {
 				// console.log('inheriting', table);
 
-				let model = models[_.last(versions)].tables[table];
+				//let model = models[_.last(versions)].tables[table];
 				let contributionSummary = _.omitBy(
 					this.json.contribution.summary.contribution,
 					(value, key) => reLeadingDoubleUnderscore.test(key)
@@ -754,6 +758,10 @@ export default class extends Runner {
 		return this._adoptChildTables(undefined, true);
 	}
 
+	_adoptAllChildTables() {
+		return this._adoptChildTables(undefined, false);
+	}
+
 	_adoptChildTables(toTable, onlyCounts) {
 		// console.log('_adoptChildTables');
 
@@ -766,9 +774,9 @@ export default class extends Runner {
 
 		return Promise.each(sortedTables, (table) => {
 			return new Promise((resolve) => {
-				// console.log('adopting', table);
+				// console.log('adopting', table, toTable, onlyCounts);
 
-				let model = models[_.last(versions)].tables[table];
+				// let model = models[_.last(versions)].tables[table];
 
 				if (table === 'locations') {
 					_.keys(this.json.locations).forEach((locationProp) => {
@@ -1186,8 +1194,12 @@ export default class extends Runner {
 		return this._aggregateTables(true);
 	}
 
+	_aggregateAllTables() {
+		return this._aggregateTables(false);
+	}
+
 	_aggregateTables(onlyCounts) {
-		// console.log('_aggregateTables');
+		// console.log('_aggregateTables', onlyCounts);
 
 		let sortedTables = _.sortBy(
 			_.keys(models[_.last(versions)].tables),
@@ -1198,7 +1210,7 @@ export default class extends Runner {
 
 		return Promise.each(sortedTables, (table) => {
 			return new Promise((resolve) => {
-				// console.log('aggregating', table);
+				console.log('aggregating', table, onlyCounts);
 
 				if (table === 'contribution') {
 					this._initProp(this.json.contribution.summary, '_all', {});
@@ -1468,7 +1480,7 @@ export default class extends Runner {
 						}
 					}
 				} else if (model.columns[column].type === 'Timestamp') {
-					let dt = moment(_.trim(row[column]), ['YYYY', moment.ISO_8601], true);
+					let dt = luxon(_.trim(row[column]), ['YYYY', luxon.ISO_8601], true);
 					if (dt.isValid()) {
 						this._summerizeNumber(summary, column, dt.valueOf());
 					}
@@ -1600,6 +1612,8 @@ export default class extends Runner {
 	}
 
 	_aggregateSummaries(fromName, from, to, toName, onlyCounts) {
+		//if (onlyCounts && onlyCounts.length)
+		console.log('_aggregateSummaries', fromName, toName, onlyCounts);
 		let model =
 			models[_.last(versions)].tables[
 				fromName === 'experiments' ? 'measurements' : fromName
@@ -1608,7 +1622,7 @@ export default class extends Runner {
 		if (model && from && from.summary && from.summary[fromName] && to) {
 			this._initProp(to, 'summary', {});
 			this._initProp(to.summary, toName, {});
-			to.summary._incomplete_summary = onlyCounts === true ? 'true' : 'false';
+			// to.summary._incomplete_summary = onlyCounts === true ? 'true' : 'false';
 			_.keys(from.summary[fromName]).forEach((column) => {
 				if (reNSummaryColumn.test(column)) {
 					this._initProp(to.summary[toName], column, 0);
@@ -1676,3 +1690,4 @@ export default class extends Runner {
 		}
 	}
 }
+module.exports = { Summarizer };

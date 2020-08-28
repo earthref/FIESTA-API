@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import Promise from 'bluebird';
-import Runner from '/lib/modules/common/runner';
+const _ = require('lodash');
+const Promise = require('bluebird');
+const { Runner } = require('../libs/runner.js');
 
-export default class extends Runner {
+class Parser extends Runner {
 	constructor({ runnerState }) {
 		super({ runnerState });
 		this.reset();
@@ -117,6 +117,7 @@ export default class extends Runner {
 			// Save the table name and add it to the JSON if necessary.
 			else {
 				this.table = tableDefinition[1].toLowerCase();
+				// eslint-disable-next-line no-prototype-builtins
 				if (!this.json.hasOwnProperty(this.table)) this.json[this.table] = [];
 			}
 		}
@@ -193,7 +194,7 @@ export default class extends Runner {
 				)
 					row = values;
 				else
-					row = _.omitBy(row, (value, key) => {
+					row = _.omitBy(row, (value, _) => {
 						return value === '';
 					});
 
@@ -216,3 +217,4 @@ export default class extends Runner {
 		}
 	}
 }
+module.exports = { Parser };

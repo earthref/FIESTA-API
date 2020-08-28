@@ -15,6 +15,26 @@ export default {
 				repositories instanceof Array ? repositories[0] : repositories;
 			const id: string = ids instanceof Array ? ids[0] : ids;
 			const key: string = keys instanceof Array ? keys[0] : keys;
+			if (id === undefined && key !== undefined) {
+				ctx.status = 502;
+				ctx.body = {
+					errors: [{
+						message: 
+						'A contribution ID is required when requesting data from a shared contribution with a private key.',
+					}]
+				};
+				return;
+			}
+			if (id === undefined) {
+				ctx.status = 502;
+				ctx.body = {
+					errors: [{
+						message: 
+						'A contribution ID is required when requesting data from a public contribution.',
+					}]
+				};
+				return;
+			}
 			const contribution = await esGetContributionData({
 				repository,
 				id,

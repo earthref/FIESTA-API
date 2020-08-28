@@ -84,7 +84,7 @@ export default {
 								format: 'json',
 							});
 							if (json) {
-								archive.append(json, {
+								archive.append(JSON.stringify(json, null, 2), {
 									name: `${cid}/magic_contribution_${cid}.json`,
 								});
 								emptyArchive = false;

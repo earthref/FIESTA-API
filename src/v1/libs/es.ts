@@ -127,6 +127,60 @@ async function esGetContributionData({
 	key?: string;
 	format?: 'txt' | 'json' | 'xls';
 } = {}): Promise<Record<string, unknown>[]> {
+	const doc = await esGetContribution({
+		repository, id, doi, key, source: 'contribution'
+	})
+	if (!doc) return;
+	if (format === 'txt') {
+		const { Exporter: ExportContribution } = await import(
+			'./export_contribution.js'
+		);
+		const exporter = new ExportContribution({});
+		return exporter.toText(doc['contribution']);
+	}
+	if (format === 'json') {
+		return doc['contribution'];
+	}
+}
+export { esGetContributionData };
+
+// Contribution summary
+async function esGetContributionSummaryData({
+	repository,
+	table = '',
+	id = '',
+	doi = '',
+	key = '',
+}: {
+	repository?: string;
+	table?: string;
+	id?: string;
+	doi?: string;
+	key?: string;
+} = {}): Promise<Record<string, unknown>[]> {
+	const doc = await esGetContribution({
+		repository, id, doi, key,
+		source: `summary${table ? `.${table}` : ''}`
+	})
+	if (!doc) return;
+	return table ? doc['summary'][table] : doc['summary'];
+}
+export { esGetContributionSummaryData };
+
+// Get Contribution
+async function esGetContribution({
+	repository,
+	id = '',
+	doi = '',
+	key = '',
+	source = '',
+}: {
+	repository?: string;
+	id?: string;
+	doi?: string;
+	key?: string;
+	source?: string;
+} = {}): Promise<Record<string, unknown>[]> {
 	const must: Record<string, unknown>[] = [];
 	if (id) must.push({ term: { 'summary.contribution.id': id } });
 	if (doi)
@@ -137,6 +191,7 @@ async function esGetContributionData({
 	const params: RequestParams.Search = {
 		index: indexes[repository],
 		type: 'contribution',
+		_source: source,
 		size: 1,
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
@@ -147,25 +202,9 @@ async function esGetContributionData({
 	if (resp.body.hits.total <= 0) {
 		return;
 	}
-	if (
-		key === '' &&
-		resp.body.hits.hits[0]._source.summary.contribution._is_activated ===
-			'false'
-	) {
-		return;
-	}
-	if (format === 'txt') {
-		const { Exporter: ExportContribution } = await import(
-			'./export_contribution.js'
-		);
-		const exporter = new ExportContribution({});
-		return exporter.toText(resp.body.hits.hits[0]._source.contribution);
-	}
-	if (format === 'json') {
-		return resp.body.hits.hits[0]._source.contribution;
-	}
+	return resp.body.hits.hits[0]._source;
 }
-export { esGetContributionData };
+export { esGetContribution };
 
 // Search public contributions
 async function esGetSearchByTable({
@@ -303,6 +342,40 @@ async function esGetPrivateSearchByTable({
 	};
 }
 export { esGetPrivateSearchByTable };
+
+// Replace a private contribution
+async function esReplacePrivate({
+	repository,
+	contributor,
+	id,
+	doc
+}: {
+	repository?: string;
+	contributor?: string;
+	id?: number;
+	doc?: any;
+} = {}): Promise<void> {
+	const params: RequestParams.UpdateByQuery = {
+		index: indexes[repository],
+		type: 'contribution',
+		body: {
+			script: {
+				source: "ctx._source = params.doc",
+				params: { doc }
+			},
+			query: {
+				bool: {
+					must: [
+						{ term: { 'summary.contribution.contributor.raw': contributor } },
+						{ term: { 'summary.contribution.id': id } },
+					]
+				}
+			}
+		},
+	};
+	await client.updateByQuery(params);
+}
+export { esReplacePrivate };
 
 // Create a private contribution
 async function esCreatePrivate({
@@ -473,34 +546,3 @@ async function esGetPrivate({
 	}
 }
 export { esGetPrivate };
-
-// Get a private contribution with a key
-async function esGetPrivateShared({
-	repository,
-	key,
-	id,
-}: {
-	repository?: string;
-	key?: string;
-	id?: number;
-} = {}): Promise<string> {
-	const must: Record<string, unknown>[] = [
-		{ term: { 'summary.contribution._private_key.raw': key } },
-		{ term: { 'summary.contribution._is_activated': false } },
-		{ term: { 'summary.contribution.id': id } },
-	];
-	const params: RequestParams.Search = {
-		index: indexes[repository],
-		type: 'contribution',
-		body: {
-			sort: { 'summary.contribution.timestamp': 'desc' },
-			query: { bool: { must } },
-		},
-	};
-	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
-		return;
-	}
-	return resp.body.hits.hits[0]._source.contribution;
-}
-export { esGetPrivateShared };

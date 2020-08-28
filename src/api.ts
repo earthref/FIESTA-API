@@ -12,7 +12,7 @@ import { Context as OpenAPIContext } from 'openapi-backend/backend';
 // import { dereference as OpenAPIParse } from 'swagger-parser';
 
 import Koa from 'koa';
-import KoaBodyparser from 'koa-bodyparser';
+import KoaBody from 'koa-body';
 import json from 'koa-json';
 import logger from 'koa-logger';
 
@@ -76,9 +76,11 @@ const server = new OpenAPIBackend({
 			}
 			ctx.status = 404;
 			ctx.body = {
-				err:
+				errors: [{
+					message: 
 					`Path '${ctx.request.path}' is not defined for this API. ` +
 					'See https://api.earthref.org for more information.',
+				}]
 			};
 		},
 		postResponseHandler: async (c: OpenAPIContext, ctx: Koa.Context) => {
@@ -145,8 +147,12 @@ API.on('error', (err, ctx) => {
 	console.error(ctx.request, err);
 });
 
-// Serve API endpoints
-API.use(KoaBodyparser());
+// Parse request bodies
+API.use(KoaBody({
+	multipart: true,
+	jsonLimit: '1GB',
+	textLimit: '1GB'
+}));
 
 // Log requests
 if (isDev) API.use(logger());

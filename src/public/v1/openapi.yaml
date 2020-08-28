@@ -203,13 +203,13 @@ paths:
     get:
       tags:
       - Public Data
-      summary: Retrieve the data for a public contribution
+      summary: Retrieve the data for a public or shared private contribution
       operationId: publicContributionData
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: id
         in: query
-        description: The ID of the public contribution to retrieve
+        description: The ID of the contribution to retrieve
         schema:
           type: integer
           minimum: 1
@@ -432,6 +432,24 @@ paths:
       responses:
         202:
           description: The file(s) were uploaded to the contribution and are being processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - rowsAdded
+                - rowsChanged
+                - rowsDeleted
+                properties:
+                  rowsAdded:
+                    type: integer
+                    minimum: 0
+                  rowsChanged:
+                    type: integer
+                    minimum: 0
+                  rowsDeleted:
+                    type: integer
+                    minimum: 0
         204:
           $ref: '#/components/responses/noMatches'
         401:
@@ -456,9 +474,9 @@ paths:
               schema:
                 type: object
                 required:
-                - rows_deleted
+                - rowsDeleted
                 properties:
-                  rows_deleted:
+                  rowsDeleted:
                     type: integer
                     minimum: 0
         204:
