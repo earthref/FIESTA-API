@@ -7,6 +7,8 @@ import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
 const _ = deepdash(lodash);
 
+console.log('here', process.env.ES_NODE);
+
 const indexes = { MagIC: 'magic_v4' };
 const usersIndex = 'er_users_v1';
 const client = new Client({
@@ -415,7 +417,7 @@ async function esCreatePrivate({
 		index: indexes[repository],
 		type: 'contribution',
 		id: `${nextID}_0`,
-		refresh: 'true',
+		refresh: true,
 		body: {
 			summary: {
 				contribution: {

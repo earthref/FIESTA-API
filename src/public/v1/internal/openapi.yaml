@@ -1,19 +1,20 @@
 openapi: 3.0.1
 info:
-  title: EarthRef.org FIESTA API
+  title: EarthRef.org Internal API
   description: 
-    The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
+    The OpenAPI definition for EarthRef.org''s Internal API.
+    Access for this API is IP whitelisted to the EarthRef.org web servers and developers.<br/><br/>
   contact:
     email: admin@earthref.org
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: 'Next'
+  version: '1.0.0'
 externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
 servers:
-- url: https://api.earthref.org/vNext
+- url: https://api.earthref.org/internal/v1
 
 components:
   securitySchemes:
@@ -78,10 +79,6 @@ components:
       example:
         errors:
         - message: 'There was an error.'
-
-security:
-  - basicAuth: []
-
 paths:
   /health-check:
     get:
@@ -123,26 +120,3 @@ paths:
                           type: string
                       example:
                         message: 'Health check failed'
-  /authenticate:
-    get:
-      tags:
-      - People
-      summary: Authenticate a username and password
-      operationId: authenticate
-      security: 
-      - basicAuth: []
-      responses:
-        200:
-          description: User Record
-          content:
-            text/plain:
-              schema:
-                type: string
-            application/json:
-              schema:
-                required:
-                - name
-        401:
-          $ref: '#/components/responses/unauthorizedError'
-        500:
-          $ref: '#/components/responses/serverError'

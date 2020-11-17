@@ -1,48 +1,31 @@
-import * as dotenv from 'dotenv';
-
-const isTest = process.env.NODE_ENV === 'testing';
-const isDev = isTest || process.env.NODE_ENV === 'development';
-if (isDev) {
-	dotenv.config();
-}
-
 import { createReadStream } from 'fs';
 import OpenAPIBackend from 'openapi-backend';
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
-// import { dereference as OpenAPIParse } from 'swagger-parser';
-
 import Koa from 'koa';
 import KoaBody from 'koa-body';
 import json from 'koa-json';
 import logger from 'koa-logger';
 
-import v1Root from './v1/path/root';
-import v1Download from './v1/path/public.download';
-import v1Data from './v1/path/public.data';
-import v1Search from './v1/path/public.search';
-import v1PrivateCreateUpdateDelete from './v1/path/private';
-import v1PrivateDownload from './v1/path/private.download';
-import v1PrivateSearch from './v1/path/private.search';
+import v1Handers from './v1/handlers';
+import v1InternalHanders from './v1/internal.handlers';
+import vNextHanders from './vNext/handlers';
 
-import vNextroot from './v1/path/root';
-
-const vs = ['next', 'v1'];
-const vDefault = 'v1'; // default version
+const isTest = process.env.NODE_ENV === 'testing';
+const isDev = isTest || process.env.TS_NODE_DEV;
 const src = `${isDev ? 'src' : 'dist'}/public`;
-
-// Define API
+const vs = [
+	'v1',
+	'internal/v1',
+	'vNext',
+];
+const vDefault = 'v1'; // default version
 
 const server = new OpenAPIBackend({
 	definition: `${isDev ? 'src' : 'dist'}/openapi.yaml`,
 	handlers: {
-		...v1Root,
-		...v1Download,
-		...v1Data,
-		...v1Search,
-		...v1PrivateCreateUpdateDelete,
-		...v1PrivateDownload,
-		...v1PrivateSearch,
-		...vNextroot,
+		...v1Handers,
+		...v1InternalHanders,
+		...vNextHanders,
 		validationFail: async (c: OpenAPIContext, ctx: Koa.Context) => {
 			ctx.status = 400;
 			ctx.body = { errors: c.validation.errors };
