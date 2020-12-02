@@ -7,11 +7,11 @@ import privateDownload from './path/private.download';
 import privateSearch from './path/private.search';
 
 export default {
-  ...root,
-  ...download,
-  ...data,
-  ...search,
-  ...privateCreateUpdateDelete,
-  ...privateDownload,
-  ...privateSearch,
-}
+	...root,
+	...download,
+	...data,
+	...search,
+	...privateCreateUpdateDelete,
+	...privateDownload,
+	...privateSearch,
+};

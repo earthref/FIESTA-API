@@ -3,7 +3,7 @@ import Koa from 'koa';
 import { esCheckConnection, esAuthenticate } from '../libs/es';
 
 export default {
-	healthCheck: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1InternalHealthCheck: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			const healthy: boolean = await esCheckConnection();
 			if (healthy) {
@@ -23,7 +23,7 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	authenticate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1InternalAuthenticate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			ctx.body = await esAuthenticate(ctx.headers.authorization);
 			if (ctx.body === false) {

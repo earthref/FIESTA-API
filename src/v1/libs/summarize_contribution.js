@@ -49,11 +49,13 @@ class Summarizer extends Runner {
 			)
 		);
 
-		return this._summarizeTables(true)
-			//.then(this._getCrossRefData.bind(this))
-			.then(this._adoptChildTableCounts.bind(this))
-			.then(this._aggregateTableCounts.bind(this))
-			.then(this._consolidate.bind(this));
+		return (
+			this._summarizeTables(true)
+				//.then(this._getCrossRefData.bind(this))
+				.then(this._adoptChildTableCounts.bind(this))
+				.then(this._aggregateTableCounts.bind(this))
+				.then(this._consolidate.bind(this))
+		);
 	}
 
 	// Return a promise for creating the summary
@@ -77,12 +79,14 @@ class Summarizer extends Runner {
 			)
 		);
 
-		return this._summarizeTables(true)
-			//.then(this._getCrossRefData.bind(this))
-			.then(this._adoptAllChildTables.bind(this))
-			//.then(this._inheritParentTables.bind(this))
-			//.then(this._aggregateAllTables.bind(this))
-			//.then(this._consolidate.bind(this));
+		return (
+			this._summarizeTables(true)
+				//.then(this._getCrossRefData.bind(this))
+				.then(this._adoptAllChildTables.bind(this))
+		);
+		//.then(this._inheritParentTables.bind(this))
+		//.then(this._aggregateAllTables.bind(this))
+		//.then(this._consolidate.bind(this));
 	}
 
 	// TODO

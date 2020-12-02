@@ -4,7 +4,7 @@ import Koa from 'koa';
 import { esGetContributionData } from '../libs/es';
 
 export default {
-	publicContributionData: async (
+	v1PublicContributionData: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {
@@ -18,20 +18,24 @@ export default {
 			if (id === undefined && key !== undefined) {
 				ctx.status = 502;
 				ctx.body = {
-					errors: [{
-						message: 
-						'A contribution ID is required when requesting data from a shared contribution with a private key.',
-					}]
+					errors: [
+						{
+							message:
+								'A contribution ID is required when requesting data from a shared contribution with a private key.',
+						},
+					],
 				};
 				return;
 			}
 			if (id === undefined) {
 				ctx.status = 502;
 				ctx.body = {
-					errors: [{
-						message: 
-						'A contribution ID is required when requesting data from a public contribution.',
-					}]
+					errors: [
+						{
+							message:
+								'A contribution ID is required when requesting data from a public contribution.',
+						},
+					],
 				};
 				return;
 			}

@@ -10,7 +10,7 @@ import {
 } from '../libs/es';
 
 export default {
-	privateDownloadFiles: async (
+	v1PrivateDownloadFiles: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {
@@ -107,7 +107,7 @@ export default {
 						if (!fs.existsSync('downloads')) {
 							fs.mkdirSync('downloads');
 						}
-						await new Promise((resolve: () => void, reject: () => void) => {
+						await new Promise((resolve, reject) => {
 							archive.pipe(fs.createWriteStream(`downloads/${fileName}`));
 							archive.on('end', resolve);
 							archive.on('error', (error: archiver.ArchiverError) => {

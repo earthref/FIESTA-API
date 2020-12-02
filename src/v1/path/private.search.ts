@@ -3,7 +3,7 @@ import Koa from 'koa';
 import { esAuthenticate, esGetPrivateSearchByTable } from '../libs/es';
 
 export default {
-	privateSearchByTable: async (
+	v1PrivateSearchByTable: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {

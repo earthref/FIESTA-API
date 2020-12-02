@@ -13,11 +13,7 @@ import vNextHanders from './vNext/handlers';
 const isTest = process.env.NODE_ENV === 'testing';
 const isDev = isTest || process.env.TS_NODE_DEV;
 const src = `${isDev ? 'src' : 'dist'}/public`;
-const vs = [
-	'v1',
-	'internal/v1',
-	'vNext',
-];
+const vs = ['v1', 'v1/internal', 'vNext'];
 const vDefault = 'v1'; // default version
 
 const server = new OpenAPIBackend({
@@ -59,11 +55,13 @@ const server = new OpenAPIBackend({
 			}
 			ctx.status = 404;
 			ctx.body = {
-				errors: [{
-					message: 
-					`Path '${ctx.request.path}' is not defined for this API. ` +
-					'See https://api.earthref.org for more information.',
-				}]
+				errors: [
+					{
+						message:
+							`Path '${ctx.request.path}' is not defined for this API. ` +
+							'See https://api.earthref.org for more information.',
+					},
+				],
 			};
 		},
 		postResponseHandler: async (c: OpenAPIContext, ctx: Koa.Context) => {
@@ -131,11 +129,13 @@ API.on('error', (err, ctx) => {
 });
 
 // Parse request bodies
-API.use(KoaBody({
-	multipart: true,
-	jsonLimit: '1GB',
-	textLimit: '1GB'
-}));
+API.use(
+	KoaBody({
+		multipart: true,
+		jsonLimit: '1GB',
+		textLimit: '1GB',
+	})
+);
 
 // Log requests
 if (isDev) API.use(logger());

@@ -1,23 +1,32 @@
 openapi: 3.0.1
 info:
   title: EarthRef.org FIESTA API
-  description: 
-    The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
+  description: |
+    This is the documentation for the [OpenAPI](https://swagger.io/specification/) definition of EarthRef.org's FIESTA API.
+
+    [EarthRef.org](https://earthref.org) is a geoscience umbrella website for several data repositories.
+    These repositories, unified under the mandate to preserve their respective data and promote scientific collaboration in their fields, are also disparate in their schemata.
+    The Framework for Integrated Earth Science and Technology Applications (FIESTA) project is creating the tools to easily customize and manage these geoscience repositories and
+    the FIESTA API is a core component of that solution.
+
+    # Authentication
+  
+    The API is served over HTTPS thereby making HTTP Basic Authentication secure.
+    The credentials are the username and password of an active EarthRef.org user account and provide access to that user's private workspace in any of EarthRef.org FIESTA repositories.
+    <br/><br/>
+  
   contact:
-    email: admin@earthref.org
+    email: webmaster@earthref.org
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '1.0.0'
-externalDocs:
-  description: EarthRef.org
-  url: https://earthref.org/
+  version: '1.1.0'
 servers:
 - url: https://api.earthref.org
 
 components:
   securitySchemes:
-    basicAuth:
+    EarthRef.org User Account Credentials:
       type: http
       scheme: basic
   parameters:
@@ -79,16 +88,13 @@ components:
         errors:
         - message: 'There was an error.'
 
-security:
-  - basicAuth: []
-
 paths:
   /v1/health-check:
     get:
       tags:
       - System
       summary: Check the health of the API
-      operationId: healthCheck
+      operationId: v1HealthCheck
       responses:
         200:
           description: Health check passed
@@ -128,9 +134,9 @@ paths:
       tags:
       - People
       summary: Authenticate a username and password
-      operationId: authenticate
+      operationId: v1Authenticate
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       responses:
         200:
           description: User Record
@@ -151,7 +157,7 @@ paths:
       tags:
       - Public Data
       summary: Download the zip archive of files for one or more public contributions
-      operationId: publicDownloadFiles
+      operationId: v1PublicDownloadFiles
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: n_max_contributions
@@ -204,7 +210,7 @@ paths:
       tags:
       - Public Data
       summary: Retrieve the data for a public or shared private contribution
-      operationId: publicContributionData
+      operationId: v1PublicContributionData
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: id
@@ -240,7 +246,7 @@ paths:
       tags:
       - Public Data
       summary: Retrieve public data rows
-      operationId: publicSearchByTable
+      operationId: v1PublicSearchByTable
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: table
@@ -284,9 +290,9 @@ paths:
       tags:
       - Private Data
       summary: Download the zip archive of the files for a private contribution
-      operationId: privateDownloadFiles
+      operationId: v1PrivateDownloadFiles
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: id
@@ -312,9 +318,9 @@ paths:
       tags:
       - Private Data
       summary: Retrieve the data for a private contribution
-      operationId: privateContributionData
+      operationId: v1PrivateContributionData
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: id
@@ -340,9 +346,9 @@ paths:
       tags:
       - Private Data
       summary: Retrieve private data rows
-      operationId: privateSearchByTable
+      operationId: v1PrivateSearchByTable
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       - name: table
@@ -384,9 +390,9 @@ paths:
       tags:
       - Private Data
       summary: Create a private contribution
-      operationId: privateCreate
+      operationId: v1PrivateCreate
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       responses:
@@ -412,9 +418,9 @@ paths:
       tags:
       - Private Data
       summary: Update a private contribution
-      operationId: privateUpdate
+      operationId: v1PrivateUpdate
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       - $ref: '#/components/parameters/contributionID'
@@ -460,9 +466,9 @@ paths:
       tags:
       - Private Data
       summary: Delete a private contribution
-      operationId: privateDelete
+      operationId: v1PrivateDelete
       security: 
-      - basicAuth: []
+      - EarthRef.org User Account Credentials: []
       parameters:
       - $ref: '#/components/parameters/repository'
       - $ref: '#/components/parameters/contributionID'

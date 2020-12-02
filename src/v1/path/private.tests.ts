@@ -46,7 +46,7 @@ describe(`FIESTA API ${v} Private Create/Update/Delete Tests`, () => {
 			}
 		);
 		expect(deleteRes.status).toBe(200);
-		expect(deleteRes.data).toHaveProperty('rows_deleted');
-		expect(deleteRes.data.rows_deleted).toEqual(1);
+		expect(deleteRes.data).toHaveProperty('rowsDeleted');
+		expect(deleteRes.data.rowsDeleted).toEqual(1);
 	});
 });

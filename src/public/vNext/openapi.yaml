@@ -2,9 +2,10 @@ openapi: 3.0.1
 info:
   title: EarthRef.org FIESTA API
   description: 
-    The OpenAPI definition for EarthRef.org''s FIESTA API.<br/><br/>
+    The OpenAPI definition for EarthRef.org''s FIESTA API.
+    This is a developmentment version and not intended for production use.<br/><br/>
   contact:
-    email: admin@earthref.org
+    email: webmaster@earthref.org
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
@@ -13,7 +14,7 @@ externalDocs:
   description: EarthRef.org
   url: https://earthref.org/
 servers:
-- url: https://api.earthref.org/vNext
+- url: https://api.earthref.org
 
 components:
   securitySchemes:
@@ -88,7 +89,7 @@ paths:
       tags:
       - System
       summary: Check the health of the API
-      operationId: healthCheck
+      operationId: vNextHealthCheck
       responses:
         200:
           description: Health check passed
@@ -128,7 +129,7 @@ paths:
       tags:
       - People
       summary: Authenticate a username and password
-      operationId: authenticate
+      operationId: vNextAuthenticate
       security: 
       - basicAuth: []
       responses:

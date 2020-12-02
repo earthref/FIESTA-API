@@ -7,8 +7,6 @@ import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
 
 const _ = deepdash(lodash);
 
-console.log('here', process.env.ES_NODE);
-
 const indexes = { MagIC: 'magic_v4' };
 const usersIndex = 'er_users_v1';
 const client = new Client({
@@ -130,8 +128,12 @@ async function esGetContributionData({
 	format?: 'txt' | 'json' | 'xls';
 } = {}): Promise<Record<string, unknown>[]> {
 	const doc = await esGetContribution({
-		repository, id, doi, key, source: 'contribution'
-	})
+		repository,
+		id,
+		doi,
+		key,
+		source: 'contribution',
+	});
 	if (!doc) return;
 	if (format === 'txt') {
 		const { Exporter: ExportContribution } = await import(
@@ -161,9 +163,12 @@ async function esGetContributionSummaryData({
 	key?: string;
 } = {}): Promise<Record<string, unknown>[]> {
 	const doc = await esGetContribution({
-		repository, id, doi, key,
-		source: `summary${table ? `.${table}` : ''}`
-	})
+		repository,
+		id,
+		doi,
+		key,
+		source: `summary${table ? `.${table}` : ''}`,
+	});
 	if (!doc) return;
 	return table ? doc['summary'][table] : doc['summary'];
 }
@@ -232,7 +237,7 @@ async function esGetSearchByTable({
 	from: number;
 	queries?: string[];
 	results: any[];
-}> {
+} | undefined> {
 	const must: Record<string, unknown>[] = [
 		{ term: { 'summary.contribution._is_activated': true } },
 	];
@@ -246,6 +251,7 @@ async function esGetSearchByTable({
 		type: table,
 		size,
 		from,
+		_source_includes: ['summary.contribution'],
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
 			query: { bool: { must } },
@@ -350,7 +356,7 @@ async function esReplacePrivate({
 	repository,
 	contributor,
 	id,
-	doc
+	doc,
 }: {
 	repository?: string;
 	contributor?: string;
@@ -362,17 +368,17 @@ async function esReplacePrivate({
 		type: 'contribution',
 		body: {
 			script: {
-				source: "ctx._source = params.doc",
-				params: { doc }
+				source: 'ctx._source = params.doc',
+				params: { doc },
 			},
 			query: {
 				bool: {
 					must: [
 						{ term: { 'summary.contribution.contributor.raw': contributor } },
 						{ term: { 'summary.contribution.id': id } },
-					]
-				}
-			}
+					],
+				},
+			},
 		},
 	};
 	await client.updateByQuery(params);

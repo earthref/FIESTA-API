@@ -1,10 +1,16 @@
 import fs from 'fs';
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
-import { esAuthenticate, esCreatePrivate, esDeletePrivate, esReplacePrivate, esGetContribution } from '../libs/es';
+import {
+	esAuthenticate,
+	esCreatePrivate,
+	esDeletePrivate,
+	esReplacePrivate,
+	esGetContribution,
+} from '../libs/es';
 
 export default {
-	privateCreate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateCreate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {
@@ -43,7 +49,7 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	privateUpdate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateUpdate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {
@@ -61,7 +67,7 @@ export default {
 			const prevID: string = ids instanceof Array ? ids[0] : ids;
 			const prevDoc = await esGetContribution({
 				repository,
-				id: prevID
+				id: prevID,
 			});
 			if (prevDoc === undefined) {
 				ctx.status = 204;
@@ -75,7 +81,11 @@ export default {
 			const nextHandle = user.handle ? `@${user.handle}` : `@user${user.id}`;
 			if (prevHandle !== '@magic' && prevHandle !== nextHandle) {
 				ctx.body = {
-					errors: [{ message: `The contribution with ID ${id} is owned by another contributor.` }],
+					errors: [
+						{
+							message: `The contribution with ID ${id} is owned by another contributor.`,
+						},
+					],
 				};
 				ctx.status = 401;
 				return;
@@ -97,42 +107,63 @@ export default {
 			);
 			const parser = new ParseContribution({});
 			await parser.parsePromise({ text: c.request.body });
-			fs.writeFileSync(`magic_doc_${id}_parser_ew.json`, JSON.stringify(parser.errorsAndWarnings(), null, 2));
+			fs.writeFileSync(
+				`magic_doc_${id}_parser_ew.json`,
+				JSON.stringify(parser.errorsAndWarnings(), null, 2)
+			);
 
 			doc.contribution = parser.json;
-			doc.contribution['contribution'] = prevDoc['contribution']['contribution'];
-			fs.writeFileSync(`magic_doc_${id}_prev.json`, JSON.stringify(doc, null, 2));
-			fs.writeFileSync(`magic_doc_${id}_prev_summary.json`, JSON.stringify(prevContributionSummary, null, 2));
+			doc.contribution['contribution'] =
+				prevDoc['contribution']['contribution'];
+			fs.writeFileSync(
+				`magic_doc_${id}_prev.json`,
+				JSON.stringify(doc, null, 2)
+			);
+			fs.writeFileSync(
+				`magic_doc_${id}_prev_summary.json`,
+				JSON.stringify(prevContributionSummary, null, 2)
+			);
 
 			// Summerize the contribution
 			const { Summarizer: SummarizeContribution } = await import(
 				'../libs/summarize_contribution.js'
 			);
 			const summarizer = new SummarizeContribution({});
-			await summarizer.preSummarizePromise(doc.contribution, { summary: { contribution: prevContributionSummary }});
-			fs.writeFileSync(`magic_doc_${id}_presummarizer.json`, JSON.stringify(summarizer.json, null, 2));
-			fs.writeFileSync(`magic_doc_${id}_presummarizer_ew.json`, JSON.stringify(summarizer.errorsAndWarnings(), null, 2));
+			await summarizer.preSummarizePromise(doc.contribution, {
+				summary: { contribution: prevContributionSummary },
+			});
+			fs.writeFileSync(
+				`magic_doc_${id}_presummarizer.json`,
+				JSON.stringify(summarizer.json, null, 2)
+			);
+			fs.writeFileSync(
+				`magic_doc_${id}_presummarizer_ew.json`,
+				JSON.stringify(summarizer.errorsAndWarnings(), null, 2)
+			);
 			doc.summary = summarizer.json.contribution.summary;
 			//await summarizer.summarizePromise(doc.contribution, { summary: { contribution: prevContributionSummary }});
 			//fs.writeFileSync(`magic_doc_${id}_summarizer.json`, JSON.stringify(summarizer.json, null, 2));
 			//fs.writeFileSync(`magic_doc_${id}_summarizer_ew.json`, JSON.stringify(summarizer.errorsAndWarnings(), null, 2));
 			//doc.summary = summarizer.json.contribution.summary;
 			console.log(prevContributionSummary);
-			fs.writeFileSync(`magic_doc_${id}_after.json`, JSON.stringify(doc, null, 2));
+			fs.writeFileSync(
+				`magic_doc_${id}_after.json`,
+				JSON.stringify(doc, null, 2)
+			);
 
 			// Index with summary
 			await esReplacePrivate({
 				repository,
 				contributor,
 				id,
-				doc
+				doc,
 			});
 
 			ctx.status = 200;
 			ctx.body = {
 				rowsAdded: 0,
 				rowsChanged: 0,
-				rowsDeleted: 0
+				rowsDeleted: 0,
 			};
 		} catch (e) {
 			ctx.app.emit('error', e, ctx);
@@ -140,7 +171,7 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	privateDelete: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateDelete: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {

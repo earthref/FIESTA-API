@@ -4,7 +4,7 @@ import Koa from 'koa';
 import { esGetSearchByTable } from '../libs/es';
 
 export default {
-	publicSearchByTable: async (
+	v1PublicSearchByTable: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {

@@ -7,7 +7,7 @@ import { s3GetContributionByID } from '../libs/s3';
 import { esGetSearchByTable } from '../libs/es';
 
 export default {
-	publicDownloadFiles: async (
+	v1PublicDownloadFiles: async (
 		c: OpenAPIContext,
 		ctx: Koa.Context
 	): Promise<void> => {
@@ -78,7 +78,7 @@ export default {
 				if (!fs.existsSync('downloads')) {
 					fs.mkdirSync('downloads');
 				}
-				await new Promise((resolve: () => void, reject: () => void) => {
+				await new Promise((resolve, reject) => {
 					archive.pipe(fs.createWriteStream(`downloads/${fileName}`));
 					archive.on('end', resolve);
 					archive.on('error', (error: archiver.ArchiverError) => {
