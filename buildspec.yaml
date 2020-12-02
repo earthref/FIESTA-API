@@ -22,7 +22,6 @@ phases:
       - rm -r node_modules
       - npm install --production
 artifacts:
-  type: zip
   files:
     - dist/**/*
     - node_modules/**/*
