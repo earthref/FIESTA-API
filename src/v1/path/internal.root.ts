@@ -1,6 +1,6 @@
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
-import { esCheckConnection, esAuthenticate } from '../libs/es';
+import { esCheckConnection } from '../libs/es';
 
 export default {
 	v1InternalHealthCheck: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
@@ -23,7 +23,7 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	v1InternalAuthenticate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	/*v1InternalAuthenticate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
 		try {
 			ctx.body = await esAuthenticate(ctx.headers.authorization);
 			if (ctx.body === false) {
@@ -37,5 +37,5 @@ export default {
 			ctx.status = 500;
 			ctx.body = { errors: [{ message: e.message }] };
 		}
-	},
+	},*/
 };

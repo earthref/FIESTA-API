@@ -89,7 +89,7 @@ components:
         - message: 'There was an error.'
 
 paths:
-  /v1/health-check:
+  /health-check:
     get:
       tags:
       - System
@@ -129,7 +129,7 @@ paths:
                           type: string
                       example:
                         message: 'Health check failed'
-  /v1/authenticate:
+  /authenticate:
     get:
       tags:
       - People
@@ -152,7 +152,7 @@ paths:
           $ref: '#/components/responses/unauthorizedError'
         500:
           $ref: '#/components/responses/serverError'
-  /v1/{repository}/download:
+  /{repository}/download:
     get:
       tags:
       - Public Data
@@ -205,7 +205,7 @@ paths:
           $ref: '#/components/responses/noMatches'
         500:
           $ref: '#/components/responses/serverError'
-  /v1/{repository}/data:
+  /{repository}/data:
     get:
       tags:
       - Public Data
@@ -241,7 +241,7 @@ paths:
                 $ref: '#/components/schemas/errorReponse'
         500:
           $ref: '#/components/responses/serverError'
-  /v1/{repository}/search/{table}:
+  /{repository}/search/{table}:
     get:
       tags:
       - Public Data
@@ -285,7 +285,7 @@ paths:
             application/vnd.ms-excel: {}
         204:
           $ref: '#/components/responses/noMatches'
-  /v1/{repository}/private/download:
+  /{repository}/private/download:
     get:
       tags:
       - Private Data
@@ -313,7 +313,7 @@ paths:
           $ref: '#/components/responses/unauthorizedError'
         500:
           $ref: '#/components/responses/serverError'
-  /v1/{repository}/private/data:
+  /{repository}/private/data:
     get:
       tags:
       - Private Data
@@ -341,7 +341,7 @@ paths:
           $ref: '#/components/responses/noMatches'
         500:
           $ref: '#/components/responses/serverError'
-  /v1/{repository}/private/search/{table}:
+  /{repository}/private/search/{table}:
     get:
       tags:
       - Private Data
@@ -385,7 +385,7 @@ paths:
           $ref: '#/components/responses/noMatches'
         401:
           $ref: '#/components/responses/unauthorizedError'
-  /v1/{repository}/private:
+  /{repository}/private:
     post:
       tags:
       - Private Data

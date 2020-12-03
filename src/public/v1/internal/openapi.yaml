@@ -80,7 +80,7 @@ components:
         errors:
         - message: 'There was an error.'
 paths:
-  /v1/internal/health-check:
+  /health-check:
     get:
       tags:
       - System
