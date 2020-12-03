@@ -251,7 +251,7 @@ async function esGetSearchByTable({
 		type: table,
 		size,
 		from,
-		_source_includes: ['summary.contribution'],
+		_source_includes: ['summary.contribution', 'rows'],
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
 			query: { bool: { must } },
