@@ -1,5 +1,7 @@
 # EarthRef's FIESTA API
 
+<img src="logo.png?raw=true" style="height: 50vh"/>
+
 ## Usage
 
 The deployed API is currently available at https://api.earthref.org/v1 with documentation at https://api.earthref.org. These GET requests can be made in the browser to test the API:
