@@ -34,7 +34,7 @@
     "koa-mount": "^4.0.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "luxon": "^1.25.0",
     "openapi-backend": "^3.6.3",
     "unzipper": "^0.10.11",
