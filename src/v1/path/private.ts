@@ -10,7 +10,10 @@ import {
 } from '../libs/es';
 
 export default {
-	v1PrivateCreate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateCreate: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {
@@ -49,7 +52,10 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	v1PrivateUpdate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateUpdate: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {
@@ -171,7 +177,10 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	v1PrivateDelete: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1PrivateDelete: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			const user = await esAuthenticate(ctx.headers.authorization);
 			if (user === false) {

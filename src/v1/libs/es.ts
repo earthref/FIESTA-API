@@ -15,7 +15,7 @@ const client = new Client({
 
 function sleep(ms = 0) {
 	return new Promise((resolve) => {
-		setTimeout(resolve, ms);
+		setTimeout(resolve, ms, '');
 	});
 }
 
@@ -230,14 +230,17 @@ async function esGetSearchByTable({
 	queries?: string[];
 	ids?: string[];
 	dois?: string[];
-} = {}): Promise<{
-	total: number;
-	table: string;
-	size: number;
-	from: number;
-	queries?: string[];
-	results: any[];
-} | undefined> {
+} = {}): Promise<
+	| {
+		total: number;
+		table: string;
+		size: number;
+		from: number;
+		queries?: string[];
+		results: any[];
+	}
+	| undefined
+> {
 	const must: Record<string, unknown>[] = [
 		{ term: { 'summary.contribution._is_activated': true } },
 	];
@@ -265,11 +268,11 @@ async function esGetSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-					_.omitBy(
-						hit._source.summary.contribution,
-						(o: any, k: string) => k[0] === '_'
-					)
-			  );
+				_.omitBy(
+					hit._source.summary.contribution,
+					(o: any, k: string) => k[0] === '_'
+				)
+			);
 	return {
 		total: resp.body.hits.total,
 		table,
@@ -335,11 +338,11 @@ async function esGetPrivateSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-					_.omitBy(
-						hit._source.summary.contribution,
-						(o: any, k: string) => k[0] === '_'
-					)
-			  );
+				_.omitBy(
+					hit._source.summary.contribution,
+					(o: any, k: string) => k[0] === '_'
+				)
+			);
 	return {
 		total: resp.body.hits.total,
 		table,
@@ -554,3 +557,65 @@ async function esGetPrivate({
 	}
 }
 export { esGetPrivate };
+
+async function esValidatePrivateContribution({
+	repository,
+	contributor,
+	id,
+}: {
+	repository?: string;
+	contributor?: string;
+	id?: number;
+} = {}): Promise<string> {
+	const must: Record<string, unknown>[] = [
+		{ term: { 'summary.contribution.contributor.raw': contributor } },
+		{ term: { 'summary.contribution._is_activated': false } },
+		{ term: { 'summary.contribution.id': id } },
+	];
+	const params: RequestParams.Search = {
+		index: indexes[repository],
+		type: 'contribution',
+		body: {
+			sort: { 'summary.contribution.timestamp': 'desc' },
+			query: { bool: { must } },
+		},
+	};
+	const resp: ApiResponse<SearchResponse> = await client.search(params);
+	if (resp.body.hits.total <= 0) {
+		return;
+	}
+	if (
+		resp.body.hits.total > 0 &&
+		resp.body.hits.hits[0]._source.contribution &&
+		_.isPlainObject(resp.body.hits.hits[0]._source.contribution.contribution)
+	)
+		resp.body.hits.hits[0]._source.contribution.contribution = [
+			resp.body.hits.hits[0]._source.contribution.contribution,
+		];
+
+	const { Validator: ValidateContribution } = await import(
+		'./validate_contribution.js'
+	);
+	const validator = new ValidateContribution({});
+	await validator.validatePromise(resp.body.hits.hits[0]._source.contribution);
+
+	await client.update({
+		index: indexes[repository],
+		type: 'contribution',
+		id: id + '_0',
+		body: {
+			doc: {
+				summary: {
+					contribution: {
+						_is_valid: _.keys(validator.validation.errors).length
+							? 'false'
+							: 'true',
+					},
+				},
+			},
+		},
+	});
+
+	return validator.validation;
+}
+export { esValidatePrivateContribution };

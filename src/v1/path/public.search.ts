@@ -25,8 +25,8 @@ export default {
 			const queries: string[] = query instanceof Array ? query : [query];
 			const tableMap = {
 				contributions: 'contribution',
-				measurements: 'experiments'
-			}
+				measurements: 'experiments',
+			};
 			ctx.body = await esGetSearchByTable({
 				repository,
 				table: tableMap[table] || table,

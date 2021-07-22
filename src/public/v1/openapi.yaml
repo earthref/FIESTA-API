@@ -341,6 +341,36 @@ paths:
           $ref: '#/components/responses/noMatches'
         500:
           $ref: '#/components/responses/serverError'
+  /v1/{repository}/private/validate:
+    get:
+      tags:
+      - Private Data
+      summary: Validate a private contribution
+      operationId: v1PrivateContributionValidate
+      security: 
+      - EarthRef.org User Account Credentials: []
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      - name: id
+        in: query
+        required: true
+        description: The ID of the contribution data to validate
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: The validation result was returned.
+          content:
+            application/json:
+              schema:
+                type: object
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
   /v1/{repository}/private/search/{table}:
     get:
       tags:
@@ -385,6 +415,8 @@ paths:
           $ref: '#/components/responses/noMatches'
         401:
           $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
   /v1/{repository}/private:
     post:
       tags:

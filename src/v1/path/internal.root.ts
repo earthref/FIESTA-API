@@ -3,7 +3,10 @@ import Koa from 'koa';
 import { esCheckConnection } from '../libs/es';
 
 export default {
-	v1InternalHealthCheck: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1InternalHealthCheck: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			const healthy: boolean = await esCheckConnection();
 			if (healthy) {

@@ -17,6 +17,10 @@ let mcs = _.flattenDeep(
 	)
 );
 
+Promise.each = async function (arr, fn) {
+	for (const item of arr) await fn(item);
+}
+
 class Validator extends Runner {
 	constructor({ runnerState }) {
 		super({ runnerState });
@@ -129,12 +133,12 @@ class Validator extends Runner {
 				let columns = this.json[table].columns
 					? this.json[table].columns
 					: _.reduce(
-							this.json[table],
-							(columns, row) => {
-								return _.union(_.keys(row), columns);
-							},
-							[]
-					  );
+						this.json[table],
+						(columns, row) => {
+							return _.union(_.keys(row), columns);
+						},
+						[]
+					);
 
 				// If there is a column name that isn't in the this version's data model, skip to the next older version.
 				if (
@@ -151,7 +155,6 @@ class Validator extends Runner {
 	}
 
 	validatePromise(json) {
-		//console.log('validatePromise');
 
 		if (!json) {
 			this._appendError(`Invalid contribution.`);
@@ -204,7 +207,6 @@ class Validator extends Runner {
 	}
 
 	_validateTables() {
-		//console.log('_validateTables');
 
 		let sortedTables = _.sortBy(
 			_.keys(models[_.last(versions)].tables),
@@ -216,7 +218,6 @@ class Validator extends Runner {
 		return Promise.each(sortedTables, (table) => {
 			return new Promise((resolve) => {
 				if (this.json[table]) {
-					//console.log('validating', table);
 					let model = models[_.last(versions)].tables[table];
 					if (table === 'measurements') {
 						_.keys(model.columns).forEach((column) => {
@@ -280,7 +281,6 @@ class Validator extends Runner {
 		if (_.trim(column) === '') return;
 
 		if (
-			idxRow &&
 			_.includes(model.columns[column].validations, 'required()') &&
 			(!_.includes(columns, column) || val === undefined || _.trim(val) === '')
 		) {
@@ -368,8 +368,7 @@ class Validator extends Runner {
 			this._addValidationError(
 				table,
 				column,
-				`The ${table} table is missing required column "${column}" since column${
-					nRequired === 1 ? '' : 's'
+				`The ${table} table is missing required column "${column}" since column${nRequired === 1 ? '' : 's'
 				} "${requiredUnless[1]}" ${nRequired === 1 ? 'is' : 'are'} empty.`,
 				idxRow + 1
 			);
@@ -437,7 +436,7 @@ class Validator extends Runner {
 				);
 			}
 
-			if (model.columns[column].type === 'Timestamp' && !luxon(v).isValid()) {
+			if (model.columns[column].type === 'Timestamp' && !luxon.DateTime.fromISO(v).isValid) {
 				this._addValidationError(
 					table,
 					column,
@@ -476,8 +475,7 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table column "${column}" value "${v}" is not in the "${
-						cvs[cv[1]].label
+					`The ${table} table column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -496,8 +494,7 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table matrix column "${column}" value "${v}" is not in the "${
-						cvs[cv[1]].label
+					`The ${table} table matrix column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -516,8 +513,7 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table dictionary column "${column}" value "${v}" is not in the "${
-						cvs[cv[1]].label
+					`The ${table} table dictionary column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -573,6 +569,7 @@ class Validator extends Runner {
 	}
 
 	_addValidationError(table, column, message, row) {
+
 		if (row === undefined) return;
 		if (
 			this.validation.errors[table] &&

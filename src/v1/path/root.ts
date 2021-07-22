@@ -23,7 +23,10 @@ export default {
 			ctx.body = { errors: [{ message: e.message }] };
 		}
 	},
-	v1Authenticate: async (c: OpenAPIContext, ctx: Koa.Context): Promise<void> => {
+	v1Authenticate: async (
+		c: OpenAPIContext,
+		ctx: Koa.Context
+	): Promise<void> => {
 		try {
 			ctx.body = await esAuthenticate(ctx.headers.authorization);
 			if (ctx.body === false) {

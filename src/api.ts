@@ -104,7 +104,7 @@ const server = new OpenAPIBackend({
 		},
 	},
 	ajvOpts: {
-		schemaId: 'auto',
+		schemaId: 'id',
 	},
 });
 server.init();

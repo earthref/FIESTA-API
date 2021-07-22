@@ -18,6 +18,8 @@ paths:
     $ref: 'public/v1/openapi.yaml#/paths/~1v1~1%7Brepository%7D~1private~1download'
   /v1/{repository}/private/data:
     $ref: 'public/v1/openapi.yaml#/paths/~1v1~1%7Brepository%7D~1private~1data'
+  /v1/{repository}/private/validate:
+    $ref: 'public/v1/openapi.yaml#/paths/~1v1~1%7Brepository%7D~1private~1validate'
   /v1/{repository}/private/search/{table}:
     $ref: 'public/v1/openapi.yaml#/paths/~1v1~1%7Brepository%7D~1private~1search~1%7Btable%7D'
   /v1/{repository}/private:
