@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
 import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
+import { isDev } from '../../api';
 
 const _ = deepdash(lodash);
 
@@ -568,10 +569,12 @@ async function esValidatePrivateContribution({
 	id?: number;
 } = {}): Promise<string> {
 	const must: Record<string, unknown>[] = [
-		{ term: { 'summary.contribution.contributor.raw': contributor } },
-		{ term: { 'summary.contribution._is_activated': false } },
 		{ term: { 'summary.contribution.id': id } },
 	];
+	if (!isDev) {
+		must.push({ term: { 'summary.contribution.contributor.raw': contributor } });
+		must.push({ term: { 'summary.contribution._is_activated': false } });
+	}
 	const params: RequestParams.Search = {
 		index: indexes[repository],
 		type: 'contribution',
@@ -607,7 +610,7 @@ async function esValidatePrivateContribution({
 			doc: {
 				summary: {
 					contribution: {
-						_is_valid: _.keys(validator.validation.errors).length
+						_is_valid: validator.validation.errors.length
 							? 'false'
 							: 'true',
 					},

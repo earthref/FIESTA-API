@@ -39,12 +39,12 @@ export default {
 				contributor: `@${user.handle}`,
 				id,
 			});
-			/* if (validation === undefined) {
+			if (validation === undefined) {
 				ctx.status = 204;
 				return;
-			}*/
+			}
 			ctx.status = 200;
-			ctx.body = validation;
+			ctx.body = { validation };
 		} catch (e) {
 			ctx.app.emit('error', e, ctx);
 			ctx.status = 500;

@@ -31,7 +31,8 @@ class Validator extends Runner {
 		super.reset();
 		this.json = {};
 		this.lastGetVersionResult = ''; // != undefined to trigger warnings and errors on first getVersion()
-		this.validation = { errors: {}, warnings: {} };
+		this.validation = { errors: [], warnings: [] };
+		this.validationResults = { errors: {}, warnings: {} };
 		this.keys = [];
 	}
 
@@ -165,7 +166,7 @@ class Validator extends Runner {
 		this.json = json;
 		this._findUniqueKeys();
 
-		return this._validateTables();
+		return this._validateTables().then(this._sortResults.bind(this));
 	}
 
 	_findUniqueKeys() {
@@ -206,26 +207,59 @@ class Validator extends Runner {
 		//console.log(JSON.stringify(this.keys, null, ' '));
 	}
 
-	_validateTables() {
+	_sortResults() {
 
-		let sortedTables = _.sortBy(
-			_.keys(models[_.last(versions)].tables),
+		const model = models[_.last(versions)];
+		_.sortBy(
+			_.keys(model.tables),
 			(table) => {
-				return models[_.last(versions)].tables[table].position;
+				return model.position;
 			}
-		);
+		).forEach(table => {
+			if (this.validationResults.errors[table] || this.validationResults.warnings[table]) {
+				_.sortBy(
+					_.keys(model.tables[table].columns),
+					(column) => {
+						return model.tables[table].columns[column].position;
+					}
+				).forEach(column => {
+					if (this.validationResults.errors[table] && this.validationResults.errors[table][column]) {
+						_.keys(this.validationResults.errors[table][column]).sort().forEach(message => {
+							this.validation.errors.push({
+								table, column, message, rows: _.keys(this.validationResults.errors[table][column][message]).map(x => Number.parseInt(x, 10))
+							});
+						});
+					}
+					if (this.validationResults.warnings[table] && this.validationResults.warnings[table][column]) {
+						_.keys(this.validationResults.errors[table][column]).sort().forEach(message => {
+							this.validation.errors.push({
+								table, column, message, rows: _.keys(this.validationResults.warnings[table][column][message]).map(x => Number.parseInt(x, 10))
+							});
+						});
+					}
+				});
+			}
+		});
+	}
 
-		return Promise.each(sortedTables, (table) => {
+	_validateTables() {
+		return Promise.each(_.keys(models[_.last(versions)].tables), (table) => {
 			return new Promise((resolve) => {
 				if (this.json[table]) {
 					let model = models[_.last(versions)].tables[table];
 					if (table === 'measurements') {
 						_.keys(model.columns).forEach((column) => {
-							this._validateColumn(table, column, this.json[table].columns);
+							if (_.includes(model.columns[column].validations, 'required()') &&
+								(!_.includes(this.json[table].columns, column))) {
+								this.validationResults.errors[table] = this.validationResults.errors[table] || {};
+								this.validationResults.errors[table][column] =
+									this.validationResults.errors[table][column] || {};
+								this.validationResults.errors[table][column][`The ${table} table is missing required column "${column}".`] = {};
+							}
 						});
 
-						if (!this.validation.errors[table])
-							this.json[table].rows.slice(0, 10000).forEach((row, idxRow) => {
+						if (!this.validationResults.errors[table])
+							this.json[table].rows.slice(0, 1000000).forEach((row, idxRow) => {
 								row.forEach((val, colIdx) => {
 									if (colIdx >= this.json[table].columns.length) {
 										this._addValidationError(
@@ -572,18 +606,18 @@ class Validator extends Runner {
 
 		if (row === undefined) return;
 		if (
-			this.validation.errors[table] &&
-			this.validation.errors[table][column] &&
-			this.validation.errors[table][column][message] &&
-			_.keys(this.validation.errors[table][column][message]).length > 1001
+			this.validationResults.errors[table] &&
+			this.validationResults.errors[table][column] &&
+			this.validationResults.errors[table][column][message] &&
+			_.keys(this.validationResults.errors[table][column][message]).length > 1001
 		)
 			return;
-		this.validation.errors[table] = this.validation.errors[table] || {};
-		this.validation.errors[table][column] =
-			this.validation.errors[table][column] || {};
-		this.validation.errors[table][column][message] =
-			this.validation.errors[table][column][message] || {};
-		this.validation.errors[table][column][message][row] = true;
+		this.validationResults.errors[table] = this.validationResults.errors[table] || {};
+		this.validationResults.errors[table][column] =
+			this.validationResults.errors[table][column] || {};
+		this.validationResults.errors[table][column][message] =
+			this.validationResults.errors[table][column][message] || {};
+		this.validationResults.errors[table][column][message][row] = true;
 	}
 }
 module.exports = { Validator };

@@ -342,7 +342,7 @@ paths:
         500:
           $ref: '#/components/responses/serverError'
   /v1/{repository}/private/validate:
-    get:
+    post:
       tags:
       - Private Data
       summary: Validate a private contribution

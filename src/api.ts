@@ -11,7 +11,7 @@ import v1InternalHanders from './v1/internal.handlers';
 import vNextHanders from './vNext/handlers';
 
 const isTest = process.env.NODE_ENV === 'testing';
-const isDev = isTest || process.env.TS_NODE_DEV;
+export const isDev = isTest || process.env.TS_NODE_DEV;
 const src = `${isDev ? 'src' : 'dist'}/public`;
 const vs = ['v1', 'v1/internal', 'vNext'];
 const vDefault = 'v1'; // default version
