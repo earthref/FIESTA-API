@@ -20,7 +20,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '1.1.0'
+  version: '1.2.0'
 servers:
 - url: https://api.earthref.org
 
@@ -285,6 +285,36 @@ paths:
             application/vnd.ms-excel: {}
         204:
           $ref: '#/components/responses/noMatches'
+        500:
+          $ref: '#/components/responses/serverError'
+  /v1/{repository}/validate:
+    post:
+      tags:
+      - Public Data
+      summary: Validate a contribution
+      operationId: v1ContributionValidate
+      parameters:
+      - $ref: '#/components/parameters/repository'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        200:
+          description: The validation result was returned.
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          $ref: '#/components/responses/serverError'
   /v1/{repository}/private/download:
     get:
       tags:
@@ -342,7 +372,7 @@ paths:
         500:
           $ref: '#/components/responses/serverError'
   /v1/{repository}/private/validate:
-    post:
+    put:
       tags:
       - Private Data
       summary: Validate a private contribution

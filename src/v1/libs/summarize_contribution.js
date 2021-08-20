@@ -506,7 +506,7 @@ class Summarizer extends Runner {
 																		this._aggregateSummaries(
 																			'locations',
 																			this.json.locations[locationProp][
-																				contributionProp
+																			contributionProp
 																			],
 																			this.json[table][tableProp][parentProp]
 																		);
@@ -518,7 +518,7 @@ class Summarizer extends Runner {
 																			this._aggregateSummaries(
 																				'ages',
 																				this.json.locations[locationProp][
-																					contributionProp
+																				contributionProp
 																				],
 																				this.json[table][tableProp][parentProp]
 																			);
@@ -531,7 +531,7 @@ class Summarizer extends Runner {
 																			this._aggregateSummaries(
 																				'images',
 																				this.json.locations[locationProp][
-																					contributionProp
+																				contributionProp
 																				],
 																				this.json[table][tableProp][parentProp]
 																			);
@@ -601,7 +601,7 @@ class Summarizer extends Runner {
 															this._aggregateSummaries(
 																'locations',
 																this.json.locations[locationProp][
-																	contributionProp
+																contributionProp
 																],
 																this.json[table][tableProp][parentProp]
 															);
@@ -613,7 +613,7 @@ class Summarizer extends Runner {
 																this._aggregateSummaries(
 																	'ages',
 																	this.json.locations[locationProp][
-																		contributionProp
+																	contributionProp
 																	],
 																	this.json[table][tableProp][parentProp]
 																);
@@ -626,7 +626,7 @@ class Summarizer extends Runner {
 																this._aggregateSummaries(
 																	'images',
 																	this.json.locations[locationProp][
-																		contributionProp
+																	contributionProp
 																	],
 																	this.json[table][tableProp][parentProp]
 																);
@@ -1140,7 +1140,7 @@ class Summarizer extends Runner {
 															this._aggregateSummaries(
 																'experiments',
 																this.json.experiments[experimentProp][
-																	specimenProp
+																specimenProp
 																],
 																this.json.samples[sampleProp][siteProp],
 																undefined,
@@ -1154,7 +1154,7 @@ class Summarizer extends Runner {
 																		this._aggregateSummaries(
 																			'experiments',
 																			this.json.experiments[experimentProp][
-																				specimenProp
+																			specimenProp
 																			],
 																			this.json.sites[siteProp][locationProp],
 																			undefined,
@@ -1169,10 +1169,10 @@ class Summarizer extends Runner {
 																				this._aggregateSummaries(
 																					'experiments',
 																					this.json.experiments[experimentProp][
-																						specimenProp
+																					specimenProp
 																					],
 																					this.json.locations[locationProp][
-																						prop
+																					prop
 																					],
 																					undefined,
 																					onlyCounts
@@ -1288,6 +1288,7 @@ class Summarizer extends Runner {
 		_.keys(row).forEach((column) => {
 			if (model.columns[column] && model.columns[column].type === 'List') {
 				this._initProp(summary, column, []);
+				if (!_.isArray(summary[column])) summary[column] = [];
 				if (row[column] && row[column].split)
 					row[column].split(':').forEach((val) => {
 						summary[column][_.trim(val)] = true;
@@ -1471,7 +1472,7 @@ class Summarizer extends Runner {
 												val === undefined &&
 												cvItem.item &&
 												cvItem.item.toLowerCase() ===
-													_.trim(row[column]).toLowerCase()
+												_.trim(row[column]).toLowerCase()
 											)
 												val = cvItem.label;
 										});
@@ -1526,8 +1527,8 @@ class Summarizer extends Runner {
 				let vals = _.isArray(val.vals)
 					? val.vals
 					: _.isPlainObject(val.vals)
-					? _.keys(val.vals)
-					: [];
+						? _.keys(val.vals)
+						: [];
 				vals.forEach((v) => {
 					if (_.isPlainObject(summary[column].vals)) {
 						summary[column].vals[v] = true;
@@ -1620,7 +1621,7 @@ class Summarizer extends Runner {
 		console.log('_aggregateSummaries', fromName, toName, onlyCounts);
 		let model =
 			models[_.last(versions)].tables[
-				fromName === 'experiments' ? 'measurements' : fromName
+			fromName === 'experiments' ? 'measurements' : fromName
 			];
 		toName = toName || fromName;
 		if (model && from && from.summary && from.summary[fromName] && to) {
@@ -1652,8 +1653,8 @@ class Summarizer extends Runner {
 								vals = _.isArray(vals)
 									? vals
 									: _.isPlainObject(vals)
-									? _.keys(vals)
-									: [];
+										? _.keys(vals)
+										: [];
 								vals.forEach((v) => {
 									if (_.isPlainObject(to.summary[toName][column])) {
 										to.summary[toName][column][v] = true;

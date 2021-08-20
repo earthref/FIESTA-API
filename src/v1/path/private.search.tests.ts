@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import axios, { AxiosInstance } from 'axios';
 
 dotenv.config();
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 const v = 'v1';
 
 describe(`FIESTA API ${v} Private Search Tests`, () => {

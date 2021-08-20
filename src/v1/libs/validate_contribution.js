@@ -588,9 +588,9 @@ class Validator extends Runner {
 				_.find(model.columns[column].validations, (x) => {
 					return (inKeys = x.match(/^in\("([^.]*)\.([^.]*)"\)$/));
 				}) &&
-				(!this.keys[inKeys[1]] ||
+				(this.keys[inKeys[1]] && (
 					!this.keys[inKeys[1]][inKeys[2]] ||
-					!this.keys[inKeys[1]][inKeys[2]][v])
+					!this.keys[inKeys[1]][inKeys[2]][v]))
 			) {
 				this._addValidationError(
 					table,

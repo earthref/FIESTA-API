@@ -1,7 +1,8 @@
 import root from './path/root';
-import download from './path/public.download';
-import data from './path/public.data';
-import search from './path/public.search';
+import publicDownload from './path/public.download';
+import publicData from './path/public.data';
+import publicSearch from './path/public.search';
+import publicValidate from './path/public.validate';
 import privateCreateUpdateDelete from './path/private';
 import privateDownload from './path/private.download';
 import privateSearch from './path/private.search';
@@ -10,9 +11,10 @@ import privateValidate from './path/private.validate';
 
 export default {
 	...root,
-	...download,
-	...data,
-	...search,
+	...publicDownload,
+	...publicData,
+	...publicSearch,
+	...publicValidate,
 	...privateCreateUpdateDelete,
 	...privateDownload,
 	...privateSearch,

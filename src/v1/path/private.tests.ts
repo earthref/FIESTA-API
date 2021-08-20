@@ -33,7 +33,7 @@ describe(`FIESTA API ${v} Private Create/Update/Delete Tests`, () => {
 				},
 			}
 		);
-		expect(createRes.status).toBe(200);
+		expect(createRes.status).toBe(201);
 		expect(createRes.data).toHaveProperty('id');
 		expect(createRes.data.id).toBeGreaterThanOrEqual(1);
 		const deleteRes = await client.delete(

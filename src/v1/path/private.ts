@@ -38,7 +38,7 @@ export default {
 			const { repository: repositories } = c.request.params;
 			const repository: string =
 				repositories instanceof Array ? repositories[0] : repositories;
-			ctx.status = 200;
+			ctx.status = 201;
 			ctx.body = {
 				id: await esCreatePrivate({
 					repository,
@@ -165,7 +165,7 @@ export default {
 				doc,
 			});
 
-			ctx.status = 200;
+			ctx.status = 202;
 			ctx.body = {
 				rowsAdded: 0,
 				rowsChanged: 0,
