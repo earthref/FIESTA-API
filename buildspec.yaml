@@ -25,5 +25,5 @@ artifacts:
   files:
     - dist/**/*
     - node_modules/**/*
+    - .platform/**/*
     - package.json
-    - .ebextensions/**/*
