@@ -19115,8 +19115,7 @@ const cvs = {
 				item: 'Not Specified',
 			},
 			{
-				item:
-					'Advanced Light Source (Lawrence Berkeley National Laboratory, USA)',
+				item: 'Advanced Light Source (Lawrence Berkeley National Laboratory, USA)',
 			},
 			{
 				item: 'Archeomagnetism Laboratory (CENIEH Burgos, Spain)',
@@ -19125,41 +19124,34 @@ const cvs = {
 				item: 'GeoRessources (CNRS-Université de Lorraine, France)',
 			},
 			{
-				item:
-					'Geomechanics Laboratory, GEOLAB-CERENA (Instituto Superior Técnico, Portugal)',
+				item: 'Geomechanics Laboratory, GEOLAB-CERENA (Instituto Superior Técnico, Portugal)',
 			},
 			{
-				item:
-					'Geosciences Montpellier (CNRS-Université de Montpellier, France)',
+				item: 'Geosciences Montpellier (CNRS-Université de Montpellier, France)',
 			},
 			{
-				item:
-					'Group of Magnetic Applications (Universitat Autònoma de Barcelona (UAB), Spain)',
+				item: 'Group of Magnetic Applications (Universitat Autònoma de Barcelona (UAB), Spain)',
 			},
 			{
 				item: 'Laboratory for Environmental Magnetism (KMI, Belgium)',
 			},
 			{
-				item:
-					'Laboratory of AMS (Paleomagnetism) and Geophysical Prospection (IGME-Universidad de Zaragoza, Spain)',
+				item: 'Laboratory of AMS (Paleomagnetism) and Geophysical Prospection (IGME-Universidad de Zaragoza, Spain)',
 			},
 			{
-				item:
-					'Laboratory of Paleomagnetism (CSIC-ICTJA and Universitat de Barcelona, Spain)',
+				item: 'Laboratory of Paleomagnetism (CSIC-ICTJA and Universitat de Barcelona, Spain)',
 			},
 			{
 				item: 'Laboratory of Paleomagnetism (CSIC-IPNA, Spain)',
 			},
 			{
-				item:
-					'Laboratory of Paleomagnetism (Universidad Complutense de Madrid (UCM) and CSIC-IGEO, Spain)',
+				item: 'Laboratory of Paleomagnetism (Universidad Complutense de Madrid (UCM) and CSIC-IGEO, Spain)',
 			},
 			{
 				item: 'Laboratory of Paleomagnetism (Universidad de Vigo, Spain)',
 			},
 			{
-				item:
-					'Paleomagnetic Lab (Scripps Institution of Oceanography, UCSD, USA)',
+				item: 'Paleomagnetic Lab (Scripps Institution of Oceanography, UCSD, USA)',
 			},
 			{
 				item: 'Paleomagnetic Laboratory (Berkeley Geochronology Center, USA)',
@@ -19177,44 +19169,34 @@ const cvs = {
 				item: 'Paleomagnetic Laboratory (Università di Roma TRE, Italy)',
 			},
 			{
-				item:
-					'Paleomagnetic Laboratory Fort Hoofddijk (Utrecht University, The Netherlands)',
+				item: 'Paleomagnetic Laboratory Fort Hoofddijk (Utrecht University, The Netherlands)',
 			},
 			{
-				item:
-					'Paleomagnetic and Rock Magnetic Laboratory (Universidad de Burgos, Spain)',
+				item: 'Paleomagnetic and Rock Magnetic Laboratory (Universidad de Burgos, Spain)',
 			},
 			{
-				item:
-					'Paleomagnetics Laboratory (California Institute of Technology, USA)',
+				item: 'Paleomagnetics Laboratory (California Institute of Technology, USA)',
 			},
 			{
-				item:
-					'Paleomagnetism Laboratory (Massachusetts Institute of Technology, USA)',
+				item: 'Paleomagnetism Laboratory (Massachusetts Institute of Technology, USA)',
 			},
 			{
-				item:
-					'Paléomagnétisme CEREGE Aix en Provence (CNRS-Aix Marseille University, France)',
+				item: 'Paléomagnétisme CEREGE Aix en Provence (CNRS-Aix Marseille University, France)',
 			},
 			{
-				item:
-					'Paléomagnétisme Géosciences Environnement (CNRS-Toulouse University, France)',
+				item: 'Paléomagnétisme Géosciences Environnement (CNRS-Toulouse University, France)',
 			},
 			{
-				item:
-					'Paléomagnétisme Géosciences Montpellier (CNRS-Montpellier University, France)',
+				item: 'Paléomagnétisme Géosciences Montpellier (CNRS-Montpellier University, France)',
 			},
 			{
-				item:
-					'Paléomagnétisme Géosciences Rennes (CNRS-Rennes 1 University, France)',
+				item: 'Paléomagnétisme Géosciences Rennes (CNRS-Rennes 1 University, France)',
 			},
 			{
-				item:
-					'Paléomagnétisme IPG Paris (CNRS-Sorbonne Paris Cité University, France)',
+				item: 'Paléomagnétisme IPG Paris (CNRS-Sorbonne Paris Cité University, France)',
 			},
 			{
-				item:
-					'Paléomagnétisme LSCE Gif sur Yvette (CNRS-Versailles St Quentin University, France)',
+				item: 'Paléomagnétisme LSCE Gif sur Yvette (CNRS-Versailles St Quentin University, France)',
 			},
 		],
 	},

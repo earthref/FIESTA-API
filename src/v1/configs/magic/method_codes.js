@@ -307,6 +307,13 @@ const methodCodes = {
 				definition: 'Sub sampling: Core',
 			},
 			{
+				code: 'SP-SS-C-PMAG',
+				definition:
+					'Sub sampling: Core samples cut from a 1 inch diameter core',
+				description:
+					'The standard paleomagnetc specimen cut from the longer core sampled in the field',
+			},
+			{
 				code: 'SP-SS-U',
 				definition: 'Sub sampling: U-Channel',
 			},
@@ -357,7 +364,7 @@ const methodCodes = {
 			{
 				code: 'IE-AFAF',
 				definition:
-					'Best-fit slope through NRM AF demagnetization versus TRM AF demagnetization.',
+					'Best-fit slope through NRM AF demagnetization versus TRM AF demagnetization',
 				description:
 					'Like the Shaw (1974) method but without the ARM AF demag steps that are used to check for alteration.',
 			},
@@ -372,40 +379,46 @@ const methodCodes = {
 					'Standard error of the paleointensity estimated by total least squares (York, 1969) as the slope of the Arai Plot',
 			},
 			{
+				code: 'IE-BICEP',
+				definition: 'Bias Corrected Estimation of Paleointensity (BiCEP)',
 				description:
-					'Specimen level paleointensity and uncertainty determined by averaging all combinations of 4 or more adjacent points within unblocking temperature interval; Sample level paleointensity and standard error estimated by bootstrap resampling of specimen data.',
+					'Bayesian paleointensity estimator of Cych et al. (in prep).',
+			},
+			{
 				code: 'IE-BOOT',
 				definition:
 					'Thellier-type intensity and uncertainty estimated by bootstrap resampling of data',
+				description:
+					'Specimen level paleointensity and uncertainty determined by averaging all combinations of 4 or more adjacent points within unblocking temperature interval; Sample level paleointensity and standard error estimated by bootstrap resampling of specimen data.',
 			},
 			{
+				code: 'IE-BZF-WK',
 				definition:
 					'Multidomain correction based on the back-zero-forth (BZF) and mutiple synthetic Arai signatures',
 				description:
-					'A paleointensity technique used to account for concave-up Arai diagrams due to multidomain (MD) contributions to determine unbiased paleointensities. A comprehensive back-zero-forth (BZF) heating technique is used in addition to zero-field heating between the Thellier two opposite in-field heating steps in order to estimate paleointensities in various standard protocols and provide internal self-consistency checks. After the first BZF experiment, each sample gets total thermal remanent magnetization (tTRM) by cooling from the Curie point in the presence of a low (15 mT) laboratory- applied field. Then the BZF protocol, with the laboratory-applied tTRM as a synthetic natural remanent magnetization (NRM), using the same laboratory-applied field and temperature steps to obtain the synthetic Arai signatures, which should only represent the domain-state dependent properties of the samples. Then the original Arai diagrams are corrected from the first BZF experiment by using the Arai signatures from the repeated BZF experiment, which neutralizes the typical MD concave-up effect. Wang & Kent (2013)',
-				code: 'IE-BZF-WK',
+					'A paleointensity technique used to account for concave-up Arai diagrams due to multidomain (MD) contributions to determine unbiased paleointensities. A comprehensive back-zero-forth (BZF) heating technique is used in addition to zero-field heating between the Thellier two opposite in-field heating steps in order to estimate paleointensities in various standard protocols and provide internal self-consistency checks. After the first BZF experiment, each sample gets total thermal remanent magnetization (tTRM) by cooling from the Curie point in the presence of a low (15 mT) laboratory- applied field. Then the BZF protocol, with the laboratory-applied tTRM as a synthetic natural remanent magnetization (NRM), using the same laboratory-applied field and temperature steps to obtain the synthetic Arai signatures, which should only represent the domain-state dependent properties of the samples. Then the original Arai diagrams are corrected from the first BZF experiment by using the Arai signatures from the repeated BZF experiment, which neutralizes the typical MD concave-up effect. Wang & Kent (2013).',
 				urls: ['https://doi.org/10.1002/ggge.20248'],
 			},
 			{
-				urls: [
-					'https://earthref.org/MagIC/books/Tauxe/Essentials/#x1-244017x7',
-				],
 				code: 'IE-DRAT',
 				definition: 'pTRM difference ratio (DRAT)',
-			},
-			{
 				urls: [
 					'https://earthref.org/MagIC/books/Tauxe/Essentials/#x1-244017x7',
 				],
-				code: 'IE-DRATS',
-				definition: 'pTRM difference ratio sum (DRATS)',
 			},
 			{
+				code: 'IE-DRATS',
+				definition: 'pTRM difference ratio sum (DRATS)',
+				urls: [
+					'https://earthref.org/MagIC/books/Tauxe/Essentials/#x1-244017x7',
+				],
+			},
+			{
+				code: 'IE-F',
+				definition: "Fraction of NRM component (Coe's F number)",
 				urls: [
 					'https://earthref.org/MagIC/books/Tauxe/Essentials/#x1-244013x5',
 				],
-				code: 'IE-F',
-				definition: "Fraction of NRM component (Coe's F number)",
 			},
 			{
 				urls: ['https://earthref.org/MagIC/books/Tauxe/Essentials/#x1-2440012'],
@@ -1219,6 +1232,14 @@ const methodCodes = {
 				code: 'LP-PI-SXTAL',
 				definition:
 					'Paleointensity experiment: Using a single crystal approach',
+			},
+			{
+				code: 'LP-PI-TRIAXE',
+				definition:
+					'Demagnetization/remagnetization measured continuously at increasing and decreasing temperatures',
+				description:
+					'Triax paleointensity experiment where the magnetic field is measured insitu while changing the temperature(Le Goff and Gallet, 1961)',
+				urls: ['https://doi.org/10.1016/j.epsl.2004.10.025'],
 			},
 			{
 				code: 'LP-PI-TRM',

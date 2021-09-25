@@ -436,15 +436,13 @@ class Exporter extends Runner {
 						discoveredColumns[potentialColumnToAdd] = potentialColumnToAdd; //again this is a bit of overlapping code here but i like the object notatoin for keeping track of a set
 						columnHeaderArray.push(potentialColumnToAdd);
 
-						let labelToAdd = this.model.tables[tableName].columns[
-							potentialColumnToAdd
-						].label;
+						let labelToAdd =
+							this.model.tables[tableName].columns[potentialColumnToAdd].label;
 						labelHeaderArray.push(labelToAdd);
 
 						// Append the group name if it's not the same as the previous column.
-						let currentGroupToAdd = this.model.tables[tableName].columns[
-							potentialColumnToAdd
-						].group;
+						let currentGroupToAdd =
+							this.model.tables[tableName].columns[potentialColumnToAdd].group;
 						groupHeaderArray.push(
 							previousGroupFound != currentGroupToAdd ? currentGroupToAdd : ''
 						);
@@ -467,15 +465,13 @@ class Exporter extends Runner {
 						discoveredColumns[potentialColumnToAdd] = potentialColumnToAdd; //again this is a bit of overlapping code here but i like the object notatoin for keeping track of a set
 						columnHeaderArray.push(potentialColumnToAdd);
 
-						let labelToAdd = this.model.tables[tableName].columns[
-							potentialColumnToAdd
-						].label;
+						let labelToAdd =
+							this.model.tables[tableName].columns[potentialColumnToAdd].label;
 						labelHeaderArray.push(labelToAdd);
 
 						// Append the group name if it's not the same as the previous column.
-						let currentGroupToAdd = this.model.tables[tableName].columns[
-							potentialColumnToAdd
-						].group;
+						let currentGroupToAdd =
+							this.model.tables[tableName].columns[potentialColumnToAdd].group;
 						groupHeaderArray.push(
 							previousGroupFound != currentGroupToAdd ? currentGroupToAdd : ''
 						);
@@ -567,9 +563,8 @@ class Exporter extends Runner {
 						tableName
 					]) {
 						//loop through the columns in the ordered model
-						let orderedColumnNameToPotentiallyAdd = this.orderedModel[
-							orderedTableIdx
-						][tableName][orderedColIdx];
+						let orderedColumnNameToPotentiallyAdd =
+							this.orderedModel[orderedTableIdx][tableName][orderedColIdx];
 						for (let jsonRowsIdx in jsonToExport[tableName]) {
 							//if the column from the model is found in the jsonToTranslate, and it hasn't already been added to the
 							// column header in the TSV, then add it
@@ -668,9 +663,8 @@ class Exporter extends Runner {
 
 			if (newTableName.toLowerCase() === 'measurements') {
 				for (let jsonColumnName of jsonToTranslate[newTableName].columns) {
-					let modelColumn = this.model.tables[newTableName].columns[
-						jsonColumnName
-					];
+					let modelColumn =
+						this.model.tables[newTableName].columns[jsonColumnName];
 					if (!modelColumn || modelColumn == undefined) {
 						if (!columnErrorReported[jsonColumnName]) {
 							this._appendError(
@@ -690,9 +684,8 @@ class Exporter extends Runner {
 						jsonToTranslate[newTableName][jsonRowIdx]
 					);
 					for (let jsonColumnName of jsonColumnNames) {
-						let modelColumn = this.model.tables[newTableName].columns[
-							jsonColumnName
-						];
+						let modelColumn =
+							this.model.tables[newTableName].columns[jsonColumnName];
 						if (!modelColumn || modelColumn == undefined) {
 							if (!columnErrorReported[jsonColumnName]) {
 								this._appendError(
@@ -731,15 +724,13 @@ class Exporter extends Runner {
 			);
 			for (let columnIdx in columnNames) {
 				let columnName = columnNames[columnIdx];
-				let columnPosition = this.model.tables[tableNames[tableIdx]].columns[
-					columnName
-				].position;
+				let columnPosition =
+					this.model.tables[tableNames[tableIdx]].columns[columnName].position;
 				columnPositionMap[columnPosition - 1] = columnName;
 			}
 			//assign the properly ordered array of columns to the object keyed via the current table
-			orderedModel[properTablePositionIdx][
-				tableNames[tableIdx]
-			] = columnPositionMap;
+			orderedModel[properTablePositionIdx][tableNames[tableIdx]] =
+				columnPositionMap;
 		}
 		return orderedModel;
 	}

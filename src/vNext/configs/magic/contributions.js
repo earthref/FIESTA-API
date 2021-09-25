@@ -564,8 +564,7 @@ export default {
 			end_lats: '9.8:60.1:31.7811:19.9:65.7:19.3:31.6:40.8',
 			magic_contribution_id: '10988',
 			max_ages: '3961',
-			type:
-				':Submarine Site:Slag:Brick:Glassy Margin:Lava Flow:Archeological Site:Outcrop:Laboratory:',
+			type: ':Submarine Site:Slag:Brick:Glassy Margin:Lava Flow:Archeological Site:Outcrop:Laboratory:',
 			class: ':Synthetic:Igneous:Extrusive:Submarine:Archeologic:',
 			location_types: ':Submarine Site:Outcrop:Laboratory:Archeological Site:',
 			n_dec: '14124',
@@ -798,8 +797,7 @@ export default {
 			original_author_id: '7011',
 			n_vgp: '47',
 			max_ages: '1800000',
-			type:
-				':Region:Pyroclastite:Not Specified:Lava Flow:Volcanic Dome:Volcanic Dike:',
+			type: ':Region:Pyroclastite:Not Specified:Lava Flow:Volcanic Dome:Volcanic Dike:',
 			class: ':Igneous:Extrusive:Not Specified:',
 			location_types: ':Region:',
 			n_dec: '6443',
@@ -1212,8 +1210,7 @@ export default {
 			magic_contribution_id: '10708',
 			min_int: '.0000128',
 			max_ages: '3940000',
-			type:
-				':Region:Glassy Margin:Sill:Volcanic Dike:Volcanic Pillow:Lava Flow:Flow Top:',
+			type: ':Region:Glassy Margin:Sill:Volcanic Dike:Volcanic Pillow:Lava Flow:Flow Top:',
 			class: ':Extrusive:Igneous:',
 			reference_keywords: ':Iceland:Paleointensity:subglacial:',
 			location_types: ':Region:',

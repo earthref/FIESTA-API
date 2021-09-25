@@ -13,13 +13,8 @@ export default {
 	): Promise<void> => {
 		try {
 			const { repository: repositories } = c.request.params;
-			const {
-				n_max_contributions,
-				query,
-				id,
-				doi,
-				contributor_name,
-			} = c.request.query;
+			const { n_max_contributions, query, id, doi, contributor_name } =
+				c.request.query;
 			if (
 				query === undefined &&
 				id === undefined &&

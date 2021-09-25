@@ -182,9 +182,8 @@ export default class extends Runner {
 					if (jsonTableOld === 'er_expeditions') {
 						let expeditionsNew = [];
 						for (let expeditionRowIdx in this.jsonOld['er_expeditions']) {
-							let expeditionRow = this.jsonOld['er_expeditions'][
-								expeditionRowIdx
-							];
+							let expeditionRow =
+								this.jsonOld['er_expeditions'][expeditionRowIdx];
 
 							// If a list of locations for this expedition is provided, duplicate the
 							// expedition row for each location and add the er_location_name column.
@@ -204,9 +203,8 @@ export default class extends Runner {
 							// Otherwise, duplicate the expedition row for each location and add the er_location name column.
 							else {
 								for (let locationRowIdx in this.jsonOld['er_locations']) {
-									let locationRow = this.jsonOld['er_locations'][
-										locationRowIdx
-									];
+									let locationRow =
+										this.jsonOld['er_locations'][locationRowIdx];
 									expeditionRow['er_location_name'] =
 										locationRow['er_location_name'];
 									expeditionsNew.push(_.cloneDeep(expeditionRow));
@@ -437,30 +435,37 @@ export default class extends Runner {
 						// Map the magic_measurements columns into measurements columns.
 						let pullIdxs = [];
 						let isPositiveIntegerRe = /^\d+$/;
-						let dateIdx = this.jsonOld['magic_measurements'].columns.indexOf(
-							'measurement_date'
-						);
+						let dateIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'measurement_date'
+							);
 						let tzIdx = this.jsonOld['magic_measurements'].columns.indexOf(
 							'measurement_time_zone'
 						);
-						let locationIdx = this.jsonOld[
-							'magic_measurements'
-						].columns.indexOf('er_location_name');
-						let siteIdx = this.jsonOld['magic_measurements'].columns.indexOf(
-							'er_site_name'
-						);
-						let sampleIdx = this.jsonOld['magic_measurements'].columns.indexOf(
-							'er_sample_name'
-						);
-						let specimenIdx = this.jsonOld[
-							'magic_measurements'
-						].columns.indexOf('er_specimen_name');
-						let syntheticIdx = this.jsonOld[
-							'magic_measurements'
-						].columns.indexOf('er_synthetic_name');
-						let numberIdx = this.jsonOld['magic_measurements'].columns.indexOf(
-							'measurement_number'
-						);
+						let locationIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'er_location_name'
+							);
+						let siteIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'er_site_name'
+							);
+						let sampleIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'er_sample_name'
+							);
+						let specimenIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'er_specimen_name'
+							);
+						let syntheticIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'er_synthetic_name'
+							);
+						let numberIdx =
+							this.jsonOld['magic_measurements'].columns.indexOf(
+								'measurement_number'
+							);
 						let experimentIdx = this.jsonOld[
 							'magic_measurements'
 						].columns.indexOf('magic_experiment_name');
@@ -471,9 +476,8 @@ export default class extends Runner {
 							specimens: {},
 						};
 						for (let columnIdx in this.jsonOld['magic_measurements'].columns) {
-							let jsonColumnOld = this.jsonOld['magic_measurements'].columns[
-								columnIdx
-							];
+							let jsonColumnOld =
+								this.jsonOld['magic_measurements'].columns[columnIdx];
 
 							// Check that the old column is defined in the old data model.
 							if (
@@ -606,9 +610,8 @@ export default class extends Runner {
 											row[specimenIdx >= 0 ? specimenIdx : row.length - 1],
 									});
 									specimensRowIdx = this.jsonNew.specimens.length - 1;
-									parentsIdx.specimens[
-										'_' + row[specimenIdx]
-									] = specimensRowIdx;
+									parentsIdx.specimens['_' + row[specimenIdx]] =
+										specimensRowIdx;
 								}
 								if (
 									sampleIdx >= 0 &&
@@ -765,9 +768,8 @@ export default class extends Runner {
 				// Update the data model version.
 				if (!this.jsonNew['contribution']) this.jsonNew['contribution'] = [{}];
 				if (parseFloat(this.versionNew) >= 3)
-					this.jsonNew['contribution'][0][
-						'data_model_version'
-					] = this.versionNew;
+					this.jsonNew['contribution'][0]['data_model_version'] =
+						this.versionNew;
 				else this.jsonNew['contribution'][0]['magic_version'] = this.versionNew;
 
 				//console.log('done with mapping', this.versionOld, 'to', this.versionNew);
@@ -865,10 +867,8 @@ export default class extends Runner {
 							`type of relative intensity normalization in the method codes.`
 					);
 				else if (relativeIntensityNormalizations.length === 1)
-					relativeIntensityNormalization = relativeIntensityNormalizations[0].replace(
-						/IE-/,
-						''
-					);
+					relativeIntensityNormalization =
+						relativeIntensityNormalizations[0].replace(/IE-/, '');
 				else relativeIntensityNormalization = undefined;
 				// Now relativeIntensityNormalization is undefined or 'ARM' or 'IRM' or 'CHI'.
 			}
@@ -913,29 +913,25 @@ export default class extends Runner {
 						.replace(/(^:|:$)/g, '')
 						.split(/:/);
 					alternatives.push(jsonRowOld['er_specimen_name']);
-					jsonRowOld['er_specimen_alternatives'] = _.uniq(alternatives).join(
-						':'
-					);
+					jsonRowOld['er_specimen_alternatives'] =
+						_.uniq(alternatives).join(':');
 				} else {
 					jsonRowOld['er_specimen_alternatives'] =
 						jsonRowOld['er_specimen_name'];
 				}
-				jsonRowOld['er_specimen_name'] = this.syntheticSpecimenNames[
-					jsonRowOld['er_specimen_name']
-				];
+				jsonRowOld['er_specimen_name'] =
+					this.syntheticSpecimenNames[jsonRowOld['er_specimen_name']];
 			} else if (this.syntheticSpecimenNames[jsonRowOld['er_specimen_name']]) {
-				jsonRowOld['er_specimen_name'] = this.syntheticSpecimenNames[
-					jsonRowOld['er_specimen_name']
-				];
+				jsonRowOld['er_specimen_name'] =
+					this.syntheticSpecimenNames[jsonRowOld['er_specimen_name']];
 			} else if (jsonRowOld['er_specimen_names']) {
 				let specimens = jsonRowOld['er_specimen_names']
 					.replace(/(^:|:$)/g, '')
 					.split(/:/);
 				for (let specimenIdx in specimens) {
 					if (this.syntheticSpecimenNames[specimens[specimenIdx]]) {
-						specimens[specimenIdx] = this.syntheticSpecimenNames[
-							specimens[specimenIdx]
-						];
+						specimens[specimenIdx] =
+							this.syntheticSpecimenNames[specimens[specimenIdx]];
 					}
 				}
 				jsonRowOld['er_specimen_names'] = _.uniq(specimens).join(':');
@@ -1319,12 +1315,12 @@ export default class extends Runner {
 
 						// Create the criteria row.
 						let criteriaRow = {};
-						criteriaRow['table_column'] = this.modelNew['criteria_map'][
-							jsonColumnOld
-						]['table_column'];
-						criteriaRow['criterion_operation'] = this.modelNew['criteria_map'][
-							jsonColumnOld
-						]['criterion_operation'];
+						criteriaRow['table_column'] =
+							this.modelNew['criteria_map'][jsonColumnOld]['table_column'];
+						criteriaRow['criterion_operation'] =
+							this.modelNew['criteria_map'][jsonColumnOld][
+								'criterion_operation'
+							];
 						criteriaRow['criterion_value'] = jsonRowOld[jsonColumnOld];
 						if (jsonRowOld['pmag_criteria_code'])
 							criteriaRow['criterion'] = jsonRowOld['pmag_criteria_code'];
@@ -1394,12 +1390,14 @@ export default class extends Runner {
 			for (let upgradeToTableAndColumnIdx in this.upgradeMap[jsonTableOld][
 				jsonColumnOld
 			]) {
-				let jsonTableNew = this.upgradeMap[jsonTableOld][jsonColumnOld][
-					upgradeToTableAndColumnIdx
-				].table;
-				let jsonColumnNew = this.upgradeMap[jsonTableOld][jsonColumnOld][
-					upgradeToTableAndColumnIdx
-				].column;
+				let jsonTableNew =
+					this.upgradeMap[jsonTableOld][jsonColumnOld][
+						upgradeToTableAndColumnIdx
+					].table;
+				let jsonColumnNew =
+					this.upgradeMap[jsonTableOld][jsonColumnOld][
+						upgradeToTableAndColumnIdx
+					].column;
 				let jsonValueNew = jsonRowOld[jsonColumnOld];
 
 				if (!joinTable || joinTable === jsonTableNew) {

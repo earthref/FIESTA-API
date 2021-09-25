@@ -19,7 +19,7 @@ let mcs = _.flattenDeep(
 
 Promise.each = async function (arr, fn) {
 	for (const item of arr) await fn(item);
-}
+};
 
 class Validator extends Runner {
 	constructor({ runnerState }) {
@@ -134,12 +134,12 @@ class Validator extends Runner {
 				let columns = this.json[table].columns
 					? this.json[table].columns
 					: _.reduce(
-						this.json[table],
-						(columns, row) => {
-							return _.union(_.keys(row), columns);
-						},
-						[]
-					);
+							this.json[table],
+							(columns, row) => {
+								return _.union(_.keys(row), columns);
+							},
+							[]
+					  );
 
 				// If there is a column name that isn't in the this version's data model, skip to the next older version.
 				if (
@@ -156,7 +156,6 @@ class Validator extends Runner {
 	}
 
 	validatePromise(json) {
-
 		if (!json) {
 			this._appendError(`Invalid contribution.`);
 			return Promise.resolve();
@@ -208,34 +207,50 @@ class Validator extends Runner {
 	}
 
 	_sortResults() {
-
 		const model = models[_.last(versions)];
-		_.sortBy(
-			_.keys(model.tables),
-			(table) => {
-				return model.position;
-			}
-		).forEach(table => {
-			if (this.validationResults.errors[table] || this.validationResults.warnings[table]) {
-				_.sortBy(
-					_.keys(model.tables[table].columns),
-					(column) => {
-						return model.tables[table].columns[column].position;
-					}
-				).forEach(column => {
-					if (this.validationResults.errors[table] && this.validationResults.errors[table][column]) {
-						_.keys(this.validationResults.errors[table][column]).sort().forEach(message => {
-							this.validation.errors.push({
-								table, column, message, rows: _.keys(this.validationResults.errors[table][column][message]).map(x => Number.parseInt(x, 10))
+		_.sortBy(_.keys(model.tables), (table) => {
+			return model.position;
+		}).forEach((table) => {
+			if (
+				this.validationResults.errors[table] ||
+				this.validationResults.warnings[table]
+			) {
+				_.sortBy(_.keys(model.tables[table].columns), (column) => {
+					return model.tables[table].columns[column].position;
+				}).forEach((column) => {
+					if (
+						this.validationResults.errors[table] &&
+						this.validationResults.errors[table][column]
+					) {
+						_.keys(this.validationResults.errors[table][column])
+							.sort()
+							.forEach((message) => {
+								this.validation.errors.push({
+									table,
+									column,
+									message,
+									rows: _.keys(
+										this.validationResults.errors[table][column][message]
+									).map((x) => Number.parseInt(x, 10)),
+								});
 							});
-						});
 					}
-					if (this.validationResults.warnings[table] && this.validationResults.warnings[table][column]) {
-						_.keys(this.validationResults.errors[table][column]).sort().forEach(message => {
-							this.validation.errors.push({
-								table, column, message, rows: _.keys(this.validationResults.warnings[table][column][message]).map(x => Number.parseInt(x, 10))
+					if (
+						this.validationResults.warnings[table] &&
+						this.validationResults.warnings[table][column]
+					) {
+						_.keys(this.validationResults.errors[table][column])
+							.sort()
+							.forEach((message) => {
+								this.validation.errors.push({
+									table,
+									column,
+									message,
+									rows: _.keys(
+										this.validationResults.warnings[table][column][message]
+									).map((x) => Number.parseInt(x, 10)),
+								});
 							});
-						});
 					}
 				});
 			}
@@ -249,12 +264,17 @@ class Validator extends Runner {
 					let model = models[_.last(versions)].tables[table];
 					if (table === 'measurements') {
 						_.keys(model.columns).forEach((column) => {
-							if (_.includes(model.columns[column].validations, 'required()') &&
-								(!_.includes(this.json[table].columns, column))) {
-								this.validationResults.errors[table] = this.validationResults.errors[table] || {};
+							if (
+								_.includes(model.columns[column].validations, 'required()') &&
+								!_.includes(this.json[table].columns, column)
+							) {
+								this.validationResults.errors[table] =
+									this.validationResults.errors[table] || {};
 								this.validationResults.errors[table][column] =
 									this.validationResults.errors[table][column] || {};
-								this.validationResults.errors[table][column][`The ${table} table is missing required column "${column}".`] = {};
+								this.validationResults.errors[table][column][
+									`The ${table} table is missing required column "${column}".`
+								] = {};
 							}
 						});
 
@@ -402,7 +422,8 @@ class Validator extends Runner {
 			this._addValidationError(
 				table,
 				column,
-				`The ${table} table is missing required column "${column}" since column${nRequired === 1 ? '' : 's'
+				`The ${table} table is missing required column "${column}" since column${
+					nRequired === 1 ? '' : 's'
 				} "${requiredUnless[1]}" ${nRequired === 1 ? 'is' : 'are'} empty.`,
 				idxRow + 1
 			);
@@ -470,7 +491,10 @@ class Validator extends Runner {
 				);
 			}
 
-			if (model.columns[column].type === 'Timestamp' && !luxon.DateTime.fromISO(v).isValid) {
+			if (
+				model.columns[column].type === 'Timestamp' &&
+				!luxon.DateTime.fromISO(v).isValid
+			) {
 				this._addValidationError(
 					table,
 					column,
@@ -509,7 +533,8 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
+					`The ${table} table column "${column}" value "${v}" is not in the "${
+						cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -528,7 +553,8 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table matrix column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
+					`The ${table} table matrix column "${column}" value "${v}" is not in the "${
+						cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -547,7 +573,8 @@ class Validator extends Runner {
 				this._addValidationError(
 					table,
 					column,
-					`The ${table} table dictionary column "${column}" value "${v}" is not in the "${cvs[cv[1]].label
+					`The ${table} table dictionary column "${column}" value "${v}" is not in the "${
+						cvs[cv[1]].label
 					}" controlled vocabulary.`,
 					idxRow + 1
 				);
@@ -588,9 +615,9 @@ class Validator extends Runner {
 				_.find(model.columns[column].validations, (x) => {
 					return (inKeys = x.match(/^in\("([^.]*)\.([^.]*)"\)$/));
 				}) &&
-				(this.keys[inKeys[1]] && (
-					!this.keys[inKeys[1]][inKeys[2]] ||
-					!this.keys[inKeys[1]][inKeys[2]][v]))
+				this.keys[inKeys[1]] &&
+				(!this.keys[inKeys[1]][inKeys[2]] ||
+					!this.keys[inKeys[1]][inKeys[2]][v])
 			) {
 				this._addValidationError(
 					table,
@@ -603,16 +630,17 @@ class Validator extends Runner {
 	}
 
 	_addValidationError(table, column, message, row) {
-
 		if (row === undefined) return;
 		if (
 			this.validationResults.errors[table] &&
 			this.validationResults.errors[table][column] &&
 			this.validationResults.errors[table][column][message] &&
-			_.keys(this.validationResults.errors[table][column][message]).length > 1001
+			_.keys(this.validationResults.errors[table][column][message]).length >
+				1001
 		)
 			return;
-		this.validationResults.errors[table] = this.validationResults.errors[table] || {};
+		this.validationResults.errors[table] =
+			this.validationResults.errors[table] || {};
 		this.validationResults.errors[table][column] =
 			this.validationResults.errors[table][column] || {};
 		this.validationResults.errors[table][column][message] =

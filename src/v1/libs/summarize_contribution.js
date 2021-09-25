@@ -140,12 +140,10 @@ class Summarizer extends Runner {
 						});
 					} else if (table === 'measurements') {
 						this._initProp(this.json, 'experiments', {});
-						const experimentColumnIdx = this.contribution.measurements.columns.indexOf(
-							'experiment'
-						);
-						const specimenColumnIdx = this.contribution.measurements.columns.indexOf(
-							'specimen'
-						);
+						const experimentColumnIdx =
+							this.contribution.measurements.columns.indexOf('experiment');
+						const specimenColumnIdx =
+							this.contribution.measurements.columns.indexOf('specimen');
 						this.contribution.measurements.rows.forEach((row) => {
 							if (row[experimentColumnIdx]) {
 								let name = row[experimentColumnIdx];
@@ -506,7 +504,7 @@ class Summarizer extends Runner {
 																		this._aggregateSummaries(
 																			'locations',
 																			this.json.locations[locationProp][
-																			contributionProp
+																				contributionProp
 																			],
 																			this.json[table][tableProp][parentProp]
 																		);
@@ -518,7 +516,7 @@ class Summarizer extends Runner {
 																			this._aggregateSummaries(
 																				'ages',
 																				this.json.locations[locationProp][
-																				contributionProp
+																					contributionProp
 																				],
 																				this.json[table][tableProp][parentProp]
 																			);
@@ -531,7 +529,7 @@ class Summarizer extends Runner {
 																			this._aggregateSummaries(
 																				'images',
 																				this.json.locations[locationProp][
-																				contributionProp
+																					contributionProp
 																				],
 																				this.json[table][tableProp][parentProp]
 																			);
@@ -543,9 +541,8 @@ class Summarizer extends Runner {
 											);
 									}
 								);
-							this.json[table][tableProp][
-								parentProp
-							].summary.contribution = contributionSummary;
+							this.json[table][tableProp][parentProp].summary.contribution =
+								contributionSummary;
 						});
 					});
 				} else if (table === 'specimens') {
@@ -601,7 +598,7 @@ class Summarizer extends Runner {
 															this._aggregateSummaries(
 																'locations',
 																this.json.locations[locationProp][
-																contributionProp
+																	contributionProp
 																],
 																this.json[table][tableProp][parentProp]
 															);
@@ -613,7 +610,7 @@ class Summarizer extends Runner {
 																this._aggregateSummaries(
 																	'ages',
 																	this.json.locations[locationProp][
-																	contributionProp
+																		contributionProp
 																	],
 																	this.json[table][tableProp][parentProp]
 																);
@@ -626,7 +623,7 @@ class Summarizer extends Runner {
 																this._aggregateSummaries(
 																	'images',
 																	this.json.locations[locationProp][
-																	contributionProp
+																		contributionProp
 																	],
 																	this.json[table][tableProp][parentProp]
 																);
@@ -636,9 +633,8 @@ class Summarizer extends Runner {
 											}
 										);
 								});
-							this.json[table][tableProp][
-								parentProp
-							].summary.contribution = contributionSummary;
+							this.json[table][tableProp][parentProp].summary.contribution =
+								contributionSummary;
 						});
 					});
 				} else if (table === 'samples') {
@@ -697,9 +693,8 @@ class Summarizer extends Runner {
 											}
 										);
 								});
-							this.json[table][tableProp][
-								parentProp
-							].summary.contribution = contributionSummary;
+							this.json[table][tableProp][parentProp].summary.contribution =
+								contributionSummary;
 						});
 					});
 				} else if (table === 'sites') {
@@ -734,17 +729,15 @@ class Summarizer extends Runner {
 										}
 									}
 								);
-							this.json[table][tableProp][
-								parentProp
-							].summary.contribution = contributionSummary;
+							this.json[table][tableProp][parentProp].summary.contribution =
+								contributionSummary;
 						});
 					});
 				} else if (table === 'locations') {
 					_.keys(this.json[table]).forEach((tableProp) => {
 						_.keys(this.json[table][tableProp]).forEach((parentProp) => {
-							this.json[table][tableProp][
-								parentProp
-							].summary.contribution = contributionSummary;
+							this.json[table][tableProp][parentProp].summary.contribution =
+								contributionSummary;
 						});
 					});
 				}
@@ -1140,7 +1133,7 @@ class Summarizer extends Runner {
 															this._aggregateSummaries(
 																'experiments',
 																this.json.experiments[experimentProp][
-																specimenProp
+																	specimenProp
 																],
 																this.json.samples[sampleProp][siteProp],
 																undefined,
@@ -1154,7 +1147,7 @@ class Summarizer extends Runner {
 																		this._aggregateSummaries(
 																			'experiments',
 																			this.json.experiments[experimentProp][
-																			specimenProp
+																				specimenProp
 																			],
 																			this.json.sites[siteProp][locationProp],
 																			undefined,
@@ -1169,10 +1162,10 @@ class Summarizer extends Runner {
 																				this._aggregateSummaries(
 																					'experiments',
 																					this.json.experiments[experimentProp][
-																					specimenProp
+																						specimenProp
 																					],
 																					this.json.locations[locationProp][
-																					prop
+																						prop
 																					],
 																					undefined,
 																					onlyCounts
@@ -1472,7 +1465,7 @@ class Summarizer extends Runner {
 												val === undefined &&
 												cvItem.item &&
 												cvItem.item.toLowerCase() ===
-												_.trim(row[column]).toLowerCase()
+													_.trim(row[column]).toLowerCase()
 											)
 												val = cvItem.label;
 										});
@@ -1527,8 +1520,8 @@ class Summarizer extends Runner {
 				let vals = _.isArray(val.vals)
 					? val.vals
 					: _.isPlainObject(val.vals)
-						? _.keys(val.vals)
-						: [];
+					? _.keys(val.vals)
+					: [];
 				vals.forEach((v) => {
 					if (_.isPlainObject(summary[column].vals)) {
 						summary[column].vals[v] = true;
@@ -1602,9 +1595,9 @@ class Summarizer extends Runner {
 					_.isPlainObject(summary[table][column]) &&
 					_.isPlainObject(summary[table][column].vals)
 				) {
-					summary[table][column].vals = _.keys(
-						summary[table][column].vals
-					).map((x) => parseFloat(x));
+					summary[table][column].vals = _.keys(summary[table][column].vals).map(
+						(x) => parseFloat(x)
+					);
 				} else if (
 					_.isPlainObject(summary[table][column]) &&
 					!_.isArray(summary[table][column].vals) &&
@@ -1621,7 +1614,7 @@ class Summarizer extends Runner {
 		console.log('_aggregateSummaries', fromName, toName, onlyCounts);
 		let model =
 			models[_.last(versions)].tables[
-			fromName === 'experiments' ? 'measurements' : fromName
+				fromName === 'experiments' ? 'measurements' : fromName
 			];
 		toName = toName || fromName;
 		if (model && from && from.summary && from.summary[fromName] && to) {
@@ -1653,8 +1646,8 @@ class Summarizer extends Runner {
 								vals = _.isArray(vals)
 									? vals
 									: _.isPlainObject(vals)
-										? _.keys(vals)
-										: [];
+									? _.keys(vals)
+									: [];
 								vals.forEach((v) => {
 									if (_.isPlainObject(to.summary[toName][column])) {
 										to.summary[toName][column][v] = true;

@@ -233,13 +233,13 @@ async function esGetSearchByTable({
 	dois?: string[];
 } = {}): Promise<
 	| {
-		total: number;
-		table: string;
-		size: number;
-		from: number;
-		queries?: string[];
-		results: any[];
-	}
+			total: number;
+			table: string;
+			size: number;
+			from: number;
+			queries?: string[];
+			results: any[];
+	  }
 	| undefined
 > {
 	const must: Record<string, unknown>[] = [
@@ -269,11 +269,11 @@ async function esGetSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-				_.omitBy(
-					hit._source.summary.contribution,
-					(o: any, k: string) => k[0] === '_'
-				)
-			);
+					_.omitBy(
+						hit._source.summary.contribution,
+						(o: any, k: string) => k[0] === '_'
+					)
+			  );
 	return {
 		total: resp.body.hits.total,
 		table,
@@ -339,11 +339,11 @@ async function esGetPrivateSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-				_.omitBy(
-					hit._source.summary.contribution,
-					(o: any, k: string) => k[0] === '_'
-				)
-			);
+					_.omitBy(
+						hit._source.summary.contribution,
+						(o: any, k: string) => k[0] === '_'
+					)
+			  );
 	return {
 		total: resp.body.hits.total,
 		table,
@@ -572,7 +572,9 @@ async function esValidatePrivateContribution({
 		{ term: { 'summary.contribution.id': id } },
 	];
 	if (!isDev) {
-		must.push({ term: { 'summary.contribution.contributor.raw': contributor } });
+		must.push({
+			term: { 'summary.contribution.contributor.raw': contributor },
+		});
 		must.push({ term: { 'summary.contribution._is_activated': false } });
 	}
 	const params: RequestParams.Search = {
@@ -610,9 +612,7 @@ async function esValidatePrivateContribution({
 			doc: {
 				summary: {
 					contribution: {
-						_is_valid: validator.validation.errors.length
-							? 'false'
-							: 'true',
+						_is_valid: validator.validation.errors.length ? 'false' : 'true',
 					},
 				},
 			},
