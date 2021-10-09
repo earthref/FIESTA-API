@@ -233,13 +233,13 @@ async function esGetSearchByTable({
 	dois?: string[];
 } = {}): Promise<
 	| {
-			total: number;
-			table: string;
-			size: number;
-			from: number;
-			queries?: string[];
-			results: any[];
-	  }
+		total: number;
+		table: string;
+		size: number;
+		from: number;
+		queries?: string[];
+		results: any[];
+	}
 	| undefined
 > {
 	const must: Record<string, unknown>[] = [
@@ -249,7 +249,7 @@ async function esGetSearchByTable({
 		queries.forEach((query) => must.push({ query_string: { query } }));
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
-		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois } });
+		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois.map(x => x.toUpperCase()) } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],
 		type: table,
@@ -269,11 +269,11 @@ async function esGetSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-					_.omitBy(
-						hit._source.summary.contribution,
-						(o: any, k: string) => k[0] === '_'
-					)
-			  );
+				_.omitBy(
+					hit._source.summary.contribution,
+					(o: any, k: string) => k[0] === '_'
+				)
+			);
 	return {
 		total: resp.body.hits.total,
 		table,
@@ -339,11 +339,11 @@ async function esGetPrivateSearchByTable({
 		table !== 'contribution'
 			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
 			: resp.body.hits.hits.map((hit) =>
-					_.omitBy(
-						hit._source.summary.contribution,
-						(o: any, k: string) => k[0] === '_'
-					)
-			  );
+				_.omitBy(
+					hit._source.summary.contribution,
+					(o: any, k: string) => k[0] === '_'
+				)
+			);
 	return {
 		total: resp.body.hits.total,
 		table,
