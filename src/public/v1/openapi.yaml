@@ -20,7 +20,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '1.2.0'
+  version: '1.2.1'
 servers:
 - url: https://api.earthref.org
 
@@ -37,7 +37,7 @@ components:
       required: true
       schema:
         type: string
-        enum: [MagIC]
+        enum: [MagIC,KdD,ERDA,KARAR,CDR]
     contributionID:
       name: id
       in: query
