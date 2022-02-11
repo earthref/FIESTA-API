@@ -1,11 +1,11 @@
 import lodash from 'lodash';
 import deepdash from 'deepdash';
 import bcrypt from 'bcryptjs';
-import { Client, ApiResponse } from '@elastic/elasticsearch';
+import { Client, ApiResponse } from '@opensearch-project/opensearch';
 
 const _ = deepdash(lodash);
 
-const usersIndex = 'er_users_v1';
+const usersIndex = 'er_users';
 const client = new Client({
 	node: process.env.ES_NODE,
 });
@@ -51,7 +51,9 @@ interface SearchResponse {
 	_scroll_id?: string;
 	_shards: ShardsResponse;
 	hits: {
-		total: number;
+		total: {
+			value: number;
+		}
 		max_score: number;
 		hits: Hit[];
 	};
@@ -95,7 +97,7 @@ async function esAuthenticate(authorization: string): Promise<boolean | any> {
 			sort: { id: 'desc' },
 		},
 	});
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		await sleep(500);
 		return false;
 	}

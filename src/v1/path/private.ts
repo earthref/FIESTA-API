@@ -76,7 +76,7 @@ export default {
 				id: prevID,
 			});
 			if (prevDoc === undefined) {
-				ctx.status = 204;
+				ctx.status = 202;
 				return;
 			}
 			let id: number = prevDoc['summary']['contribution']['id'];

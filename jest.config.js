@@ -6,6 +6,7 @@ module.exports = {
 	transform: {
 		'^.+\\.ts$': 'ts-jest',
 	},
+	maxWorkers: '25%',
 	watchPlugins: [
 		'jest-watch-typeahead/filename',
 		'jest-watch-typeahead/testname',

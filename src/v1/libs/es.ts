@@ -3,13 +3,14 @@ import deepdash from 'deepdash';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
-import { Client, RequestParams, ApiResponse } from '@elastic/elasticsearch';
+import { Client, RequestParams, ApiResponse } from '@opensearch-project/opensearch';
 import { isDev } from '../../api';
+import { table } from 'console';
 
 const _ = deepdash(lodash);
 
-const indexes = { MagIC: 'magic_v4' };
-const usersIndex = 'er_users_v1';
+const indexes = { MagIC: 'magic' };
+const usersIndex = 'er_users';
 const client = new Client({
 	node: process.env.ES_NODE,
 });
@@ -55,7 +56,9 @@ interface SearchResponse {
 	_scroll_id?: string;
 	_shards: ShardsResponse;
 	hits: {
-		total: number;
+		total: {
+			value: number,
+		};
 		max_score: number;
 		hits: Hit[];
 	};
@@ -99,7 +102,7 @@ async function esAuthenticate(authorization: string): Promise<boolean | any> {
 			sort: { id: 'desc' },
 		},
 	});
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		await sleep(500);
 		return false;
 	}
@@ -196,9 +199,11 @@ async function esGetContribution({
 			term: { 'summary.contribution._reference.doi.raw': doi.toUpperCase() },
 		});
 	if (key) must.push({ term: { 'summary.contribution._private_key': key } });
+	must.push({
+		term: { type: 'contribution' },
+	});
 	const params: RequestParams.Search = {
 		index: indexes[repository],
-		type: 'contribution',
 		_source: source,
 		size: 1,
 		body: {
@@ -207,7 +212,7 @@ async function esGetContribution({
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
 	return resp.body.hits.hits[0]._source;
@@ -250,9 +255,9 @@ async function esGetSearchByTable({
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois.map(x => x.toUpperCase()) } });
+	must.push({ term: { type: table } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],
-		type: table,
 		size,
 		from,
 		_source_includes: ['summary.contribution', 'rows'],
@@ -262,7 +267,7 @@ async function esGetSearchByTable({
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
 	const results =
@@ -275,7 +280,7 @@ async function esGetSearchByTable({
 				)
 			);
 	return {
-		total: resp.body.hits.total,
+		total: resp.body.hits.total.value,
 		table,
 		size,
 		from,
@@ -321,9 +326,9 @@ async function esGetPrivateSearchByTable({
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois } });
+	must.push({ term: { type: table } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],
-		type: table,
 		size,
 		from,
 		body: {
@@ -332,7 +337,7 @@ async function esGetPrivateSearchByTable({
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
 	const results =
@@ -345,7 +350,7 @@ async function esGetPrivateSearchByTable({
 				)
 			);
 	return {
-		total: resp.body.hits.total,
+		total: resp.body.hits.total.value,
 		table,
 		size,
 		from,
@@ -369,7 +374,6 @@ async function esReplacePrivate({
 } = {}): Promise<void> {
 	const params: RequestParams.UpdateByQuery = {
 		index: indexes[repository],
-		type: 'contribution',
 		body: {
 			script: {
 				source: 'ctx._source = params.doc',
@@ -380,6 +384,7 @@ async function esReplacePrivate({
 					must: [
 						{ term: { 'summary.contribution.contributor.raw': contributor } },
 						{ term: { 'summary.contribution.id': id } },
+						{ term: { type: 'contribution' } },
 					],
 				},
 			},
@@ -401,13 +406,19 @@ async function esCreatePrivate({
 } = {}): Promise<number> {
 	const lastResp: ApiResponse<SearchResponse> = await client.search({
 		index: indexes[repository],
-		type: 'contribution',
 		body: {
 			size: 1,
 			_source: 'summary.contribution.id',
 			query: {
-				exists: {
-					field: 'summary.contribution.id',
+				bool: {
+					must: [
+						{
+							exists: {
+								field: 'summary.contribution.id',
+							}
+						},
+						{ term: { type: 'contribution' } },
+					],
 				},
 			},
 			sort: [
@@ -425,10 +436,10 @@ async function esCreatePrivate({
 	const timestamp = DateTime.utc().toISO();
 	await client.index({
 		index: indexes[repository],
-		type: 'contribution',
 		id: `${nextID}_0`,
 		refresh: true,
 		body: {
+			type: table,
 			summary: {
 				contribution: {
 					id: nextID,
@@ -526,17 +537,17 @@ async function esGetPrivate({
 			: { term: { 'summary.contribution._private_key.raw': key } },
 		{ term: { 'summary.contribution._is_activated': false } },
 		{ term: { 'summary.contribution.id': id } },
+		{ term: { type: 'contribution' } },
 	];
 	const params: RequestParams.Search = {
 		index: indexes[repository],
-		type: 'contribution',
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
 			query: { bool: { must } },
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
 	if (format === 'txt') {
@@ -570,6 +581,7 @@ async function esValidatePrivateContribution({
 } = {}): Promise<string> {
 	const must: Record<string, unknown>[] = [
 		{ term: { 'summary.contribution.id': id } },
+		{ term: { type: 'contribution' } },
 	];
 	if (!isDev) {
 		must.push({
@@ -579,18 +591,17 @@ async function esValidatePrivateContribution({
 	}
 	const params: RequestParams.Search = {
 		index: indexes[repository],
-		type: 'contribution',
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
 			query: { bool: { must } },
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
-	if (resp.body.hits.total <= 0) {
+	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
 	if (
-		resp.body.hits.total > 0 &&
+		resp.body.hits.total.value > 0 &&
 		resp.body.hits.hits[0]._source.contribution &&
 		_.isPlainObject(resp.body.hits.hits[0]._source.contribution.contribution)
 	)
@@ -606,7 +617,6 @@ async function esValidatePrivateContribution({
 
 	await client.update({
 		index: indexes[repository],
-		type: 'contribution',
 		id: id + '_0',
 		body: {
 			doc: {
