@@ -10,7 +10,7 @@ export default {
 	): Promise<void> => {
 		try {
 			const { repository: repositories, table: tables } = c.request.params;
-			const { n_max_rows, from, query } = c.request.query;
+			const { n_max_rows, from, query, included_columns, missing_columns } = c.request.query;
 			const repository: string =
 				repositories instanceof Array ? repositories[0] : repositories;
 			const table: string = tables instanceof Array ? tables[0] : tables;
@@ -23,6 +23,8 @@ export default {
 				10
 			);
 			const queries: string[] = query instanceof Array ? query : [query];
+			const exists_fields: string[] = included_columns instanceof Array ? included_columns : [included_columns];
+			const not_exists_fields: string[] = missing_columns instanceof Array ? missing_columns : [missing_columns];
 			const tableMap = {
 				contributions: 'contribution',
 				measurements: 'experiments',
@@ -33,6 +35,8 @@ export default {
 				size: n_max_rows !== undefined ? size : 10,
 				from: from !== undefined ? fromNumber : undefined,
 				queries: query !== undefined ? queries : undefined,
+				exists_fields: included_columns !== undefined ? exists_fields.map(x => `summary._all.${x}`) : undefined,
+				not_exists_fields: missing_columns !== undefined ? not_exists_fields.map(x => `summary._all.${x}`) : undefined,
 			});
 			if (ctx.body === undefined) {
 				ctx.status = 204;

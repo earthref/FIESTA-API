@@ -226,6 +226,8 @@ async function esGetSearchByTable({
 	size = 10,
 	from = 0,
 	queries = [],
+	exists_fields = [],
+	not_exists_fields = [],
 	ids = [],
 	dois = [],
 }: {
@@ -234,24 +236,30 @@ async function esGetSearchByTable({
 	size?: number;
 	from?: number;
 	queries?: string[];
+	exists_fields?: string[];
+	not_exists_fields?: string[];
 	ids?: string[];
 	dois?: string[];
-} = {}): Promise<
-	| {
-		total: number;
-		table: string;
-		size: number;
-		from: number;
-		queries?: string[];
-		results: any[];
-	}
-	| undefined
-> {
+} = {}): Promise<{
+	total: number;
+	table: string;
+	size: number;
+	from: number;
+	queries?: string[];
+	exists_fields?: string[];
+	not_exists_fields?: string[];
+	results: any[];
+} | undefined> {
 	const must: Record<string, unknown>[] = [
 		{ term: { 'summary.contribution._is_activated': true } },
 	];
+	const must_not: Record<string, unknown>[] = [];
 	if (queries.length)
 		queries.forEach((query) => must.push({ query_string: { query } }));
+	if (exists_fields.length)
+		exists_fields.forEach((column) => must.push({ exists: { field: column } }));
+	if (not_exists_fields.length)
+		not_exists_fields.forEach((column) => must_not.push({ exists: { field: column } }));
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois.map(x => x.toUpperCase()) } });
@@ -263,7 +271,7 @@ async function esGetSearchByTable({
 		_source_includes: ['summary.contribution', 'rows'],
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
-			query: { bool: { must } },
+			query: { bool: { must, must_not } },
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
@@ -298,6 +306,8 @@ async function esGetPrivateSearchByTable({
 	size = 10,
 	from = 0,
 	queries = [],
+	exists_fields = [],
+	not_exists_fields = [],
 	ids = [],
 	dois = [],
 }: {
@@ -307,6 +317,8 @@ async function esGetPrivateSearchByTable({
 	size?: number;
 	from?: number;
 	queries?: string[];
+	exists_fields?: string[];
+	not_exists_fields?: string[];
 	ids?: string[];
 	dois?: string[];
 } = {}): Promise<{
@@ -315,14 +327,21 @@ async function esGetPrivateSearchByTable({
 	size: number;
 	from: number;
 	queries?: string[];
+	exists_fields?: string[];
+	not_exists_fields?: string[];
 	results: any[];
-}> {
+} | undefined> {
 	const must: Record<string, unknown>[] = [
 		{ term: { 'summary.contribution.contributor.raw': contributor } },
 		{ term: { 'summary.contribution._is_activated': false } },
 	];
+	const must_not: Record<string, unknown>[] = [];
 	if (queries.length)
 		queries.forEach((query) => must.push({ query_string: { query } }));
+	if (exists_fields.length)
+		exists_fields.forEach((column) => must.push({ exists: { field: column } }));
+	if (not_exists_fields.length)
+		not_exists_fields.forEach((column) => must_not.push({ exists: { field: column } }));
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois } });
@@ -331,9 +350,10 @@ async function esGetPrivateSearchByTable({
 		index: indexes[repository],
 		size,
 		from,
+		_source_includes: ['summary.contribution', 'rows'],
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
-			query: { bool: { must } },
+			query: { bool: { must, must_not } },
 		},
 	};
 	const resp: ApiResponse<SearchResponse> = await client.search(params);
@@ -355,6 +375,8 @@ async function esGetPrivateSearchByTable({
 		size,
 		from,
 		queries,
+		exists_fields,
+		not_exists_fields,
 		results,
 	};
 }

@@ -217,8 +217,10 @@ paths:
         in: query
         description: The ID of the contribution to retrieve
         schema:
-          type: integer
-          minimum: 1
+          type: array
+          items:
+            type: integer
+            minimum: 1
       - name: key
         in: query
         description: The private key for retrieving a shared contribution
@@ -272,6 +274,20 @@ paths:
         in: query
         description: One or more Elasticsearch query strings to match any data model text field
           (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+        schema:
+          type: array
+          items:
+            type: string
+      - name: included_columns
+        in: query
+        description: One or more column names that should be included in the matched rows
+        schema:
+          type: array
+          items:
+            type: string
+      - name: missing_columns
+        in: query
+        description: One or more column names that should not be included in the matched rows
         schema:
           type: array
           items:
