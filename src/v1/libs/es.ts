@@ -230,6 +230,7 @@ async function esGetSearchByTable({
 	not_exists_fields = [],
 	ids = [],
 	dois = [],
+	contributor_names = [],
 }: {
 	repository?: string;
 	table?: string;
@@ -240,6 +241,7 @@ async function esGetSearchByTable({
 	not_exists_fields?: string[];
 	ids?: string[];
 	dois?: string[];
+	contributor_names?: string[];
 } = {}): Promise<{
 	total: number;
 	table: string;
@@ -263,6 +265,8 @@ async function esGetSearchByTable({
 	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois.map(x => x.toUpperCase()) } });
+	if (contributor_names.length)
+		must.push({ terms: { 'summary.contribution._contributor.raw': contributor_names } });
 	must.push({ term: { type: table } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],

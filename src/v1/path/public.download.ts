@@ -36,14 +36,18 @@ export default {
 			);
 			const repository: string =
 				repositories instanceof Array ? repositories[0] : repositories;
+			const queries: string[] = query instanceof Array ? query : [query];
 			const ids: string[] = id instanceof Array ? id : [id];
 			const dois: string[] = doi instanceof Array ? doi : [doi];
+			const contributor_names: string[] = contributor_name instanceof Array ? contributor_name : [contributor_name];
 			const contributions = await esGetSearchByTable({
 				repository,
 				table: 'contribution',
 				size: n_max_contributions !== undefined ? size : 10,
+				queries: query !== undefined ? queries : undefined,
 				ids: id !== undefined ? ids : undefined,
 				dois: doi !== undefined ? dois : undefined,
+				contributor_names: contributor_name !== undefined ? contributor_names : undefined,
 			});
 			if (contributions === undefined || contributions.results.length === 0) {
 				ctx.status = 204;
