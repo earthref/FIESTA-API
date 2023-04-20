@@ -230,7 +230,9 @@ async function esGetSearchByTable({
 	not_exists_fields = [],
 	ids = [],
 	dois = [],
-	contributor_names = [],
+    contributor_names = [],
+    only_latest = false,
+    reference_titles = [],
 }: {
 	repository?: string;
 	table?: string;
@@ -242,6 +244,8 @@ async function esGetSearchByTable({
 	ids?: string[];
 	dois?: string[];
 	contributor_names?: string[];
+    only_latest?: boolean;
+    reference_titles?: string[];
 } = {}): Promise<{
 	total: number;
 	table: string;
@@ -257,16 +261,27 @@ async function esGetSearchByTable({
 	];
 	const must_not: Record<string, unknown>[] = [];
 	if (queries.length)
-		queries.forEach((query) => must.push({ query_string: { query } }));
+		queries.forEach((query) => must.push({ query_string: { query, default_operator: 'AND' } }));
 	if (exists_fields.length)
 		exists_fields.forEach((column) => must.push({ exists: { field: column } }));
 	if (not_exists_fields.length)
 		not_exists_fields.forEach((column) => must_not.push({ exists: { field: column } }));
-	if (ids.length) must.push({ terms: { 'summary.contribution.id': ids } });
+	if (ids.length) must.push({ terms: { 'summary.contribution._history.id': ids } });
 	if (dois.length)
 		must.push({ terms: { 'summary.contribution._reference.doi.raw': dois.map(x => x.toUpperCase()) } });
 	if (contributor_names.length)
 		must.push({ terms: { 'summary.contribution._contributor.raw': contributor_names } });
+	if (only_latest)
+        must.push({ term: { 'summary.contribution._is_latest': true } });
+    if (reference_titles.length)
+        must.push({
+            bool: {
+                should: reference_titles.map(title =>
+                    ({ match_phrase: { 'summary.contribution._reference.title.raw': title } })
+                )
+            }   
+        });
+    console.log(JSON.stringify({query: { bool: { must, must_not } }}))
 	must.push({ term: { type: table } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],

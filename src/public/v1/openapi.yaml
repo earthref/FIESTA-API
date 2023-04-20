@@ -10,11 +10,11 @@ info:
     the FIESTA API is a core component of that solution.
 
     # Authentication
-  
+
     The API is served over HTTPS thereby making HTTP Basic Authentication secure.
     The credentials are the username and password of an active EarthRef.org user account and provide access to that user's private workspace in any of EarthRef.org FIESTA repositories.
     <br/><br/>
-  
+
   contact:
     email: webmaster@earthref.org
   license:
@@ -22,7 +22,7 @@ info:
     url: https://opensource.org/licenses/MIT
   version: '1.2.1'
 servers:
-- url: https://api.earthref.org
+  - url: https://api.earthref.org
 
 components:
   securitySchemes:
@@ -37,7 +37,7 @@ components:
       required: true
       schema:
         type: string
-        enum: [MagIC,KdD,ERDA,KARAR,CDR]
+        enum: [MagIC, KdD, ERDA, KARAR, CDR]
     contributionID:
       name: id
       in: query
@@ -65,13 +65,12 @@ components:
             $ref: '#/components/schemas/errorReponse'
     noMatches:
       description: No matches found
-      content:
-        {}
+      content: {}
   schemas:
     messageResponse:
       type: object
       required:
-      - message
+        - message
       properties:
         message:
           type: string
@@ -86,13 +85,13 @@ components:
             $ref: '#/components/schemas/messageResponse'
       example:
         errors:
-        - message: 'There was an error.'
+          - message: 'There was an error.'
 
 paths:
   /v1/health-check:
     get:
       tags:
-      - System
+        - System
       summary: Check the health of the API
       operationId: v1HealthCheck
       responses:
@@ -103,7 +102,7 @@ paths:
               schema:
                 type: object
                 required:
-                - message
+                  - message
                 properties:
                   message:
                     type: string
@@ -116,14 +115,14 @@ paths:
               schema:
                 type: object
                 required:
-                - errors
+                  - errors
                 properties:
                   errors:
                     type: array
                     items:
                       type: object
                       required:
-                      - message
+                        - message
                       properties:
                         message:
                           type: string
@@ -132,11 +131,11 @@ paths:
   /v1/authenticate:
     get:
       tags:
-      - People
+        - People
       summary: Authenticate a username and password
       operationId: v1Authenticate
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       responses:
         200:
           description: User Record
@@ -147,7 +146,7 @@ paths:
             application/json:
               schema:
                 required:
-                - name
+                  - name
         401:
           $ref: '#/components/responses/unauthorizedError'
         500:
@@ -155,47 +154,61 @@ paths:
   /v1/{repository}/download:
     get:
       tags:
-      - Public Data
+        - Public Data
       summary: Download the zip archive of files for one or more public contributions
       operationId: v1PublicDownloadFiles
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: n_max_contributions
-        in: query
-        description: Maximum number of contributions to download in descending timestamp order
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 10
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
-        schema:
-          type: string
-      - name: id
-        in: query
-        description: One or more contribution IDs to match
-        schema:
-          type: array
-          items:
+        - $ref: '#/components/parameters/repository'
+        - name: n_max_contributions
+          in: query
+          description: Maximum number of contributions to download in descending timestamp order
+          schema:
             type: integer
             minimum: 1
-      - name: doi
-        in: query
-        description: One or more reference DOIs to match
-        schema:
-          type: array
-          items:
+            maximum: 100
+            default: 10
+        - name: only_latest
+          in: query
+          description: Only download the latest version of a contribution
+          schema:
+            type: boolean
+            default: false
+        - name: query
+          in: query
+          description:
+            One or more Elasticsearch query strings to match any data model text field
+            (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
+          schema:
             type: string
-      - name: contributor_name
-        in: query
-        description: One or more contributor names to match
-        schema:
-          type: array
-          items:
-            type: string
+        - name: id
+          in: query
+          description: One or more contribution IDs to match
+          schema:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+        - name: doi
+          in: query
+          description: One or more reference DOIs to match
+          schema:
+            type: array
+            items:
+              type: string
+        - name: contributor_name
+          in: query
+          description: One or more contributor names to match
+          schema:
+            type: array
+            items:
+              type: string
+        - name: reference_title
+          in: query
+          description: One or more reference titles to match
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: A zip archive of files for the public contributions
@@ -208,24 +221,24 @@ paths:
   /v1/{repository}/data:
     get:
       tags:
-      - Public Data
+        - Public Data
       summary: Retrieve the data for a public or shared private contribution
       operationId: v1PublicContributionData
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: id
-        in: query
-        description: The ID of the contribution to retrieve
-        schema:
-          type: array
-          items:
-            type: integer
-            minimum: 1
-      - name: key
-        in: query
-        description: The private key for retrieving a shared contribution
-        schema:
-          type: string
+        - $ref: '#/components/parameters/repository'
+        - name: id
+          in: query
+          description: The ID of the contribution to retrieve
+          schema:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+        - name: key
+          in: query
+          description: The private key for retrieving a shared contribution
+          schema:
+            type: string
       responses:
         200:
           description: Rows are returned in the format requested by the accept header
@@ -246,52 +259,53 @@ paths:
   /v1/{repository}/search/{table}:
     get:
       tags:
-      - Public Data
+        - Public Data
       summary: Retrieve public data rows
       operationId: v1PublicSearchByTable
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: table
-        in: path
-        required: true
-        description: Table name
-        schema:
-          type: string
-      - name: n_max_rows
-        in: query
-        description: Max number of rows to return
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 10000
-      - name: from
-        in: query
-        description: Starting record number for paging
-        schema:
-          type: integer
-          minimum: 1
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: array
-          items:
+        - $ref: '#/components/parameters/repository'
+        - name: table
+          in: path
+          required: true
+          description: Table name
+          schema:
             type: string
-      - name: included_columns
-        in: query
-        description: One or more column names that should be included in the matched rows
-        schema:
-          type: array
-          items:
-            type: string
-      - name: missing_columns
-        in: query
-        description: One or more column names that should not be included in the matched rows
-        schema:
-          type: array
-          items:
-            type: string
+        - name: n_max_rows
+          in: query
+          description: Max number of rows to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+        - name: from
+          in: query
+          description: Starting record number for paging
+          schema:
+            type: integer
+            minimum: 1
+        - name: query
+          in: query
+          description:
+            One or more Elasticsearch query strings to match any data model text field
+            (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+          schema:
+            type: array
+            items:
+              type: string
+        - name: included_columns
+          in: query
+          description: One or more column names that should be included in the matched rows
+          schema:
+            type: array
+            items:
+              type: string
+        - name: missing_columns
+          in: query
+          description: One or more column names that should not be included in the matched rows
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: Rows are returned in the format requested by the accept header
@@ -306,11 +320,11 @@ paths:
   /v1/{repository}/validate:
     post:
       tags:
-      - Public Data
+        - Public Data
       summary: Validate a contribution
       operationId: v1ContributionValidate
       parameters:
-      - $ref: '#/components/parameters/repository'
+        - $ref: '#/components/parameters/repository'
       requestBody:
         content:
           multipart/form-data:
@@ -334,20 +348,20 @@ paths:
   /v1/{repository}/private/download:
     get:
       tags:
-      - Private Data
+        - Private Data
       summary: Download the zip archive of the files for a private contribution
       operationId: v1PrivateDownloadFiles
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: id
-        in: query
-        required: true
-        description: The ID of the contribution to download
-        schema:
-          type: integer
-          minimum: 1
+        - $ref: '#/components/parameters/repository'
+        - name: id
+          in: query
+          required: true
+          description: The ID of the contribution to download
+          schema:
+            type: integer
+            minimum: 1
       responses:
         200:
           description: A zip archive of files for the private contribution
@@ -362,20 +376,20 @@ paths:
   /v1/{repository}/private/data:
     get:
       tags:
-      - Private Data
+        - Private Data
       summary: Retrieve the data for a private contribution
       operationId: v1PrivateContributionData
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: id
-        in: query
-        required: true
-        description: The ID of the contribution data to retrieve
-        schema:
-          type: integer
-          minimum: 1
+        - $ref: '#/components/parameters/repository'
+        - name: id
+          in: query
+          required: true
+          description: The ID of the contribution data to retrieve
+          schema:
+            type: integer
+            minimum: 1
       responses:
         200:
           description: Rows are returned in the format requested by the accept header
@@ -390,20 +404,20 @@ paths:
   /v1/{repository}/private/validate:
     put:
       tags:
-      - Private Data
+        - Private Data
       summary: Validate a private contribution
       operationId: v1PrivateContributionValidate
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: id
-        in: query
-        required: true
-        description: The ID of the contribution data to validate
-        schema:
-          type: integer
-          minimum: 1
+        - $ref: '#/components/parameters/repository'
+        - name: id
+          in: query
+          required: true
+          description: The ID of the contribution data to validate
+          schema:
+            type: integer
+            minimum: 1
       responses:
         200:
           description: The validation result was returned.
@@ -420,40 +434,41 @@ paths:
   /v1/{repository}/private/search/{table}:
     get:
       tags:
-      - Private Data
+        - Private Data
       summary: Retrieve private data rows
       operationId: v1PrivateSearchByTable
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - name: table
-        in: path
-        description: Table name
-        required: true
-        schema:
-          type: string
-      - name: n_max_rows
-        in: query
-        description: Max number of rows to return
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 10000
-      - name: from
-        in: query
-        description: Starting record number for paging
-        schema:
-          type: integer
-          minimum: 1
-      - name: query
-        in: query
-        description: One or more Elasticsearch query strings to match any data model text field
-          (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
-        schema:
-          type: array
-          items:
+        - $ref: '#/components/parameters/repository'
+        - name: table
+          in: path
+          description: Table name
+          required: true
+          schema:
             type: string
+        - name: n_max_rows
+          in: query
+          description: Max number of rows to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+        - name: from
+          in: query
+          description: Starting record number for paging
+          schema:
+            type: integer
+            minimum: 1
+        - name: query
+          in: query
+          description:
+            One or more Elasticsearch query strings to match any data model text field
+            (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: Rows are returned in the format requested by the accept header.
@@ -466,13 +481,13 @@ paths:
   /v1/{repository}/private:
     post:
       tags:
-      - Private Data
+        - Private Data
       summary: Create a private contribution
       operationId: v1PrivateCreate
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
+        - $ref: '#/components/parameters/repository'
       responses:
         201:
           description: The private contribution was created.
@@ -481,7 +496,7 @@ paths:
               schema:
                 type: object
                 required:
-                - id
+                  - id
                 properties:
                   id:
                     type: integer
@@ -494,14 +509,14 @@ paths:
           $ref: '#/components/responses/serverError'
     put:
       tags:
-      - Private Data
+        - Private Data
       summary: Update a private contribution
       operationId: v1PrivateUpdate
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - $ref: '#/components/parameters/contributionID'
+        - $ref: '#/components/parameters/repository'
+        - $ref: '#/components/parameters/contributionID'
       requestBody:
         content:
           multipart/form-data:
@@ -521,9 +536,9 @@ paths:
               schema:
                 type: object
                 required:
-                - rowsAdded
-                - rowsChanged
-                - rowsDeleted
+                  - rowsAdded
+                  - rowsChanged
+                  - rowsDeleted
                 properties:
                   rowsAdded:
                     type: integer
@@ -542,14 +557,14 @@ paths:
           $ref: '#/components/responses/serverError'
     delete:
       tags:
-      - Private Data
+        - Private Data
       summary: Delete a private contribution
       operationId: v1PrivateDelete
-      security: 
-      - EarthRef.org User Account Credentials: []
+      security:
+        - EarthRef.org User Account Credentials: []
       parameters:
-      - $ref: '#/components/parameters/repository'
-      - $ref: '#/components/parameters/contributionID'
+        - $ref: '#/components/parameters/repository'
+        - $ref: '#/components/parameters/contributionID'
       responses:
         200:
           description: The contribution was deleted.
@@ -558,7 +573,7 @@ paths:
               schema:
                 type: object
                 required:
-                - rowsDeleted
+                  - rowsDeleted
                 properties:
                   rowsDeleted:
                     type: integer

@@ -107,9 +107,72 @@ describe(`FIESTA API ${v} Download Tests`, () => {
 					entry.autodrain();
 				})
 				.promise();
-			expect(paths.length).toBe(2);
+			expect(paths.length).toBeGreaterThanOrEqual(2);
 			expect(paths).toContain('16595/magic_contribution_16595.txt');
 			expect(paths).toContain('16761/magic_contribution_16761.txt');
+		}
+	);
+
+	test(
+		`GET /${v}/MagIC/download?id=16760&only_latest=true should return status 200 - ` +
+		`and only one contribution should be downloaded`,
+		async () => {
+			const res = await client.get(
+				`/${v}/MagIC/download?id=16760&only_latest=true`,
+				{ responseType: 'stream' }
+			);
+			expect(res.status).toBe(200);
+			const paths: string[] = [];
+			await res.data
+				.pipe(unzipper.Parse())
+				.on(`entry`, (entry: any) => {
+					paths.push(entry.path);
+					entry.autodrain();
+				})
+				.promise();
+			expect(paths.length).toBe(1);
+		}
+	);
+
+	test(
+		`GET /${v}/MagIC/download?id=16760&only_latest=true should return status 200 - ` +
+		`and only one contribution should be downloaded`,
+		async () => {
+			const res = await client.get(
+				`/${v}/MagIC/download?id=16760&only_latest=true`,
+				{ responseType: 'stream' }
+			);
+			expect(res.status).toBe(200);
+			const paths: string[] = [];
+			await res.data
+				.pipe(unzipper.Parse())
+				.on(`entry`, (entry: any) => {
+					paths.push(entry.path);
+					entry.autodrain();
+				})
+				.promise();
+			expect(paths.length).toBe(1);
+		}
+	);
+
+	test(
+		`GET /${v}/MagIC/download?reference_title=Geology of the Wilkes land sub-basin and stability of the East Antarctic Ice Sheet: Insights from rock magnetism at IODP Site U1361&only_latest=true should return status 200 - ` +
+		`and only one contribution should be downloaded`,
+		async () => {
+			const res = await client.get(
+				`/${v}/MagIC/download?reference_title=Geology%20of%20the%20Wilkes%20land%20sub-basin%20and%20stability%20of%20the%20East%20Antarctic%20Ice%20Sheet%3A%20Insights%20from%20rock%20magnetism%20at%20IODP%20Site%20U1361&only_latest=true`,
+				{ responseType: 'stream' }
+			);
+			expect(res.status).toBe(200);
+			const paths: string[] = [];
+			await res.data
+				.pipe(unzipper.Parse())
+				.on(`entry`, (entry: any) => {
+					paths.push(entry.path);
+					entry.autodrain();
+				})
+				.promise();
+			expect(paths.length).toBe(1);
 		}
 	);
 });

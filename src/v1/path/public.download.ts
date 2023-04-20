@@ -13,13 +13,14 @@ export default {
 	): Promise<void> => {
 		try {
 			const { repository: repositories } = c.request.params;
-			const { n_max_contributions, query, id, doi, contributor_name } =
+			const { n_max_contributions, query, id, doi, contributor_name, only_latest, reference_title } =
 				c.request.query;
 			if (
 				query === undefined &&
 				id === undefined &&
 				doi === undefined &&
-				contributor_name === undefined
+				contributor_name === undefined &&
+				reference_title === undefined
 			) {
 				ctx.status = 400;
 				ctx.body = {
@@ -39,7 +40,8 @@ export default {
 			const queries: string[] = query instanceof Array ? query : [query];
 			const ids: string[] = id instanceof Array ? id : [id];
 			const dois: string[] = doi instanceof Array ? doi : [doi];
-			const contributor_names: string[] = contributor_name instanceof Array ? contributor_name : [contributor_name];
+            const contributor_names: string[] = contributor_name instanceof Array ? contributor_name : [contributor_name];
+            const reference_titles: string[] = reference_title instanceof Array ? reference_title : [reference_title];
 			const contributions = await esGetSearchByTable({
 				repository,
 				table: 'contribution',
@@ -47,7 +49,9 @@ export default {
 				queries: query !== undefined ? queries : undefined,
 				ids: id !== undefined ? ids : undefined,
 				dois: doi !== undefined ? dois : undefined,
-				contributor_names: contributor_name !== undefined ? contributor_names : undefined,
+                contributor_names: contributor_name !== undefined ? contributor_names : undefined,
+                only_latest: only_latest !== undefined ? true : false,
+                reference_titles: reference_title !== undefined ? reference_titles : undefined,
 			});
 			if (contributions === undefined || contributions.results.length === 0) {
 				ctx.status = 204;
