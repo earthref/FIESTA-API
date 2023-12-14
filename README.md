@@ -1,4 +1,4 @@
-# EarthRef's FIESTA API
+# EarthRef's Framework for Integrated Earth Science and Technology Applications (FIESTA) API
 
 <img src="logo.png?raw=true" style="height: 50vh"/>
 
