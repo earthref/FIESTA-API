@@ -37,7 +37,7 @@ components:
       required: true
       schema:
         type: string
-        enum: [MagIC, KdD, ERDA, KARAR, CDR]
+        enum: [MagIC]
     contributionID:
       name: id
       in: query
@@ -510,7 +510,11 @@ paths:
     put:
       tags:
         - Private Data
-      summary: Update a private contribution
+      summary: Replace a private contribution
+      description:
+        If the contribution is public, a new private contribution will be created in the user's
+        private worksapce and the new contribution ID is returned. Tables in the uploaded files
+        are combined and replace the existing contribution tables.
       operationId: v1PrivateUpdate
       security:
         - EarthRef.org User Account Credentials: []
@@ -536,17 +540,87 @@ paths:
               schema:
                 type: object
                 required:
-                  - rowsAdded
-                  - rowsChanged
-                  - rowsDeleted
+                  - id
+                  - tables_not_processed
+                  - rows_added
+                  - rows_deleted
                 properties:
-                  rowsAdded:
+                  id:
+                    description: The contribution ID to which the data were replaced.
+                    type: integer
+                    minimum: 1
+                  tables_not_processed:
+                    description: The tables that were not processed.
+                    type: array
+                    items:
+                      type: string
+                  rows_added:
+                    description: The number of rows added across all tables.
                     type: integer
                     minimum: 0
-                  rowsChanged:
+                  rows_deleted:
+                    description: The number of rows deleted from the existing contribution.
                     type: integer
                     minimum: 0
-                  rowsDeleted:
+        204:
+          $ref: '#/components/responses/noMatches'
+        401:
+          $ref: '#/components/responses/unauthorizedError'
+        500:
+          $ref: '#/components/responses/serverError'
+    patch:
+      tags:
+        - Private Data
+      summary: Append to a private contribution
+      description:
+        If the contribution is public, a new private contribution will be created in the user's
+        private worksapce and the new contribution ID is returned. Tables in the uploaded files
+        are combined and append to the existing contribution tables.
+      operationId: v1PrivateAppend
+      security:
+        - EarthRef.org User Account Credentials: []
+      parameters:
+        - $ref: '#/components/parameters/repository'
+        - $ref: '#/components/parameters/contributionID'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        202:
+          description: The file(s) were uploaded to the contribution and are being processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - tables_not_processed
+                  - rows_added
+                  - rows_deleted
+                properties:
+                  id:
+                    description: The contribution ID to which the data were appended.
+                    type: integer
+                    minimum: 1
+                  tables_not_processed:
+                    description: The tables that were not processed.
+                    type: array
+                    items:
+                      type: string
+                  rows_added:
+                    description: The number of rows added across all tables.
+                    type: integer
+                    minimum: 0
+                  rows_deleted:
+                    description: The number of rows deleted from the existing contribution.
                     type: integer
                     minimum: 0
         204:
