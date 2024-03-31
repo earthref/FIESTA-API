@@ -20,7 +20,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: '1.2.1'
+  version: '1.3.0'
 servers:
   - url: https://api.earthref.org
 
