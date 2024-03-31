@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
 import { Client, RequestParams, ApiResponse } from '@opensearch-project/opensearch';
 import { isDev } from '../../api';
-import { table } from 'console';
 
 const _ = deepdash(lodash);
 
@@ -199,9 +198,8 @@ async function esGetContribution({
 			term: { 'summary.contribution._reference.doi.raw': doi.toUpperCase() },
 		});
 	if (key) must.push({ term: { 'summary.contribution._private_key': key } });
-	must.push({
-		term: { type: 'contribution' },
-	});
+	must.push({ term: { type: 'contribution' } });
+    // must.push({ term: { 'summary.contribution._is_activated': true } });
 	const params: RequestParams.Search = {
 		index: indexes[repository],
 		_source: source,
@@ -480,11 +478,11 @@ async function esCreatePrivate({
 		id: `${nextID}_0`,
 		refresh: true,
 		body: {
-			type: table,
+			type: "contribution",
 			summary: {
 				contribution: {
 					id: nextID,
-					version: null,
+					version: 1,
 					contributor: contributor,
 					timestamp: timestamp,
 					data_model_version: '3.0',
@@ -496,7 +494,7 @@ async function esCreatePrivate({
 					_history: [
 						{
 							id: nextID,
-							version: null,
+							version: 1,
 							contributor: contributorName,
 							timestamp: timestamp,
 							data_model_version: '3.0',
@@ -509,7 +507,7 @@ async function esCreatePrivate({
 					{
 						contributor: contributor,
 						id: nextID,
-						version: null,
+						version: 1,
 						timestamp: timestamp,
 						data_model_version: '3.0',
 					},

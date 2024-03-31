@@ -331,11 +331,10 @@ paths:
             schema:
               type: object
               properties:
-                filename:
+                file:
                   type: array
                   items:
-                    type: string
-                    format: binary
+                    type: files
       responses:
         200:
           description: The validation result was returned.
@@ -527,11 +526,10 @@ paths:
             schema:
               type: object
               properties:
-                filename:
+                file:
                   type: array
                   items:
-                    type: string
-                    format: binary
+                    type: files
       responses:
         202:
           description: The file(s) were uploaded to the contribution and are being processed.
@@ -541,27 +539,11 @@ paths:
                 type: object
                 required:
                   - id
-                  - tables_not_processed
-                  - rows_added
-                  - rows_deleted
                 properties:
                   id:
                     description: The contribution ID to which the data were replaced.
                     type: integer
                     minimum: 1
-                  tables_not_processed:
-                    description: The tables that were not processed.
-                    type: array
-                    items:
-                      type: string
-                  rows_added:
-                    description: The number of rows added across all tables.
-                    type: integer
-                    minimum: 0
-                  rows_deleted:
-                    description: The number of rows deleted from the existing contribution.
-                    type: integer
-                    minimum: 0
         204:
           $ref: '#/components/responses/noMatches'
         401:
@@ -588,11 +570,10 @@ paths:
             schema:
               type: object
               properties:
-                filename:
+                file:
                   type: array
                   items:
-                    type: string
-                    format: binary
+                    type: files
       responses:
         202:
           description: The file(s) were uploaded to the contribution and are being processed.
@@ -602,25 +583,14 @@ paths:
                 type: object
                 required:
                   - id
-                  - tables_not_processed
                   - rows_added
-                  - rows_deleted
                 properties:
                   id:
                     description: The contribution ID to which the data were appended.
                     type: integer
                     minimum: 1
-                  tables_not_processed:
-                    description: The tables that were not processed.
-                    type: array
-                    items:
-                      type: string
                   rows_added:
                     description: The number of rows added across all tables.
-                    type: integer
-                    minimum: 0
-                  rows_deleted:
-                    description: The number of rows deleted from the existing contribution.
                     type: integer
                     minimum: 0
         204:

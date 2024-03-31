@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import fs from 'fs';
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
@@ -105,73 +106,65 @@ export default {
 					contributorName: `${user.name.given} ${user.name.family}`,
 				});
 			}
-			const doc = { contribution: {}, summary: {} };
-            const tables_not_processed = [];
+			const doc = { type: "contribution", contribution: prevDoc['contribution'] || {}, summary: {} };
 
-			// Parse the contribution
+			// Parse the files and overwrite contribution tables
 			const { Parser: ParseContribution } = await import(
 				'../libs/parse_contribution.js'
-			);
-			const parser = new ParseContribution({});
-			await parser.parsePromise({ text: c.request.body });
-			fs.writeFileSync(
-				`magic_doc_${id}_parser_ew.json`,
-				JSON.stringify(parser.errorsAndWarnings(), null, 2)
-			);
+            );
+            const files = Array.isArray(c.request.body.files.file) ? c.request.body.files.file : [c.request.body.files.file];
+            for(const file of files) {
+                const parser = new ParseContribution({});
+                const fileText = fs.readFileSync(file.path).toString()
+                await parser.parsePromise({ text: fileText });
+                fs.writeFileSync(
+                    `magic_doc_${id}_parser_ew.json`,
+                    JSON.stringify(parser.errorsAndWarnings(), null, 2)
+                );
 
-			doc.contribution = parser.json;
-			doc.contribution['contribution'] =
-				prevDoc['contribution']['contribution'];
-			fs.writeFileSync(
-				`magic_doc_${id}_prev.json`,
-				JSON.stringify(doc, null, 2)
-			);
-			fs.writeFileSync(
-				`magic_doc_${id}_prev_summary.json`,
-				JSON.stringify(prevContributionSummary, null, 2)
-			);
+                doc.contribution = { ...doc.contribution, ...parser.json };
+                doc.contribution['contribution'] =
+                    prevDoc['contribution']['contribution'];
+                fs.writeFileSync(
+                    `magic_doc_${id}_prev.json`,
+                    JSON.stringify(doc, null, 2)
+                );
+                fs.writeFileSync(
+                    `magic_doc_${id}_prev_summary.json`,
+                    JSON.stringify(prevContributionSummary, null, 2)
+                );
 
-			// Summerize the contribution
-			const { Summarizer: SummarizeContribution } = await import(
-				'../libs/summarize_contribution.js'
-			);
-			const summarizer = new SummarizeContribution({});
-			await summarizer.preSummarizePromise(doc.contribution, {
-				summary: { contribution: prevContributionSummary },
-			});
-			fs.writeFileSync(
-				`magic_doc_${id}_presummarizer.json`,
-				JSON.stringify(summarizer.json, null, 2)
-			);
-			fs.writeFileSync(
-				`magic_doc_${id}_presummarizer_ew.json`,
-				JSON.stringify(summarizer.errorsAndWarnings(), null, 2)
-			);
-			doc.summary = summarizer.json.contribution.summary;
-			//await summarizer.summarizePromise(doc.contribution, { summary: { contribution: prevContributionSummary }});
-			//fs.writeFileSync(`magic_doc_${id}_summarizer.json`, JSON.stringify(summarizer.json, null, 2));
-			//fs.writeFileSync(`magic_doc_${id}_summarizer_ew.json`, JSON.stringify(summarizer.errorsAndWarnings(), null, 2));
-			//doc.summary = summarizer.json.contribution.summary;
-			console.log(prevContributionSummary);
-			fs.writeFileSync(
-				`magic_doc_${id}_after.json`,
-				JSON.stringify(doc, null, 2)
-			);
+                // Summerize the contribution
+                const { Summarizer: SummarizeContribution } = await import(
+                    '../libs/summarize_contribution.js'
+                );
+                const summarizer = new SummarizeContribution({});
+                await summarizer.preSummarizePromise(doc.contribution, {
+                    summary: { contribution: prevContributionSummary },
+                });
+                fs.writeFileSync(
+                    `magic_doc_${id}_presummarizer.json`,
+                    JSON.stringify(summarizer.json, null, 2)
+                );
+                fs.writeFileSync(
+                    `magic_doc_${id}_presummarizer_ew.json`,
+                    JSON.stringify(summarizer.errorsAndWarnings(), null, 2)
+                );
+                doc.summary = summarizer.json.contribution.summary;
 
-			// Index with summary
-			await esReplacePrivate({
-				repository,
-				contributor,
-				id,
-				doc,
-			});
+            }
+                
+            // Index with summary
+            await esReplacePrivate({
+                repository,
+                contributor,
+                id,
+                doc,
+            });
 
 			ctx.status = 202;
 			ctx.body = {
-                id: id,
-                tables_not_processed: tables_not_processed,
-				rows_added: 0,
-				rows_deleted: 0,
+                id: id
 			};
 		} catch (e) {
 			ctx.app.emit('error', e, ctx);
@@ -232,58 +225,59 @@ export default {
 					contributorName: `${user.name.given} ${user.name.family}`,
 				});
 			}
-			const doc = { contribution: {}, summary: {} };
-            const tables_not_processed = [];
+			const doc = { type: "contribution", contribution: prevDoc['contribution'] || {}, summary: {} };
+            let rows_added = 0;
 
-			// Parse the contribution
+			// Parse the files and overwrite contribution tables
 			const { Parser: ParseContribution } = await import(
 				'../libs/parse_contribution.js'
-			);
-			const parser = new ParseContribution({});
-			await parser.parsePromise({ text: c.request.body });
-			fs.writeFileSync(
-				`magic_doc_${id}_parser_ew.json`,
-				JSON.stringify(parser.errorsAndWarnings(), null, 2)
-			);
+            );
+            const files = Array.isArray(c.request.body.files.file) ? c.request.body.files.file : [c.request.body.files.file];
+            for(const file of files) {
+                const parser = new ParseContribution({});
+                const fileText = fs.readFileSync(file.path).toString()
+                await parser.parsePromise({ text: fileText });
+                fs.writeFileSync(
+                    `magic_doc_${id}_parser_ew.json`,
+                    JSON.stringify(parser.errorsAndWarnings(), null, 2)
+                );
 
-			doc.contribution = parser.json;
-			doc.contribution['contribution'] =
-				prevDoc['contribution']['contribution'];
-			fs.writeFileSync(
-				`magic_doc_${id}_prev.json`,
-				JSON.stringify(doc, null, 2)
-			);
-			fs.writeFileSync(
-				`magic_doc_${id}_prev_summary.json`,
-				JSON.stringify(prevContributionSummary, null, 2)
-			);
+                _.keys(parser.json).forEach(table => {
+                    doc.contribution[table] ||= [];
+                    rows_added += parser.json[table].length;
+                    doc.contribution[table].push(...parser.json[table]);
+                })
 
-			// Summerize the contribution
-			const { Summarizer: SummarizeContribution } = await import(
-				'../libs/summarize_contribution.js'
-			);
-			const summarizer = new SummarizeContribution({});
-			await summarizer.preSummarizePromise(doc.contribution, {
-				summary: { contribution: prevContributionSummary },
-			});
-			fs.writeFileSync(
-				`magic_doc_${id}_presummarizer.json`,
-				JSON.stringify(summarizer.json, null, 2)
-			);
-			fs.writeFileSync(
-				`magic_doc_${id}_presummarizer_ew.json`,
-				JSON.stringify(summarizer.errorsAndWarnings(), null, 2)
-			);
-			doc.summary = summarizer.json.contribution.summary;
-			//await summarizer.summarizePromise(doc.contribution, { summary: { contribution: prevContributionSummary }});
-			//fs.writeFileSync(`magic_doc_${id}_summarizer.json`, JSON.stringify(summarizer.json, null, 2));
-			//fs.writeFileSync(`magic_doc_${id}_summarizer_ew.json`, JSON.stringify(summarizer.errorsAndWarnings(), null, 2));
-			//doc.summary = summarizer.json.contribution.summary;
-			console.log(prevContributionSummary);
-			fs.writeFileSync(
-				`magic_doc_${id}_after.json`,
-				JSON.stringify(doc, null, 2)
-			);
+                doc.contribution['contribution'] =
+                    prevDoc['contribution']['contribution'];
+                fs.writeFileSync(
+                    `magic_doc_${id}_prev.json`,
+                    JSON.stringify(doc, null, 2)
+                );
+                fs.writeFileSync(
+                    `magic_doc_${id}_prev_summary.json`,
+                    JSON.stringify(prevContributionSummary, null, 2)
+                );
+
+                // Summerize the contribution
+                const { Summarizer: SummarizeContribution } = await import(
+                    '../libs/summarize_contribution.js'
+                );
+                const summarizer = new SummarizeContribution({});
+                await summarizer.preSummarizePromise(doc.contribution, {
+                    summary: { contribution: prevContributionSummary },
+                });
+                fs.writeFileSync(
+                    `magic_doc_${id}_presummarizer.json`,
+                    JSON.stringify(summarizer.json, null, 2)
+                );
+                fs.writeFileSync(
+                    `magic_doc_${id}_presummarizer_ew.json`,
+                    JSON.stringify(summarizer.errorsAndWarnings(), null, 2)
+                );
+                doc.summary = summarizer.json.contribution.summary;
+
+            }
 
 			// Index with summary
 			await esReplacePrivate({
@@ -296,9 +290,7 @@ export default {
 			ctx.status = 202;
             ctx.body = {
                 id: id,
-                tables_not_processed: tables_not_processed,
-				rows_added: 0,
-				rows_deleted: 0,
+				rows_added: rows_added
 			};
 		} catch (e) {
 			ctx.app.emit('error', e, ctx);

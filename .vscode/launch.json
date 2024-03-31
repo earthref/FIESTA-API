@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "npm-debug-dev",
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "/home/rminnett/.nvm/versions/node/v18.12.1/bin/npm",
             "cwd": "${workspaceFolder}",
             "runtimeArgs": ["run-script", "dev"],
             "port": 9229,

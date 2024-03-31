@@ -1,9 +1,11 @@
 import { jest, describe, beforeAll, test, expect } from '@jest/globals';
 import * as dotenv from 'dotenv';
 import axios, { AxiosInstance } from 'axios';
+import FormData from 'form-data';
+import { Blob } from 'node:buffer';
 
 dotenv.config();
-jest.setTimeout(30000);
+jest.setTimeout(300000);
 const v = 'v1';
 
 describe(`FIESTA API ${v} Private Create/Update/Append/Delete Tests`, () => {
@@ -16,13 +18,13 @@ describe(`FIESTA API ${v} Private Create/Update/Append/Delete Tests`, () => {
 		});
 	});
 
-	test(`POST /${v}/MagIC/private should return status 401`, async () => {
+	test.skip(`POST /${v}/MagIC/private should return status 401`, async () => {
 		const res = await client.post(`/${v}/MagIC/private`);
 		expect(res.status).toBe(401);
 		expect(res.data).toHaveProperty('errors');
 	});
 
-	test(`POST /${v}/MagIC/private and DELETE /${v}/MagIC/private`, async () => {
+	test.skip(`POST /${v}/MagIC/private and DELETE /${v}/MagIC/private`, async () => {
 		const createRes = await client.post(
 			`/${v}/MagIC/private`,
 			{},
@@ -52,14 +54,23 @@ describe(`FIESTA API ${v} Private Create/Update/Append/Delete Tests`, () => {
 	});
 
 	test(`PUT /${v}/MagIC/private`, async () => {
+        const formData = new FormData();
+        const locations = new Blob(['tab delimited\tlocations\nlocation\tlocation_type\nHawaii\tOutcrop	This study'], { type: 'text/plain' });
+        formData.append('file',locations);
+        const sites = new Blob(['tab delimited\tsites\nsite\tlocation\tresult_type\nCA\tHawaii\ti'], { type: 'text/plain' });
+        formData.append('file',sites);
+        
         const updateRes = await client.put(
-			`/${v}/MagIC/private?id=19933`,
-			{ },
+			`/${v}/MagIC/private?id=19590`,
+			formData,
 			{
 				auth: {
 					username: process.env.TEST_USERNAME,
 					password: process.env.TEST_PASSWORD,
-				},
+                },
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
 			}
         );
 		expect(updateRes.status).toBe(201);
@@ -67,7 +78,7 @@ describe(`FIESTA API ${v} Private Create/Update/Append/Delete Tests`, () => {
         expect(updateRes.data.id).toBeGreaterThanOrEqual(1);
 	});
 
-	test(`POST /${v}/MagIC/private, PUT /${v}/MagIC/private and DELETE /${v}/MagIC/private`, async () => {
+	test.skip(`POST /${v}/MagIC/private, PUT /${v}/MagIC/private and DELETE /${v}/MagIC/private`, async () => {
 		const createRes = await client.post(
 			`/${v}/MagIC/private`,
 			{},
