@@ -2,6 +2,7 @@
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
 import Koa from 'koa';
 import { esGetContributionData } from '../libs/es';
+import { s3GetContributionByID } from '../libs/s3';
 
 export default {
 	v1PublicContributionData: async (
@@ -44,13 +45,26 @@ export default {
 				id,
 				key,
 				format: ctx.accepts('text/plain') ? 'txt' : 'json',
-			});
-			if (contribution === undefined) {
+            });
+            let contributionString: string = "";
+            if (contribution && typeof contribution === 'string') {
+                contributionString = contribution;
+            }
+            if (contribution === undefined) {
+                const contributionFile = await s3GetContributionByID({
+                    id,
+                    format: ctx.accepts('text/plain') ? 'txt' : 'json',
+                });
+                if (contributionFile && typeof contributionFile === 'string') {
+                    contributionString = contributionFile;
+                }
+            }
+            if (contributionString === "") {
 				ctx.status = 204;
 				return;
 			}
 			ctx.status = 200;
-			ctx.body = contribution;
+			ctx.body = contributionString;
 		} catch (e) {
 			ctx.app.emit('error', e, ctx);
 			ctx.status = 500;
