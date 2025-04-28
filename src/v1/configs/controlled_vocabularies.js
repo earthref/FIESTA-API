@@ -21,6 +21,43 @@ const cvs = {
 			},
 		],
 	},
+	file_type: {
+		label: 'File/Image Type',
+		database_column: 'file_type',
+		items: [
+			{
+				item: 'qdm_context_image',
+				label: 'Quantum Diamond Magnetometer (QDM) Context Image',
+			},
+			{
+				item: 'qdm_b111_map',
+				label: 'Quantum Diamond Magnetometer (QDM) B(1,1,1) Map',
+			},
+			{
+				item: 'qdm_bz_map',
+				label: 'Quantum Diamond Magnetometer (QDM) BZ Map',
+			},
+			{
+				item: 'qdm_fitted_map',
+				label: 'Quantum Diamond Magnetometer (QDM) Fitted Map',
+			},
+		],
+	},
+	feature_type: {
+		label: 'Feature Type',
+		database_column: 'feature_type',
+		items: [
+			{
+				item: 'Dike',
+			},
+			{
+				item: 'Sill',
+			},
+			{
+				item: 'Lineation',
+			},
+		],
+	},
 	state_province: {
 		label: 'State or Province Names',
 		database_column: 'state_province',
@@ -11238,6 +11275,10 @@ const cvs = {
 				item: 'g',
 				label: 'Good',
 			},
+			{
+				item: 'u',
+				label: 'Not determined/Unknown',
+			},
 		],
 	},
 	derived_value: {
@@ -11245,19 +11286,49 @@ const cvs = {
 		database_column: 'derived_value',
 		items: [
 			{
+				item: 'QDM GF Factor',
+				label:
+					'Quantum Diamond Magnetometer GF Factor. Fu, Lima, Volk and Trubko (2020), doi:10.1029/2020GC009147',
+			},
+			{
 				item: 'XPEEM',
 				label:
-					'X-ray photoemission electron microscopy. Bryson, Herrero-Albillos et al., 2014, doi:10.1016/j.epsl.2014.04.016',
+					'X-ray photoemission electron microscopy. Bryson, Herrero-Albillos et al. (2014), doi:10.1016/j.epsl.2014.04.016',
 			},
 			{
 				item: 'SQUID Microscopy Model Height Lima And Weiss 2016',
 				label:
-					'SQUID microscopy model height. Lima And Weiss, 2016, doi:10.1002/2016GC006487',
+					'SQUID microscopy model height. Lima And Weiss (2016), doi:10.1002/2016GC006487',
 			},
 			{
-				item: 'SQUID Microscopy Residuals Lima And Weiss 2016',
+				item: 'SQUID Microscopy Model Residuals Lima And Weiss 2016',
 				label:
-					'SQUID microscopy model residuals. Lima And Weiss, 2016, doi:10.1002/2016GC006487',
+					'SQUID microscopy model residuals. Lima And Weiss (2016), doi:10.1002/2016GC006487',
+			},
+			{
+				item: 'SQUID Microscopy Model Height Lima et al. 2023',
+				label:
+					'SQUID microscopy model height. Lima et al. (2023), doi:10.1029/2022GC010724',
+			},
+			{
+				item: 'SQUID Microscopy Model Residuals Lima et al. 2023',
+				label:
+					'SQUID microscopy model residuals. Lima et al. (2023), doi:10.1029/2022GC010724',
+			},
+			{
+				item: 'SQUID Microscopy Model Regularization Parameter Lima et al. 2023',
+				label:
+					'SQUID microscopy model regularization (lreg) parameter. Lima et al. (2023), doi:10.1029/2022GC010724',
+			},
+			{
+				item: 'SQUID Microscopy Model Order Lima et al. 2023',
+				label:
+					'SQUID microscopy model order. Lima et al. (2023), doi:10.1029/2022GC010724',
+			},
+			{
+				item: 'SQUID Microscopy Model Upward Continuation Height Lima et al. 2023',
+				label:
+					'SQUID microscopy model upward continuation height (upcont). Lima et al. (2023), doi:10.1029/2022GC010724',
 			},
 		],
 	},
@@ -13207,9 +13278,6 @@ const cvs = {
 				item: 'Colombia',
 			},
 			{
-				item: 'Comores',
-			},
-			{
 				item: 'Comoros',
 			},
 			{
@@ -13354,7 +13422,7 @@ const cvs = {
 				item: 'Haiti',
 			},
 			{
-				item: 'Heard Island and Mcdonald Islands',
+				item: 'Heard Island and McDonald Islands',
 			},
 			{
 				item: 'Holy See',
@@ -13810,12 +13878,6 @@ const cvs = {
 				item: 'Tuvalu',
 			},
 			{
-				item: 'U.K.',
-			},
-			{
-				item: 'U.S.A.',
-			},
-			{
 				item: 'US Virgin Islands',
 			},
 			{
@@ -13938,11 +14000,11 @@ const cvs = {
 		items: [
 			{
 				item: 's',
-				label: 'Standard',
+				label: 'Calibration Standard',
 			},
 			{
 				item: 'u',
-				label: 'Unknown',
+				label: 'Sample With Unknown Value',
 			},
 		],
 	},
@@ -13990,7 +14052,7 @@ const cvs = {
 				item: 'Unknown',
 			},
 			{
-				item: 'Verway',
+				item: 'Verwey',
 			},
 		],
 	},
@@ -14211,6 +14273,9 @@ const cvs = {
 				item: 'Arenite',
 			},
 			{
+				item: 'Ash',
+			},
+			{
 				item: 'Ash Breccia',
 			},
 			{
@@ -14341,6 +14406,9 @@ const cvs = {
 			},
 			{
 				item: 'Brown Lignite',
+			},
+			{
+				item: 'Burnt Sediment',
 			},
 			{
 				item: 'CB Chondrite',
@@ -14568,6 +14636,9 @@ const cvs = {
 				item: 'Comenditic Trachyte',
 			},
 			{
+				item: 'Concretions',
+			},
+			{
 				item: 'Conglomerate',
 			},
 			{
@@ -14725,6 +14796,9 @@ const cvs = {
 			},
 			{
 				item: 'Feldspathic Wacke',
+			},
+			{
+				item: 'Felsic Dike',
 			},
 			{
 				item: 'Felsic Lava',
@@ -15088,6 +15162,9 @@ const cvs = {
 			},
 			{
 				item: 'Impact Melt Lunar Anorthosite Breccia',
+			},
+			{
+				item: 'Impact Melt Lunar Basalt',
 			},
 			{
 				item: 'Impure Coal',
@@ -15984,6 +16061,9 @@ const cvs = {
 				item: 'Nakhlite',
 			},
 			{
+				item: 'Nannofossil Ooze',
+			},
+			{
 				item: 'Natrocarbonatite',
 			},
 			{
@@ -16348,6 +16428,9 @@ const cvs = {
 			},
 			{
 				item: 'Pumice',
+			},
+			{
+				item: 'Pyroclastite',
 			},
 			{
 				item: 'Pyroclastic Breccia',
@@ -16920,6 +17003,9 @@ const cvs = {
 				item: 'Uncategorized Achondrite',
 			},
 			{
+				item: 'Ungrouped Iron Meteorite',
+			},
+			{
 				item: 'Ureilite Primitive Achondrite',
 			},
 			{
@@ -16978,24 +17064,12 @@ const cvs = {
 			},
 		],
 	},
-	database_column: {
+	external_database_names: {
 		label: 'External Database Names',
 		database_column: 'external_database_ids',
 		items: [
 			{
-				item: '20D',
-			},
-			{
-				item: 'ARCHEO00',
-			},
-			{
-				item: 'ARCHEOINTB',
-			},
-			{
 				item: 'ARCH_AU',
-			},
-			{
-				item: 'ARCH_BU',
 			},
 			{
 				item: 'ARCH_ES',
@@ -17016,28 +17090,13 @@ const cvs = {
 				item: 'CALS7K.2',
 			},
 			{
-				item: 'DRAGON',
-			},
-			{
-				item: 'GEOCHRON',
-			},
-			{
 				item: 'GEOMAGIA50',
-			},
-			{
-				item: 'GLOPIS',
 			},
 			{
 				item: 'GPMDB',
 			},
 			{
-				item: 'LORE',
-			},
-			{
-				item: 'NAPIS',
-			},
-			{
-				item: 'NWUS',
+				item: 'ICEPMAG',
 			},
 			{
 				item: 'PALEOMAGIA',
@@ -17046,37 +17105,7 @@ const cvs = {
 				item: 'PINT',
 			},
 			{
-				item: 'PINT03',
-			},
-			{
-				item: 'PINT06',
-			},
-			{
-				item: 'PINT08',
-			},
-			{
 				item: 'PSVRL',
-			},
-			{
-				item: 'SAPIS',
-			},
-			{
-				item: 'SECVR',
-			},
-			{
-				item: 'SEDPI',
-			},
-			{
-				item: 'SINT200',
-			},
-			{
-				item: 'SINT2000',
-			},
-			{
-				item: 'SINT800',
-			},
-			{
-				item: 'SWUS',
 			},
 			{
 				item: 'TAFI',
@@ -17653,6 +17682,9 @@ const cvs = {
 				item: 'Pottery',
 			},
 			{
+				item: 'Pyroclastic Flow',
+			},
+			{
 				item: 'Pyroclastite',
 			},
 			{
@@ -17827,6 +17859,10 @@ const cvs = {
 			{
 				item: 't',
 				label: 'Transitional',
+			},
+			{
+				item: 'u',
+				label: 'Unknown',
 			},
 		],
 	},
@@ -19148,7 +19184,10 @@ const cvs = {
 				item: 'Department of Geomagnetism (Academy of Sciences, Czech Republic)',
 			},
 			{
-				item: 'Centre Européen de Recherche et d’Enseignement des Géosciences de l’Environnement (CEREGE), (Aix en Provence, France)',
+				item: 'Paleomagnetic Laboratory (AGICO Inc., Czech Republic)',
+			},
+			{
+				item: 'Centre Européen de Recherche et d’Enseignement des Géosciences de l’Environnement (CEREGE) (Aix en Provence, France)',
 			},
 			{
 				item: 'Alpine Laboratory of Paleomagnetism (ALP, Italy)',
@@ -19184,7 +19223,13 @@ const cvs = {
 				item: 'Paléomagnétisme Géosciences Rennes (CNRS-Rennes 1 University, France)',
 			},
 			{
+				item: 'Paléomagnétisme IPG Paris (CNRS-Paris Cité University, France)',
+			},
+			{
 				item: 'Paléomagnétisme IPG Paris (CNRS-Sorbonne Paris Cité University, France)',
+			},
+			{
+				item: 'Paléomagnétisme LSCE Gif sur Yvette (CNRS-Versailles St Quentin University, France)',
 			},
 			{
 				item: 'Paléomagnétisme Géosciences Environnement (CNRS-Toulouse University, France)',
@@ -19197,6 +19242,9 @@ const cvs = {
 			},
 			{
 				item: 'Paléomagnétisme LSCE Gif sur Yvette (CNRS-Versailles St Quentin University, France)',
+			},
+			{
+				item: 'LDEO Paleomagnetics Lab (Lamont-Doherty Earth Observatory, Columbia University, USA)',
 			},
 			{
 				item: 'Magnetics & Gravity Team (Commonwealth Scientific and Industrial Research Organisation (CSIRO), Australia)',
@@ -19223,6 +19271,9 @@ const cvs = {
 				item: 'Laboratory for Paleo- and Rock Magnetism (GFZ German Research Centre for Geosciences, Potsdam, Germany)',
 			},
 			{
+				item: 'Paleomagnetic Lab (Hebrew University of Jerusalem, Israel)',
+			},
+			{
 				item: 'Solid Earth Geophysics Research Laboratory (Helsinki University, Finland)',
 			},
 			{
@@ -19245,6 +19296,9 @@ const cvs = {
 			},
 			{
 				item: 'Department of Planetology (Kobe University, Japan)',
+			},
+			{
+				item: 'KCC Paleomagnetism and Rock Magnetism Laboratory (Kochi University, Japan)',
 			},
 			{
 				item: 'Paleomagnetism and Rock Magnetism (Kyoto University, Japan)',
@@ -19277,6 +19331,12 @@ const cvs = {
 				item: 'Earth Magnetism Laboratory (Michigan Tech, USA)',
 			},
 			{
+				item: 'Paleomagnetism Laboratory (Montanuniversität Leoben, Austria)',
+			},
+			{
+				item: 'Institute of Magnetism (National Academy of Sciences of Ukraine Kiev, Ukraine)',
+			},
+			{
 				item: 'Paleomagnetism and Rock Magnetism Laboratory (New Mexico Highlands University, USA)',
 			},
 			{
@@ -19290,6 +19350,9 @@ const cvs = {
 			},
 			{
 				item: 'Paleomagnetic and Environmental Magnetic Research Laboratory (Oregon State University, USA)',
+			},
+			{
+				item: 'Paleomagnetism Laboratory (Nanjing University, China)',
 			},
 			{
 				item: 'Applied Magnetics Laboratory (Oregon State University, USA)',
@@ -19307,7 +19370,16 @@ const cvs = {
 				item: 'Paleomagnetic Lab (Scripps Institution of Oceanography, UCSD, USA)',
 			},
 			{
-				item: 'Paleomagnetic Laboratory (Atmosphere and Ocean Research Institute, University of Tokyo, Japan)',
+				item: 'Joint International Research Laboratory for Environmental and Social Archaeology (Shandong University, China)',
+			},
+			{
+				item: 'Stanford Paleomagnetism Laboratory (Stanford University, USA)',
+			},
+			{
+				item: 'School of Earth Science and Engineering (Sun Yat-sen University, China)',
+			},
+			{
+				item: 'JOIDES Resolution (Texas A&M University, USA)',
 			},
 			{
 				item: 'Paleo & Planetary Magnetism Lab (Tokyo Institute of Technology, Japan)',
@@ -19340,10 +19412,13 @@ const cvs = {
 				item: 'Paleomagnetism Lab (University of Alaska Fairbanks, USA)',
 			},
 			{
+				item: 'Laboratory of Paleomagnetism and Petromagnetism (University of Alberta, Canada)',
+			},
+			{
 				item: 'Paleomagnetics Laboratory (University of Arizona, USA)',
 			},
 			{
-				item: 'Group of Magnetic Applications (Universitat Autònoma de Barcelona (UAB), Spain)',
+				item: 'Group of Magnetic Applications (Universitat AutÃ²noma de Barcelona (UAB), Spain)',
 			},
 			{
 				item: 'Laboratori de Paleomagnetisme (Universidad de Barcelona, Spain)',
@@ -19403,7 +19478,7 @@ const cvs = {
 				item: 'Paleomagnetism, Structure and Tectonics (University of Michigan, USA)',
 			},
 			{
-				item: 'Institute of Rock Magnetism (University of Minnesota, USA)',
+				item: 'Institute for Rock Magnetism (University of Minnesota, USA)',
 			},
 			{
 				item: 'IFAS (Universidad Nacional del Centro de la Provincia de Buenos Aires, Brazil)',
@@ -19412,10 +19487,16 @@ const cvs = {
 				item: 'Paleomagnetics Lab (University of New Hampshire, USA)',
 			},
 			{
-				item: 'Palaeomagnetism and Rock Magnetism (University of Oxford, UK)',
+				item: 'School of Geosciences Paleomagnetic Lab (University of Oklahoma, USA)',
+			},
+			{
+				item: 'Geomagnetic Laboratory (University of Oslo, Norway)',
 			},
 			{
 				item: 'Paleomagnetic Research Facility (University of Otago, New Zealand)',
+			},
+			{
+				item: 'Palaeomagnetism and Rock Magnetism (University of Oxford, UK)',
 			},
 			{
 				item: 'Geodynamics and Palaeomagnetism (University of Plymouth, UK)',
@@ -19433,7 +19514,13 @@ const cvs = {
 				item: 'Paleomagnetic Laboratory (Universidade de São Paulo, Brazil)',
 			},
 			{
-				item: 'Paleomagnetic Laboratory (University of Southern California, USA)',
+				item: 'Paleomagnetism and Rock Magnetism Laboratory (University of Southern California, USA)',
+			},
+			{
+				item: 'Paleomagnetic Laboratory (Atmosphere and Ocean Research Institute, University of Tokyo, Japan)',
+			},
+			{
+				item: 'Departamento de Geologia, Facultad de Ciencias Físicas y Matemáticas (Universidad de Chile, Santiago, Chile)',
 			},
 			{
 				item: 'Laboratory of Paleomagnetism (Universidad de Vigo, Spain)',
@@ -19454,7 +19541,10 @@ const cvs = {
 				item: 'School of Geography Environment and Earth Sciences (Victoria University of Wellington, New Zealand)',
 			},
 			{
-				item: 'Paleomagnetic Laboratory (Western Washington University, USA)',
+				item: 'Western Paleomagnetic & Petrophysical Laboratory (Western Science, Canada)',
+			},
+			{
+				item: 'Pacific Northwest Paleomagnetism Lab (Western Washington University, USA)',
 			},
 			{
 				item: 'Western Paleomagnetic & Petrophysical Laboratory (WPPL) (Western University, Canada)',
