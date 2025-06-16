@@ -285,7 +285,7 @@ async function esGetSearchByTable({
 		index: indexes[repository],
 		size,
 		from,
-		_source_includes: ['summary.contribution', 'rows'],
+		_source_includes: ['summary.contribution', 'rows', 'columns'],
 		body: {
 			sort: { 'summary.contribution.timestamp': 'desc' },
 			query: { bool: { must, must_not } },
@@ -295,15 +295,27 @@ async function esGetSearchByTable({
 	if (resp.body.hits.total.value <= 0) {
 		return;
 	}
-	const results =
-		table !== 'contribution'
-			? _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows)
-			: resp.body.hits.hits.map((hit) =>
-				_.omitBy(
-					hit._source.summary.contribution,
-					(o: any, k: string) => k[0] === '_'
-				)
-			);
+
+    let results;
+    if (resp.body.hits.hits.length > 0) {
+        if (table === 'contribution') {
+            results = resp.body.hits.hits.map((hit) =>
+                _.omitBy(
+                    hit._source.summary.contribution,
+                    (o: any, k: string) => k[0] === '_'
+                )
+            );
+        }
+        else if (table === 'experiments') {
+            table = 'measurements';
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows.map((row) => _.zipObject(hit._source.columns, row)));
+        }
+        else {
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows);
+        }
+        results = results.map((result) => _.omitBy(result, (value) => value === null || value === ''));
+    }
+
 	return {
 		total: resp.body.hits.total.value,
 		table,
