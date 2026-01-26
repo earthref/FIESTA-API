@@ -88,6 +88,19 @@ components:
           - message: 'There was an error.'
 
 paths:
+  /v1/docs:
+    get:
+      tags:
+        - System
+      summary: API Documentation (Scalar)
+      operationId: v1Docs
+      responses:
+        200:
+          description: API documentation page
+          content:
+            text/html:
+              schema:
+                type: string
   /v1/health-check:
     get:
       tags:

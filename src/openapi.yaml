@@ -4,6 +4,8 @@ info:
   version: '*'
 paths:
   # v1 FIESTA API
+  /v1/docs:
+    $ref: 'public/v1/openapi.yaml#/paths/~1v1~1docs'
   /v1/health-check:
     $ref: 'public/v1/openapi.yaml#/paths/~1v1~1health-check'
   /v1/authenticate:

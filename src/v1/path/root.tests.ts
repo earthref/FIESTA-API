@@ -23,6 +23,16 @@ describe(`FIESTA API ${v} Root Tests`, () => {
 		expect(res.status).toBe(200);
 	});
 
+	test(`GET /${v}/docs returns 200 with HTML content`, async () => {
+		const res = await client.get(`/${v}/docs`, {
+			headers: { Accept: 'text/html' },
+		});
+		expect(res.status).toBe(200);
+		expect(res.headers['content-type']).toMatch(/text\/html/);
+		expect(res.data).toContain('api-reference');
+		expect(res.data).toContain('scalar');
+	});
+
 	test(`GET /${v}/authenticate returns 401`, async () => {
 		const res = await client.get(`/${v}/authenticate`, {
 			headers: { Accept: 'text/plain' },
