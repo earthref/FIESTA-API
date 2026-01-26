@@ -59,4 +59,23 @@ describe(`FIESTA API ${v} Search Tests`, () => {
 		expect(res.data).toHaveProperty('results');
 		expect(res.data.results.length).toBeLessThanOrEqual(res.data.size);
 	});
+
+	test(`GET /${v}/MagIC/search/contributions with published_since returns results on or after date`, async () => {
+		const res = await client.get(
+			`/${v}/MagIC/search/contributions?published_since=2023-01-01&n_max_rows=10`
+		);
+		expect(res.status).toBe(200);
+		expect(res.data).toHaveProperty('total');
+		expect(res.data).toHaveProperty('results');
+		// Verify all returned contributions have timestamp >= 2023-01-01
+		if (res.data.results.length > 0) {
+			res.data.results.forEach((contribution: any) => {
+				if (contribution.timestamp) {
+					const timestamp = new Date(contribution.timestamp);
+					const minDate = new Date('2023-01-01');
+					expect(timestamp.getTime()).toBeGreaterThanOrEqual(minDate.getTime());
+				}
+			});
+		}
+	});
 });

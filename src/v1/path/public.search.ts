@@ -10,7 +10,7 @@ export default {
 	): Promise<void> => {
 		try {
 			const { repository: repositories, table: tables } = c.request.params;
-			const { n_max_rows, from, query, included_columns, missing_columns } = c.request.query;
+			const { n_max_rows, from, query, included_columns, missing_columns, published_since } = c.request.query;
 			const repository: string =
 				repositories instanceof Array ? repositories[0] : repositories;
 			const table: string = tables instanceof Array ? tables[0] : tables;
@@ -29,6 +29,7 @@ export default {
 				contributions: 'contribution',
 				measurements: 'experiments',
 			};
+			const publishedSinceDate: string = published_since instanceof Array ? published_since[0] : published_since;
 			ctx.body = await esGetSearchByTable({
 				repository,
 				table: tableMap[table] || table,
@@ -37,6 +38,7 @@ export default {
 				queries: query !== undefined ? queries : undefined,
 				exists_fields: included_columns !== undefined ? exists_fields.map(x => `summary._all.${x}`) : undefined,
 				not_exists_fields: missing_columns !== undefined ? not_exists_fields.map(x => `summary._all.${x}`) : undefined,
+				published_since: published_since !== undefined ? publishedSinceDate : undefined,
 			});
 			if (ctx.body === undefined) {
 				ctx.status = 204;

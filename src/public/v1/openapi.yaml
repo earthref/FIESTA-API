@@ -306,6 +306,12 @@ paths:
             type: array
             items:
               type: string
+        - name: published_since
+          in: query
+          description: Filter contributions published on or after this date (ISO 8601 format, e.g., 2024-01-01 or 2024-01-01T00:00:00Z)
+          schema:
+            type: string
+            format: date-time
       responses:
         200:
           description: Rows are returned in the format requested by the accept header

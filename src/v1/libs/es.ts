@@ -231,6 +231,7 @@ async function esGetSearchByTable({
     contributor_names = [],
     only_latest = false,
     reference_titles = [],
+    published_since = '',
 }: {
 	repository?: string;
 	table?: string;
@@ -244,6 +245,7 @@ async function esGetSearchByTable({
 	contributor_names?: string[];
     only_latest?: boolean;
     reference_titles?: string[];
+    published_since?: string;
 } = {}): Promise<{
 	total: number;
 	table: string;
@@ -279,6 +281,8 @@ async function esGetSearchByTable({
                 )
             }   
         });
+    if (published_since)
+        must.push({ range: { 'summary.contribution.timestamp': { gte: published_since } } });
     console.log(JSON.stringify({query: { bool: { must, must_not } }}))
 	must.push({ term: { type: table } });
 	const params: RequestParams.Search = {
