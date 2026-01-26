@@ -303,19 +303,30 @@ async function esGetSearchByTable({
     let results;
     if (resp.body.hits.hits.length > 0) {
         if (table === 'contribution') {
-            results = resp.body.hits.hits.map((hit) =>
-                _.omitBy(
+            results = resp.body.hits.hits.map((hit) => ({
+                contribution_id: hit._source.summary.contribution.id,
+                ..._.omitBy(
                     hit._source.summary.contribution,
                     (o: any, k: string) => k[0] === '_'
                 )
-            );
+            }));
         }
         else if (table === 'experiments') {
             table = 'measurements';
-            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows.map((row) => _.zipObject(hit._source.columns, row)));
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => 
+                hit._source.rows.map((row) => ({
+                    contribution_id: hit._source.summary.contribution.id,
+                    ..._.zipObject(hit._source.columns, row)
+                }))
+            );
         }
         else {
-            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => hit._source.rows);
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => 
+                hit._source.rows.map((row) => ({
+                    contribution_id: hit._source.summary.contribution.id,
+                    ...row
+                }))
+            );
         }
         results = results.map((result) => _.omitBy(result, (value) => value === null || value === ''));
     }
