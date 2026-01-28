@@ -313,7 +313,7 @@ async function esGetSearchByTable({
         }
         else if (table === 'experiments') {
             table = 'measurements';
-            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => 
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) =>
                 hit._source.rows.map((row) => ({
                     contribution_id: hit._source.summary.contribution.id,
                     ..._.zipObject(hit._source.columns, row)
@@ -321,7 +321,7 @@ async function esGetSearchByTable({
             );
         }
         else {
-            results = _.flatMap(resp.body.hits.hits, (hit: Hit) => 
+            results = _.flatMap(resp.body.hits.hits, (hit: Hit) =>
                 hit._source.rows.map((row) => ({
                     contribution_id: hit._source.summary.contribution.id,
                     ...row
