@@ -68,12 +68,14 @@ interface SearchResponse {
 // Check the ES connection status
 async function esCheckConnection(attempt = 0): Promise<boolean> {
 	try {
-		const health = await client.cluster.health({});
-		return (
-			health &&
-			health.body &&
-			(health.body.status === 'yellow' || health.body.status === 'green')
-		);
+		const resp = await client.search({
+			index: usersIndex,
+			size: 0,
+			body: {
+				query: { match_all: {} }
+			}
+		});
+		return resp && resp.body && typeof resp.body.hits.total.value === 'number';
 	} catch (err) {
 		if (process.env.NODE_ENV === 'development') {
 			console.log('Connecting to ES Failed, Retrying...', err);
