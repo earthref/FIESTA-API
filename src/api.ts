@@ -1,3 +1,25 @@
+import Sentry from '@sentry/node';
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
+
+Sentry.init({
+    dsn: "https://30ae127d9fbc1a9d9228e2be8518a63a@o4510790707052544.ingest.us.sentry.io/4510790713212928",
+    integrations: [
+        nodeProfilingIntegration(),
+    ],
+
+    // Send structured logs to Sentry
+    enableLogs: true,
+    // Tracing
+    tracesSampleRate: 1.0, //  Capture 100% of the transactions
+    // Set sampling rate for profiling - this is evaluated only once per SDK.init call
+    profileSessionSampleRate: 1.0,
+    // Trace lifecycle automatically enables profiling during active traces
+    profileLifecycle: 'trace',
+    // Setting this option to true will send default PII data to Sentry.
+    // For example, automatic IP address collection on events
+    sendDefaultPii: true,
+});
+
 import { createReadStream } from 'fs';
 import OpenAPIBackend from 'openapi-backend';
 import { Context as OpenAPIContext } from 'openapi-backend/backend';
@@ -110,6 +132,8 @@ const server = new OpenAPIBackend({
 server.init();
 
 const API = new Koa();
+
+Sentry.setupKoaErrorHandler(API);
 
 // Return JSON errors
 API.use(async (ctx, next) => {
