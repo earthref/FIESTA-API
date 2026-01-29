@@ -70,6 +70,6 @@ sites_df.head()
 ```
 npm install
 npm dev
-# API running at http://localhost:3200
+# API running at http://localhost:3100
 ```
 
