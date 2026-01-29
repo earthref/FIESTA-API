@@ -6,6 +6,9 @@
     "license": "MIT",
     "keywords": [],
     "private": true,
+    "engines": {
+        "node": "14.x"
+    },
     "scripts": {
         "public": "rimraf dist/public && copyfiles -u 2 src/public/**/* dist/public && copyfiles -u 2 src/public/**/**/* dist/public",
         "libs": "rimraf dist/v1/libs && copyfiles -u 3 src/v1/libs/*.js dist/v1/libs",
