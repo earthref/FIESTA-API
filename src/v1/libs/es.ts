@@ -11,7 +11,7 @@ const _ = deepdash(lodash);
 const indexes = { MagIC: 'magic' };
 const usersIndex = 'er_users';
 const client = new Client({
-	node: process.env.ES_NODE,
+    node: process.env.OS_NODE,
 });
 
 function sleep(ms = 0) {
